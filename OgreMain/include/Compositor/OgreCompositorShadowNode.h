@@ -402,18 +402,34 @@ namespace Ogre
             PSSM blend. Ignored if not using PSSM.
         @param splitFade
             PSSM split fade. Ignored if not using PSSM.
+        @param visibilityMask
+            Visibility mask for all passes. See firstRq
+        @param firstRq
+            When rendering, which Render Queues to consider.
+            Normally you want to set this to firstRq = 0; lastRq = 255.
+
+            However if you have a dedicated shadow map for e.g. the main player
+            then you want to put the player in a specific RQs and tighten
+            the Render Queue to obtain maximum coverage quality
+            Range is [firstRq; lastRq)
+        @param lastRq
+            See firstRq
         */
-        static void createShadowNodeWithSettings( CompositorManager2 *compositorManager,
-                                                  const RenderSystemCapabilities *capabilities,
-                                                  const String &shadowNodeName,
-                                                  const ShadowNodeHelper::
-                                                  ShadowParamVec &shadowParams,
-                                                  bool useEsm,
-                                                  uint32 pointLightCubemapResolution=1024u,
-                                                  Real pssmLambda=0.95f, Real splitPadding=1.0f,
-                                                  Real splitBlend = 0.125f, Real splitFade = 0.313f,
-                                                  uint32 numStableSplits = 0,
-                                                  uint32 visibilityMask = VisibilityFlags::RESERVED_VISIBILITY_FLAGS );
+        static void createShadowNodeWithSettings(
+            CompositorManager2 *compositorManager,                               //
+            const RenderSystemCapabilities *capabilities,                        //
+            const String &shadowNodeName,                                        //
+            const ShadowNodeHelper::ShadowParamVec &shadowParams,                //
+            bool useEsm,                                                         //
+            uint32 pointLightCubemapResolution = 1024u,                          //
+            Real pssmLambda = 0.95f,                                             //
+            Real splitPadding = 1.0f,                                            //
+            Real splitBlend = 0.125f,                                            //
+            Real splitFade = 0.313f,                                             //
+            uint32 numStableSplits = 0,                                          //
+            uint32 visibilityMask = VisibilityFlags::RESERVED_VISIBILITY_FLAGS,  //
+            uint8 firstRq = 0u,                                                  //
+            uint8 lastRq = 255u );
     };
 
     /** @} */
