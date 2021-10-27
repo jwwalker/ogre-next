@@ -21,51 +21,49 @@ int mainApp( int argc, const char *argv[] )
     return Demo::MainEntryPoints::mainAppSingleThreaded( DEMO_MAIN_ENTRY_PARAMS );
 }
 
+static void createShadowNode(void)
+{
+	Ogre::Root& root( Ogre::Root::getSingleton() );
+	
+	Ogre::ShadowNodeHelper::ShadowParamVec shadowParams;
+	Ogre::ShadowNodeHelper::ShadowParam shadowParam;
+	memset( &shadowParam, 0, sizeof(shadowParam) );
+
+	shadowParam.technique = Ogre::SHADOWMAP_PSSM;
+	shadowParam.numPssmSplits = 3u;
+	shadowParam.resolution[0].x = 2048u;
+	shadowParam.resolution[0].y = 2048u;
+	for( size_t i=1u; i<4u; ++i )
+	{
+		shadowParam.resolution[i].x = 1024u;
+		shadowParam.resolution[i].y = 1024u;
+	}
+	shadowParam.atlasStart[0].x = 0u;
+	shadowParam.atlasStart[0].y = 0u;
+	shadowParam.atlasStart[1].x = 0u;
+	shadowParam.atlasStart[1].y = 2048u;
+	shadowParam.atlasStart[2].x = 1024u;
+	shadowParam.atlasStart[2].y = 2048u;
+
+	shadowParam.supportedLightTypes = 0u;
+	shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
+	shadowParams.push_back( shadowParam );
+
+	Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
+		root.getCompositorManager2(),
+		root.getRenderSystem()->getCapabilities(),
+		"ShadowMapFromCodeShadowNode",
+		shadowParams, false );
+}
+
 namespace Demo
 {
     class ShadowMapFromCodeGraphicsSystem : public GraphicsSystem
     {
-        void createPcfShadowNode(void)
-        {
-            Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
-            Ogre::RenderSystem *renderSystem = mRoot->getRenderSystem();
-
-            Ogre::ShadowNodeHelper::ShadowParamVec shadowParams;
-
-            Ogre::ShadowNodeHelper::ShadowParam shadowParam;
-            memset( &shadowParam, 0, sizeof(shadowParam) );
-
-            //First light, directional
-            shadowParam.technique = Ogre::SHADOWMAP_PSSM;
-            shadowParam.numPssmSplits = 3u;
-            shadowParam.resolution[0].x = 2048u;
-            shadowParam.resolution[0].y = 2048u;
-            for( size_t i=1u; i<4u; ++i )
-            {
-                shadowParam.resolution[i].x = 1024u;
-                shadowParam.resolution[i].y = 1024u;
-            }
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 0u;
-            shadowParam.atlasStart[1].x = 0u;
-            shadowParam.atlasStart[1].y = 2048u;
-            shadowParam.atlasStart[2].x = 1024u;
-            shadowParam.atlasStart[2].y = 2048u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParams.push_back( shadowParam );
-
-            Ogre::ShadowNodeHelper::createShadowNodeWithSettings( compositorManager,
-                                                                  renderSystem->getCapabilities(),
-                                                                  "ShadowMapFromCodeShadowNode",
-                                                                  shadowParams, false );
-        }
-
 
         virtual Ogre::CompositorWorkspace* setupCompositor()
         {
-			createPcfShadowNode();
+			createShadowNode();
 
             Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
             const Ogre::String workspaceName( "xWorkspace" );
