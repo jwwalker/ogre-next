@@ -56,6 +56,36 @@ static void createShadowNode(void)
 		shadowParams, false );
 }
 
+static Ogre::CompositorWorkspace*
+makeCompositorWorkspace( const Ogre::String& workspaceName,
+						const Ogre::ColourValue& backgroundColor,
+						Ogre::SceneManager* sceneManager,
+						Ogre::Window* window,
+						Ogre::Camera* camera )
+{
+	Ogre::Root& root( Ogre::Root::getSingleton() );
+	Ogre::CompositorManager2* compositorManager = root.getCompositorManager2();
+	if( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
+	{
+		compositorManager->createBasicWorkspaceDef( workspaceName,
+			backgroundColor, Ogre::IdString() );
+		
+		const Ogre::String nodeDefName = "AutoGen " +
+			Ogre::IdString(workspaceName + "/Node").getReleaseText();
+		Ogre::CompositorNodeDef *nodeDef =
+			compositorManager->getNodeDefinitionNonConst( nodeDefName );
+		Ogre::CompositorTargetDef *targetDef = nodeDef->getTargetPass( 0 );
+		const Ogre::CompositorPassDefVec &passes = targetDef->getCompositorPasses();
+		Ogre::CompositorPassSceneDef *passSceneDef =
+			static_cast<Ogre::CompositorPassSceneDef*>( passes[0] );
+		passSceneDef->mShadowNode = "ShadowMapFromCodeShadowNode";
+	}
+	
+	Ogre::CompositorWorkspace* workspace = compositorManager->addWorkspace(
+		sceneManager, window->getTexture(), camera, workspaceName, true );
+	return workspace;
+}
+
 namespace Demo
 {
     class ShadowMapFromCodeGraphicsSystem : public GraphicsSystem
@@ -64,32 +94,10 @@ namespace Demo
         virtual Ogre::CompositorWorkspace* setupCompositor()
         {
 			createShadowNode();
+			
+			mWorkspace = makeCompositorWorkspace( "xWorkspace",
+				mBackgroundColour, mSceneManager, mRenderWindow, mCamera );
 
-            Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
-            const Ogre::String workspaceName( "xWorkspace" );
-
-            if( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
-            {
-                compositorManager->createBasicWorkspaceDef( workspaceName, mBackgroundColour,
-                                                            Ogre::IdString() );
-
-                const Ogre::String nodeDefName = "AutoGen " +
-                                                 Ogre::IdString(workspaceName +
-                                                                "/Node").getReleaseText();
-                Ogre::CompositorNodeDef *nodeDef =
-                        compositorManager->getNodeDefinitionNonConst( nodeDefName );
-
-                Ogre::CompositorTargetDef *targetDef = nodeDef->getTargetPass( 0 );
-                const Ogre::CompositorPassDefVec &passes = targetDef->getCompositorPasses();
-
-                assert( dynamic_cast<Ogre::CompositorPassSceneDef*>( passes[0] ) );
-                Ogre::CompositorPassSceneDef *passSceneDef =
-                        static_cast<Ogre::CompositorPassSceneDef*>( passes[0] );
-                passSceneDef->mShadowNode = "ShadowMapFromCodeShadowNode";
-             }
-
-            mWorkspace = compositorManager->addWorkspace( mSceneManager, mRenderWindow->getTexture(),
-                mCamera, workspaceName, true );
             return mWorkspace;
         }
 
