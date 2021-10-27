@@ -16,16 +16,10 @@
 #include "MainEntryPointHelper.h"
 #include "System/MainEntryPoints.h"
 
-#if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-INT WINAPI WinMainApp( HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR strCmdLine, INT nCmdShow )
-#else
 int mainApp( int argc, const char *argv[] )
-#endif
 {
     return Demo::MainEntryPoints::mainAppSingleThreaded( DEMO_MAIN_ENTRY_PARAMS );
 }
-#endif
 
 namespace Demo
 {
@@ -61,25 +55,6 @@ namespace Demo
             shadowParam.supportedLightTypes = 0u;
             shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
             shadowParams.push_back( shadowParam );
-
-#if SPOTLIGHTS
-            //Second light, directional, spot or point
-            shadowParam.technique = Ogre::SHADOWMAP_FOCUSED;
-            shadowParam.resolution[0].x = 2048u;
-            shadowParam.resolution[0].y = 2048u;
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 2048u + 1024u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParam.addLightType( Ogre::Light::LT_POINT );
-            shadowParam.addLightType( Ogre::Light::LT_SPOTLIGHT );
-            shadowParams.push_back( shadowParam );
-
-            //Third light, directional, spot or point
-            shadowParam.atlasStart[0].y = 2048u + 1024u + 2048u;
-            shadowParams.push_back( shadowParam );
-#endif
 
             Ogre::ShadowNodeHelper::createShadowNodeWithSettings( compositorManager,
                                                                   renderSystem->getCapabilities(),
