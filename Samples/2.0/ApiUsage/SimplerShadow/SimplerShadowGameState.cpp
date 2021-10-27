@@ -105,8 +105,6 @@ namespace Demo
 
         mLightNodes[0] = lightNode;
 
-        mCameraController = new CameraController( mGraphicsSystem, false );
-
         TutorialGameState::createScene01();
     }
     //-----------------------------------------------------------------------------------

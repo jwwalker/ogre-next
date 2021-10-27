@@ -18,12 +18,7 @@ namespace Demo
 
         bool                mAnimateObjects;
 
-        void setupShadowNode( bool forEsm );
-
         virtual void generateDebugText( float timeSinceLast, Ogre::String &outText );
-
-        void createShadowMapDebugOverlays(void);
-        void destroyShadowMapDebugOverlays(void);
 
     public:
         ShadowMapFromCodeGameState( const Ogre::String &helpDescription );
