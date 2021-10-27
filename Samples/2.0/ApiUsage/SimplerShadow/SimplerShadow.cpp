@@ -61,24 +61,28 @@ makeCompositorWorkspace( const Ogre::String& workspaceName,
 						const Ogre::ColourValue& backgroundColor,
 						Ogre::SceneManager* sceneManager,
 						Ogre::Window* window,
-						Ogre::Camera* camera )
+						Ogre::Camera* camera,
+						bool makeShadows )
 {
 	Ogre::Root& root( Ogre::Root::getSingleton() );
 	Ogre::CompositorManager2* compositorManager = root.getCompositorManager2();
-	if( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
+	if ( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
 	{
 		compositorManager->createBasicWorkspaceDef( workspaceName,
 			backgroundColor, Ogre::IdString() );
 		
-		const Ogre::String nodeDefName = "AutoGen " +
-			Ogre::IdString(workspaceName + "/Node").getReleaseText();
-		Ogre::CompositorNodeDef *nodeDef =
-			compositorManager->getNodeDefinitionNonConst( nodeDefName );
-		Ogre::CompositorTargetDef *targetDef = nodeDef->getTargetPass( 0 );
-		const Ogre::CompositorPassDefVec &passes = targetDef->getCompositorPasses();
-		Ogre::CompositorPassSceneDef *passSceneDef =
-			static_cast<Ogre::CompositorPassSceneDef*>( passes[0] );
-		passSceneDef->mShadowNode = "ShadowMapFromCodeShadowNode";
+		if (makeShadows)
+		{
+			const Ogre::String nodeDefName = "AutoGen " +
+				Ogre::IdString(workspaceName + "/Node").getReleaseText();
+			Ogre::CompositorNodeDef *nodeDef =
+				compositorManager->getNodeDefinitionNonConst( nodeDefName );
+			Ogre::CompositorTargetDef *targetDef = nodeDef->getTargetPass( 0 );
+			const Ogre::CompositorPassDefVec& passes( targetDef->getCompositorPasses() );
+			Ogre::CompositorPassSceneDef *passSceneDef =
+				static_cast<Ogre::CompositorPassSceneDef*>( passes[0] );
+			passSceneDef->mShadowNode = "ShadowMapFromCodeShadowNode";
+		}
 	}
 	
 	Ogre::CompositorWorkspace* workspace = compositorManager->addWorkspace(
@@ -96,7 +100,7 @@ namespace Demo
 			createShadowNode();
 			
 			mWorkspace = makeCompositorWorkspace( "xWorkspace",
-				mBackgroundColour, mSceneManager, mRenderWindow, mCamera );
+				mBackgroundColour, mSceneManager, mRenderWindow, mCamera, true );
 
             return mWorkspace;
         }
