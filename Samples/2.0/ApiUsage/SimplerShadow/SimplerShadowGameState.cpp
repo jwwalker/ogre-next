@@ -37,16 +37,6 @@ using namespace Demo;
 
 namespace Demo
 {
-    const Ogre::String c_shadowMapFilters[Ogre::HlmsPbs::NumShadowFilter] =
-    {
-        "PCF 2x2",
-        "PCF 3x3",
-        "PCF 4x4",
-        "PCF 5x5",
-        "PCF 6x6",
-        "ESM"
-    };
-
     ShadowMapFromCodeGameState::ShadowMapFromCodeGameState( const Ogre::String &helpDescription ) :
         TutorialGameState( helpDescription ),
         mAnimateObjects( true )
@@ -111,67 +101,11 @@ namespace Demo
         lightNode->attachObject( light );
         light->setPowerScale( 1.0f );
         light->setType( Ogre::Light::LT_DIRECTIONAL );
-        light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
+        light->setDirection( Ogre::Vector3( -3, -1, -1 ).normalisedCopy() );
 
         mLightNodes[0] = lightNode;
 
-#if SPOTLIGHTS
-        light = sceneManager->createLight();
-        lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( light );
-        light->setDiffuseColour( 0.8f, 0.4f, 0.2f ); //Warm
-        light->setSpecularColour( 0.8f, 0.4f, 0.2f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_SPOTLIGHT );
-        lightNode->setPosition( -10.0f, 10.0f, 10.0f );
-        light->setDirection( Ogre::Vector3( 1, -1, -1 ).normalisedCopy() );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
-
-        mLightNodes[1] = lightNode;
-
-        light = sceneManager->createLight();
-        lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( light );
-        light->setDiffuseColour( 0.2f, 0.4f, 0.8f ); //Cold
-        light->setSpecularColour( 0.2f, 0.4f, 0.8f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_SPOTLIGHT );
-        lightNode->setPosition( 10.0f, 10.0f, -10.0f );
-        light->setDirection( Ogre::Vector3( -1, -1, 1 ).normalisedCopy() );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
-
-        mLightNodes[2] = lightNode;
-#endif
-
         mCameraController = new CameraController( mGraphicsSystem, false );
-
- 
-#if !OGRE_NO_JSON
-        //For ESM, setup the filter settings (radius and gaussian deviation).
-        //It controls how blurry the shadows will look.
-        Ogre::HlmsManager *hlmsManager = Ogre::Root::getSingleton().getHlmsManager();
-        Ogre::HlmsCompute *hlmsCompute = hlmsManager->getComputeHlms();
-
-        Ogre::uint8 kernelRadius = 8;
-        float gaussianDeviationFactor = 0.5f;
-        Ogre::uint16 K = 80;
-        Ogre::HlmsComputeJob *job = 0;
-
-        //Setup compute shader filter (faster for large kernels; but
-        //beware of mobile hardware where compute shaders are slow)
-        //For reference large kernels means kernelRadius > 2 (approx)
-        job = hlmsCompute->findComputeJob( "ESM/GaussianLogFilterH" );
-        MiscUtils::setGaussianLogFilterParams( job, kernelRadius, gaussianDeviationFactor, K );
-        job = hlmsCompute->findComputeJob( "ESM/GaussianLogFilterV" );
-        MiscUtils::setGaussianLogFilterParams( job, kernelRadius, gaussianDeviationFactor, K );
-
-        //Setup pixel shader filter (faster for small kernels, also to use as a fallback
-        //on GPUs that don't support compute shaders, or where compute shaders are slow).
-        MiscUtils::setGaussianLogFilterParams( "ESM/GaussianLogFilterH", kernelRadius,
-                                               gaussianDeviationFactor, K );
-        MiscUtils::setGaussianLogFilterParams( "ESM/GaussianLogFilterV", kernelRadius,
-                                               gaussianDeviationFactor, K );
-#endif
 
         TutorialGameState::createScene01();
     }
@@ -189,17 +123,9 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void ShadowMapFromCodeGameState::generateDebugText( float timeSinceLast, Ogre::String &outText )
     {
-        Ogre::Hlms *hlms = mGraphicsSystem->getRoot()->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
-
-        assert( dynamic_cast<Ogre::HlmsPbs*>( hlms ) );
-        Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs*>( hlms );
-
         TutorialGameState::generateDebugText( timeSinceLast, outText );
         outText += "\nPress F2 to toggle animation. ";
         outText += mAnimateObjects ? "[On]" : "[Off]";
-        outText += "\nPress F3 to show/hide PSSM splits. ";
-        outText += "\nPress F4 to show/hide spotlight maps. ";
-        outText += "\nPress F5 to switch filter. [" + c_shadowMapFilters[pbs->getShadowFilter()] + "]";
     }
     //-----------------------------------------------------------------------------------
     void ShadowMapFromCodeGameState::keyReleased( const SDL_KeyboardEvent &arg )

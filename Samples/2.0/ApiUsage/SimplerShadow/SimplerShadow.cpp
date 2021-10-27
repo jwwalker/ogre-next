@@ -62,80 +62,10 @@ namespace Demo
                                                                   shadowParams, false );
         }
 
-        void createEsmShadowNodes(void)
-        {
-            Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
-            Ogre::RenderSystem *renderSystem = mRoot->getRenderSystem();
-
-            Ogre::ShadowNodeHelper::ShadowParamVec shadowParams;
-
-            Ogre::ShadowNodeHelper::ShadowParam shadowParam;
-            memset( &shadowParam, 0, sizeof(shadowParam) );
-
-            //First light, directional
-            shadowParam.technique = Ogre::SHADOWMAP_PSSM;
-            shadowParam.numPssmSplits = 3u;
-            shadowParam.resolution[0].x = 1024u;
-            shadowParam.resolution[0].y = 1024u;
-            shadowParam.resolution[1].x = 2048u;
-            shadowParam.resolution[1].y = 2048u;
-            shadowParam.resolution[2].x = 1024u;
-            shadowParam.resolution[2].y = 1024u;
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 0u;
-            shadowParam.atlasStart[1].x = 0u;
-            shadowParam.atlasStart[1].y = 1024u;
-            shadowParam.atlasStart[2].x = 1024u;
-            shadowParam.atlasStart[2].y = 0u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParams.push_back( shadowParam );
-
-#if SPOTLIGHTS
-            //Second light, directional, spot or point
-            shadowParam.technique = Ogre::SHADOWMAP_FOCUSED;
-            shadowParam.resolution[0].x = 1024u;
-            shadowParam.resolution[0].y = 1024u;
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 2048u + 1024u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParam.addLightType( Ogre::Light::LT_POINT );
-            shadowParam.addLightType( Ogre::Light::LT_SPOTLIGHT );
-            shadowParams.push_back( shadowParam );
-
-            //Third light, directional, spot or point
-            shadowParam.atlasStart[0].x = 1024u;
-            shadowParams.push_back( shadowParam );
-#endif
-
-            const Ogre::RenderSystemCapabilities *capabilities = renderSystem->getCapabilities();
-            Ogre::RenderSystemCapabilities capsCopy = *capabilities;
-
-            //Force the utility to create ESM shadow node with compute filters.
-            //Otherwise it'd create using what's supported by the current GPU.
-            capsCopy.setCapability( Ogre::RSC_COMPUTE_PROGRAM );
-            Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
-                        compositorManager, &capsCopy,
-                        "ShadowMapFromCodeEsmShadowNodeCompute",
-                        shadowParams, true );
-
-            //Force the utility to create ESM shadow node with graphics filters.
-            //Otherwise it'd create using what's supported by the current GPU.
-            capsCopy.unsetCapability( Ogre::RSC_COMPUTE_PROGRAM );
-            Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
-                        compositorManager, &capsCopy,
-                        "ShadowMapFromCodeEsmShadowNodePixelShader",
-                        shadowParams, true );
-        }
 
         virtual Ogre::CompositorWorkspace* setupCompositor()
         {
 			createPcfShadowNode();
-			createEsmShadowNodes();
-
 
             Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
             const Ogre::String workspaceName( "xWorkspace" );
