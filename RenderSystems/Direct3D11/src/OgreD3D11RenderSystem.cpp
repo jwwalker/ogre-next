@@ -1201,6 +1201,25 @@ namespace Ogre
             break;
         }
 
+        {
+            uint32 numTexturesInTextureDescriptor[NumShaderTypes + 1];
+            for( size_t i = 0u; i < NumShaderTypes + 1; ++i )
+                numTexturesInTextureDescriptor[i] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
+            if( mFeatureLevel < D3D_FEATURE_LEVEL_11_0 )
+            {
+                for( size_t i = 0u; i < NumShaderTypes + 1; ++i )
+                    numTexturesInTextureDescriptor[i] = D3D10_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
+                numTexturesInTextureDescriptor[HullShader] = 0u;
+                numTexturesInTextureDescriptor[DomainShader] = 0u;
+                numTexturesInTextureDescriptor[NumShaderTypes] = 0u;
+            }
+            if( mFeatureLevel < D3D_FEATURE_LEVEL_10_0 )
+            {
+                numTexturesInTextureDescriptor[GeometryShader] = 0u;
+            }
+            rsc->setNumTexturesInTextureDescriptor( numTexturesInTextureDescriptor );
+        }
+
         rsc->setCapability(RSC_INFINITE_FAR_PLANE);
 
         rsc->setCapability(RSC_TEXTURE_3D);
@@ -3782,6 +3801,32 @@ namespace Ogre
             wchar_t wideName[256]; // Let avoid heap memory allocation if we are in profiling code.
             bool wideNameOk = !eventName.empty() && 0 != MultiByteToWideChar(CP_ACP, 0, eventName.data(), eventName.length() + 1, wideName, ARRAYSIZE(wideName));
             mDevice.GetProfiler()->SetMarker(wideNameOk ? wideName : L"<too long or empty event name>");
+        }
+#endif
+    }
+    //---------------------------------------------------------------------
+    void D3D11RenderSystem::debugAnnotationPush( const String &eventName )
+    {
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+        if( mDevice.GetProfiler() )
+        {
+            wchar_t wideName[256];  // Let avoid heap memory allocation if we are in profiling code.
+            bool wideNameOk =
+                !eventName.empty() &&
+                0 != MultiByteToWideChar( CP_ACP, 0, eventName.data(), eventName.length() + 1, wideName,
+                                          ARRAYSIZE( wideName ) );
+            mDevice.GetProfiler()->BeginEvent( wideNameOk ? wideName
+                                                         : L"<too long or empty event name>" );
+        }
+#endif
+    }
+    //---------------------------------------------------------------------
+    void D3D11RenderSystem::debugAnnotationPop()
+    {
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+        if(mDevice.GetProfiler())
+        {
+            mDevice.GetProfiler()->EndEvent();
         }
 #endif
     }

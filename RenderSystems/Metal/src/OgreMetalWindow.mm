@@ -138,6 +138,8 @@ namespace Ogre
                               const NameValuePairList *miscParams, MetalDevice *ownerDevice ) :
         Window( title, width, height, fullscreenMode ),
         mClosed( false ),
+        mHidden( false ),
+        mIsExternal( false ),
         mHwGamma( true ),
         mMetalLayer( 0 ),
         mCurrentDrawable( 0 ),
@@ -305,6 +307,7 @@ namespace Ogre
         destroy();
 
         mClosed = false;
+        mHidden = false;
         mHwGamma = true;
         NSObject *externalWindowHandle; // OgreMetalView, NSView or NSWindow
         bool presentsWithTransaction = false;
@@ -313,6 +316,10 @@ namespace Ogre
         {
             NameValuePairList::const_iterator opt;
             NameValuePairList::const_iterator end = miscParams->end();
+
+            opt = miscParams->find("hidden");
+            if( opt != end )
+                mHidden = StringConverter::parseBool( opt->second );
 
             opt = miscParams->find("FSAA");
             if( opt != end )
@@ -342,6 +349,7 @@ namespace Ogre
         if( externalWindowHandle && [externalWindowHandle isKindOfClass:[OgreMetalView class]] )
         {
             mMetalView = (OgreMetalView*)externalWindowHandle;
+            mIsExternal = true;
         }
         else
         {
@@ -374,7 +382,12 @@ namespace Ogre
             
             externalWindowHandle = window;
             SetupMetalWindowListeners( this, window );
-            [window orderFront: nil];
+            if( !mHidden )
+                [window orderFront: nil];
+        }
+        else
+        {
+            mIsExternal = true;
         }
 
         NSView* externalView;
@@ -517,18 +530,23 @@ namespace Ogre
     //-------------------------------------------------------------------------
     void MetalWindow::setHidden( bool hidden )
     {
-#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
-        [mWindow setIsMiniaturized:hidden];
+        mHidden = hidden;
+        if( !mIsExternal )
+        {
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+            [mMetalView.window setHidden:hidden];
+#else
+            if( hidden )
+                [mWindow orderOut:nil];
+            else
+                [mWindow makeKeyAndOrderFront:nil];
 #endif
+        }
     }
     //-------------------------------------------------------------------------
     bool MetalWindow::isHidden(void) const
     {
-#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
-        return mWindow.isMiniaturized;
-#else
-        return false;
-#endif
+        return mHidden;
     }
     //-------------------------------------------------------------------------
     void MetalWindow::getCustomAttribute( IdString name, void* pData )
