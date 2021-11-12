@@ -76,60 +76,25 @@ void Demo::SpotAngleGraphicsSystem::initialize( const Ogre::String &windowTitle 
 								 windowTitle );
 
 	// enable sRGB Gamma Conversion mode by default for all renderers,
-	// but still allow to override it via config dialog
-	Ogre::RenderSystemList::const_iterator itor = mRoot->getAvailableRenderers().begin();
-	Ogre::RenderSystemList::const_iterator endt = mRoot->getAvailableRenderers().end();
+	const Ogre::RenderSystemList& renderers( mRoot->getAvailableRenderers() );
+    for (auto& renderSystem : renderers)
+    {
+        renderSystem->setConfigOption( "sRGB Gamma Conversion", "Yes" );
+    }
+    mRoot->setRenderSystem( renderers[0] );
 
-	while( itor != endt )
-	{
-		Ogre::RenderSystem *rs = *itor;
-		rs->setConfigOption( "sRGB Gamma Conversion", "Yes" );
-		++itor;
-	}
-
-	if( mAlwaysAskForConfig || !mRoot->restoreConfig() )
-	{
-		if( !mRoot->showConfigDialog() )
-		{
-			mQuit = true;
-			return;
-		}
-	}
+	mOverlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
 
 	mRoot->initialise( false, windowTitle );
-
-	Ogre::ConfigOptionMap& cfgOpts = mRoot->getRenderSystem()->getConfigOptions();
 
 	int width   = 1280;
 	int height  = 720;
 
-	Ogre::ConfigOptionMap::iterator opt = cfgOpts.find( "Video Mode" );
-	if( opt != cfgOpts.end() && !opt->second.currentValue.empty() )
-	{
-		//Ignore leading space
-		const Ogre::String::size_type start = opt->second.currentValue.find_first_of("012356789");
-		//Get the width and height
-		Ogre::String::size_type widthEnd = opt->second.currentValue.find(' ', start);
-		// we know that the height starts 3 characters after the width and goes until the next space
-		Ogre::String::size_type heightEnd = opt->second.currentValue.find(' ', widthEnd+3);
-		// Now we can parse out the values
-		width   = Ogre::StringConverter::parseInt( opt->second.currentValue.substr( 0, widthEnd ) );
-		height  = Ogre::StringConverter::parseInt( opt->second.currentValue.substr(
-													   widthEnd+3, heightEnd ) );
-	}
-
 	Ogre::NameValuePairList params;
-	bool fullscreen = Ogre::StringConverter::parseBool( cfgOpts["Full Screen"].currentValue );
 #if OGRE_USE_SDL2
 	int screen = 0;
 	int posX = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
 	int posY = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
-
-	if(fullscreen)
-	{
-		posX = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
-		posY = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
-	}
 
 	mSdlWindow = SDL_CreateWindow(
 				windowTitle.c_str(),    // window title
@@ -137,8 +102,7 @@ void Demo::SpotAngleGraphicsSystem::initialize( const Ogre::String &windowTitle 
 				posY,               // initial y position
 				width,              // width, in pixels
 				height,             // height, in pixels
-				SDL_WINDOW_SHOWN
-				  | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE );
+				SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE );
 
 	//Get the native whnd
 	SDL_SysWMinfo wmInfo;
@@ -170,19 +134,15 @@ void Demo::SpotAngleGraphicsSystem::initialize( const Ogre::String &windowTitle 
 #endif
 
 	params.insert( std::make_pair("title", windowTitle) );
-	params.insert( std::make_pair("gamma", cfgOpts["sRGB Gamma Conversion"].currentValue) );
-	if( cfgOpts.find( "VSync Method" ) != cfgOpts.end() )
-		params.insert( std::make_pair( "vsync_method", cfgOpts["VSync Method"].currentValue ) );
-	params.insert( std::make_pair("FSAA", cfgOpts["FSAA"].currentValue) );
-	params.insert( std::make_pair("vsync", cfgOpts["VSync"].currentValue) );
-	params.insert( std::make_pair("reverse_depth", "Yes" ) );
+	params.insert( std::make_pair("reverse_depth", "true" ) );
+	params.insert( std::make_pair("gamma", "true" ) );
+	params.insert( std::make_pair("FSAA", "true" ) );
+	params.insert( std::make_pair("vsync", "true" ) );
 
-	initMiscParamsListener( params );
+	//initMiscParamsListener( params );
 
 	mRenderWindow = Ogre::Root::getSingleton().createRenderWindow( windowTitle, width, height,
-																   fullscreen, &params );
-
-	mOverlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
+																   false, &params );
 
 	setupResources();
 	loadResources();
