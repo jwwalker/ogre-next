@@ -43,231 +43,158 @@ int mainApp( int argc, const char *argv[] )
 }
 #endif
 
-    //-----------------------------------------------------------------------------------
-    void Demo::SpotAngleGraphicsSystem::initialize( const Ogre::String &windowTitle )
-    {
-    #if OGRE_USE_SDL2
-        //if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-        if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK |
-                      SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS ) != 0 )
-        {
-            OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR, "Cannot initialize SDL2!",
-                         "GraphicsSystem::initialize" );
-        }
-    #endif
-
-        Ogre::String pluginsPath;
-        // only use plugins.cfg if not static
-    #ifndef OGRE_STATIC_LIB
-    #if OGRE_DEBUG_MODE && !((OGRE_PLATFORM == OGRE_PLATFORM_APPLE) || (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS))
-        pluginsPath = mPluginsFolder + "plugins_d.cfg";
-    #else
-        pluginsPath = mPluginsFolder + "plugins.cfg";
-    #endif
-    #endif
-
-    #if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
-        const Ogre::String cfgPath = mWriteAccessFolder + "ogre.cfg";
-    #else
-        const Ogre::String cfgPath = "";
-    #endif
-
-        mRoot = OGRE_NEW Ogre::Root( pluginsPath, cfgPath,
-                                     mWriteAccessFolder + "Ogre.log",
-                                     windowTitle );
-
-        //AndroidSystems::registerArchiveFactories();
-
-        mStaticPluginLoader.install( mRoot );
-
-        // enable sRGB Gamma Conversion mode by default for all renderers,
-        // but still allow to override it via config dialog
-        Ogre::RenderSystemList::const_iterator itor = mRoot->getAvailableRenderers().begin();
-        Ogre::RenderSystemList::const_iterator endt = mRoot->getAvailableRenderers().end();
-
-        while( itor != endt )
-        {
-            Ogre::RenderSystem *rs = *itor;
-            rs->setConfigOption( "sRGB Gamma Conversion", "Yes" );
-            ++itor;
-        }
-
-        if( mAlwaysAskForConfig || !mRoot->restoreConfig() )
-        {
-            if( !mRoot->showConfigDialog() )
-            {
-                mQuit = true;
-                return;
-            }
-        }
-
-    #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-        if(!mRoot->getRenderSystem())
-        {
-            Ogre::RenderSystem *renderSystem =
-                    mRoot->getRenderSystemByName( "Metal Rendering Subsystem" );
-            mRoot->setRenderSystem( renderSystem );
-        }
-    #endif
-    #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-        if( !mRoot->getRenderSystem() )
-        {
-            Ogre::RenderSystem *renderSystem =
-                mRoot->getRenderSystemByName( "Vulkan Rendering Subsystem" );
-            mRoot->setRenderSystem( renderSystem );
-        }
-    #endif
-
-        mRoot->initialise( false, windowTitle );
-
-        Ogre::ConfigOptionMap& cfgOpts = mRoot->getRenderSystem()->getConfigOptions();
-
-        int width   = 1280;
-        int height  = 720;
-
-    #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-        {
-            Ogre::Vector2 screenRes = iOSUtils::getScreenResolutionInPoints();
-            width = static_cast<int>( screenRes.x );
-            height = static_cast<int>( screenRes.y );
-        }
-    #endif
-
-        Ogre::ConfigOptionMap::iterator opt = cfgOpts.find( "Video Mode" );
-        if( opt != cfgOpts.end() && !opt->second.currentValue.empty() )
-        {
-            //Ignore leading space
-            const Ogre::String::size_type start = opt->second.currentValue.find_first_of("012356789");
-            //Get the width and height
-            Ogre::String::size_type widthEnd = opt->second.currentValue.find(' ', start);
-            // we know that the height starts 3 characters after the width and goes until the next space
-            Ogre::String::size_type heightEnd = opt->second.currentValue.find(' ', widthEnd+3);
-            // Now we can parse out the values
-            width   = Ogre::StringConverter::parseInt( opt->second.currentValue.substr( 0, widthEnd ) );
-            height  = Ogre::StringConverter::parseInt( opt->second.currentValue.substr(
-                                                           widthEnd+3, heightEnd ) );
-        }
-
-        Ogre::NameValuePairList params;
-        bool fullscreen = Ogre::StringConverter::parseBool( cfgOpts["Full Screen"].currentValue );
-    #if OGRE_USE_SDL2
-        int screen = 0;
-        int posX = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
-        int posY = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
-
-        if(fullscreen)
-        {
-            posX = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
-            posY = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
-        }
-
-        mSdlWindow = SDL_CreateWindow(
-                    windowTitle.c_str(),    // window title
-                    posX,               // initial x position
-                    posY,               // initial y position
-                    width,              // width, in pixels
-                    height,             // height, in pixels
-                    SDL_WINDOW_SHOWN
-                      | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE );
-
-        //Get the native whnd
-        SDL_SysWMinfo wmInfo;
-        SDL_VERSION( &wmInfo.version );
-
-        if( SDL_GetWindowWMInfo( mSdlWindow, &wmInfo ) == SDL_FALSE )
-        {
-            OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR,
-                         "Couldn't get WM Info! (SDL2)",
-                         "GraphicsSystem::initialize" );
-        }
-
-        Ogre::String winHandle;
-        switch( wmInfo.subsystem )
-        {
-        #if defined(SDL_VIDEO_DRIVER_WINDOWS)
-        case SDL_SYSWM_WINDOWS:
-            // Windows code
-            winHandle = Ogre::StringConverter::toString( (uintptr_t)wmInfo.info.win.window );
-            break;
-        #endif
-        #if defined(SDL_VIDEO_DRIVER_WINRT)
-        case SDL_SYSWM_WINRT:
-            // Windows code
-            winHandle = Ogre::StringConverter::toString( (uintptr_t)wmInfo.info.winrt.window );
-            break;
-        #endif
-        #if defined(SDL_VIDEO_DRIVER_COCOA)
-        case SDL_SYSWM_COCOA:
-            winHandle  = Ogre::StringConverter::toString(WindowContentViewHandle(wmInfo));
-            break;
-        #endif
-        #if defined(SDL_VIDEO_DRIVER_X11)
-        case SDL_SYSWM_X11:
-            winHandle = Ogre::StringConverter::toString( (uintptr_t)wmInfo.info.x11.window );
-            params.insert( std::make_pair(
-                "SDL2x11", Ogre::StringConverter::toString( (uintptr_t)&wmInfo.info.x11 ) ) );
-            break;
-        #endif
-        default:
-            OGRE_EXCEPT( Ogre::Exception::ERR_NOT_IMPLEMENTED,
-                         "Unexpected WM! (SDL2)",
-                         "GraphicsSystem::initialize" );
-            break;
-        }
-
-        #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
-            params.insert( std::make_pair("externalWindowHandle",  winHandle) );
-        #else
-            params.insert( std::make_pair("parentWindowHandle",  winHandle) );
-        #endif
-    #endif
-
-    #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-            params.insert( std::make_pair(
-                "ANativeWindow",
-                Ogre::StringConverter::toString( (uintptr_t)AndroidSystems::getNativeWindow() ) ) );
-    #endif
-
-        params.insert( std::make_pair("title", windowTitle) );
-        params.insert( std::make_pair("gamma", cfgOpts["sRGB Gamma Conversion"].currentValue) );
-        if( cfgOpts.find( "VSync Method" ) != cfgOpts.end() )
-            params.insert( std::make_pair( "vsync_method", cfgOpts["VSync Method"].currentValue ) );
-        params.insert( std::make_pair("FSAA", cfgOpts["FSAA"].currentValue) );
-        params.insert( std::make_pair("vsync", cfgOpts["VSync"].currentValue) );
-        params.insert( std::make_pair("reverse_depth", "Yes" ) );
-
-        initMiscParamsListener( params );
-
-        mRenderWindow = Ogre::Root::getSingleton().createRenderWindow( windowTitle, width, height,
-                                                                       fullscreen, &params );
-
-        mOverlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
-
-        setupResources();
-        loadResources();
-        chooseSceneManager();
-        createCamera();
-        mWorkspace = setupCompositor();
-
-    #if OGRE_USE_SDL2
-        mInputHandler = new SdlInputHandler( mSdlWindow, mCurrentGameState,
-                                             mCurrentGameState, mCurrentGameState );
-    #endif
-
-        BaseSystem::initialize();
-
-#if OGRE_PROFILING
-        Ogre::Profiler::getSingleton().setEnabled( true );
-    #if OGRE_PROFILING == OGRE_PROFILING_INTERNAL
-        Ogre::Profiler::getSingleton().endProfile( "" );
-    #endif
-    #if OGRE_PROFILING == OGRE_PROFILING_INTERNAL_OFFLINE
-        Ogre::Profiler::getSingleton().getOfflineProfiler().setDumpPathsOnShutdown(
-                    mWriteAccessFolder + "ProfilePerFrame",
-                    mWriteAccessFolder + "ProfileAccum" );
-    #endif
+//-----------------------------------------------------------------------------------
+void Demo::SpotAngleGraphicsSystem::initialize( const Ogre::String &windowTitle )
+{
+#if OGRE_USE_SDL2
+	//if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
+	if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS ) != 0 )
+	{
+		OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR, "Cannot initialize SDL2!",
+					 "GraphicsSystem::initialize" );
+	}
 #endif
-    }
+
+	Ogre::String pluginsPath;
+	// only use plugins.cfg if not static
+#ifndef OGRE_STATIC_LIB
+#if OGRE_DEBUG_MODE && !((OGRE_PLATFORM == OGRE_PLATFORM_APPLE) || (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS))
+	pluginsPath = mPluginsFolder + "plugins_d.cfg";
+#else
+	pluginsPath = mPluginsFolder + "plugins.cfg";
+#endif
+#endif
+
+#if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
+	const Ogre::String cfgPath = mWriteAccessFolder + "ogre.cfg";
+#else
+	const Ogre::String cfgPath = "";
+#endif
+
+	mRoot = new Ogre::Root( pluginsPath, cfgPath,
+								 mWriteAccessFolder + "Ogre.log",
+								 windowTitle );
+
+	// enable sRGB Gamma Conversion mode by default for all renderers,
+	// but still allow to override it via config dialog
+	Ogre::RenderSystemList::const_iterator itor = mRoot->getAvailableRenderers().begin();
+	Ogre::RenderSystemList::const_iterator endt = mRoot->getAvailableRenderers().end();
+
+	while( itor != endt )
+	{
+		Ogre::RenderSystem *rs = *itor;
+		rs->setConfigOption( "sRGB Gamma Conversion", "Yes" );
+		++itor;
+	}
+
+	if( mAlwaysAskForConfig || !mRoot->restoreConfig() )
+	{
+		if( !mRoot->showConfigDialog() )
+		{
+			mQuit = true;
+			return;
+		}
+	}
+
+	mRoot->initialise( false, windowTitle );
+
+	Ogre::ConfigOptionMap& cfgOpts = mRoot->getRenderSystem()->getConfigOptions();
+
+	int width   = 1280;
+	int height  = 720;
+
+	Ogre::ConfigOptionMap::iterator opt = cfgOpts.find( "Video Mode" );
+	if( opt != cfgOpts.end() && !opt->second.currentValue.empty() )
+	{
+		//Ignore leading space
+		const Ogre::String::size_type start = opt->second.currentValue.find_first_of("012356789");
+		//Get the width and height
+		Ogre::String::size_type widthEnd = opt->second.currentValue.find(' ', start);
+		// we know that the height starts 3 characters after the width and goes until the next space
+		Ogre::String::size_type heightEnd = opt->second.currentValue.find(' ', widthEnd+3);
+		// Now we can parse out the values
+		width   = Ogre::StringConverter::parseInt( opt->second.currentValue.substr( 0, widthEnd ) );
+		height  = Ogre::StringConverter::parseInt( opt->second.currentValue.substr(
+													   widthEnd+3, heightEnd ) );
+	}
+
+	Ogre::NameValuePairList params;
+	bool fullscreen = Ogre::StringConverter::parseBool( cfgOpts["Full Screen"].currentValue );
+#if OGRE_USE_SDL2
+	int screen = 0;
+	int posX = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
+	int posY = SDL_WINDOWPOS_CENTERED_DISPLAY(screen);
+
+	if(fullscreen)
+	{
+		posX = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
+		posY = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen);
+	}
+
+	mSdlWindow = SDL_CreateWindow(
+				windowTitle.c_str(),    // window title
+				posX,               // initial x position
+				posY,               // initial y position
+				width,              // width, in pixels
+				height,             // height, in pixels
+				SDL_WINDOW_SHOWN
+				  | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE );
+
+	//Get the native whnd
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION( &wmInfo.version );
+
+	if( SDL_GetWindowWMInfo( mSdlWindow, &wmInfo ) == SDL_FALSE )
+	{
+		OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR,
+					 "Couldn't get WM Info! (SDL2)",
+					 "GraphicsSystem::initialize" );
+	}
+
+	Ogre::String winHandle;
+	switch( wmInfo.subsystem )
+	{
+	#if defined(SDL_VIDEO_DRIVER_COCOA)
+	case SDL_SYSWM_COCOA:
+		winHandle  = Ogre::StringConverter::toString(WindowContentViewHandle(wmInfo));
+		break;
+	#endif
+	default:
+		OGRE_EXCEPT( Ogre::Exception::ERR_NOT_IMPLEMENTED,
+					 "Unexpected WM! (SDL2)",
+					 "GraphicsSystem::initialize" );
+		break;
+	}
+
+	params.insert( std::make_pair("parentWindowHandle",  winHandle) );
+#endif
+
+	params.insert( std::make_pair("title", windowTitle) );
+	params.insert( std::make_pair("gamma", cfgOpts["sRGB Gamma Conversion"].currentValue) );
+	if( cfgOpts.find( "VSync Method" ) != cfgOpts.end() )
+		params.insert( std::make_pair( "vsync_method", cfgOpts["VSync Method"].currentValue ) );
+	params.insert( std::make_pair("FSAA", cfgOpts["FSAA"].currentValue) );
+	params.insert( std::make_pair("vsync", cfgOpts["VSync"].currentValue) );
+	params.insert( std::make_pair("reverse_depth", "Yes" ) );
+
+	initMiscParamsListener( params );
+
+	mRenderWindow = Ogre::Root::getSingleton().createRenderWindow( windowTitle, width, height,
+																   fullscreen, &params );
+
+	mOverlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
+
+	setupResources();
+	loadResources();
+	chooseSceneManager();
+	createCamera();
+	mWorkspace = setupCompositor();
+
+#if OGRE_USE_SDL2
+	mInputHandler = new SdlInputHandler( mSdlWindow, mCurrentGameState,
+										 mCurrentGameState, mCurrentGameState );
+#endif
+}
 
 
 void Demo::SpotAngleGraphicsSystem::createPcfShadowNode(void)
