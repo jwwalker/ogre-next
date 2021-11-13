@@ -69,15 +69,6 @@ namespace Demo
 
         TutorialGameState::createScene01();
         
-        Ogre::Camera* camera = mGraphicsSystem->getCamera();
-		camera->setPosition( Ogre::Vector3( 0, 1, 3 ) );
-		// Look back along -Z
-		camera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
-		camera->setNearClipDistance( 0.2f );
-		camera->setFarClipDistance( 1000.0f );
-		camera->setAutoAspectRatio( true );
-		camera->setFOVy( Ogre::Degree( 30.0 ) );
-        
 		sceneManager->setAmbientLight( Ogre::ColourValue(),
 			Ogre::ColourValue(), Ogre::Vector3::UNIT_Y );
     }

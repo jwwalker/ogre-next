@@ -18,6 +18,10 @@ protected:
 	void createPcfShadowNode(void);
 	
 	virtual Ogre::CompositorWorkspace* setupCompositor();
+	
+	virtual void setupResources(void);
+	virtual void loadResources(void);
+	virtual void createCamera(void);
 };
 
 }

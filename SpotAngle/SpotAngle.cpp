@@ -239,8 +239,41 @@ Ogre::CompositorWorkspace* Demo::SpotAngleGraphicsSystem::setupCompositor()
 	return mWorkspace;
 }
 
+void Demo::SpotAngleGraphicsSystem::setupResources(void)
+{
+	Demo::GraphicsSystem::setupResources();
 
+    addResourceLocation(
+    	Ogre::String( "Contents/Resources/2.0/"
+		"scripts/materials/PbsMaterials" ),
+    	"FileSystem", "General" );
+}
 
+void Demo::SpotAngleGraphicsSystem::loadResources(void)
+{
+	registerHlms();
+
+	//loadTextureCache();
+	//loadHlmsDiskCache();
+
+	// Initialise, parse scripts etc
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups( true );
+}
+
+void Demo::SpotAngleGraphicsSystem::createCamera(void)
+{
+    mCamera = mSceneManager->createCamera( "Main Camera" );
+
+    mCamera->setPosition( Ogre::Vector3( 0, 1, 3 ) );
+    // Look back along -Z
+    mCamera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
+    mCamera->setNearClipDistance( 0.2f );
+    mCamera->setFarClipDistance( 1000.0f );
+    mCamera->setAutoAspectRatio( true );
+    mCamera->setFOVy( Ogre::Degree( 30.0 ) );
+}
+
+///MARK: -
 
 void Demo::MainEntryPoints::createSystems( GameState **outGraphicsGameState,
 									 GraphicsSystem **outGraphicsSystem,
