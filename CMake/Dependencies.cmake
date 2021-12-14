@@ -126,17 +126,19 @@ endif()
 find_package(OpenGL)
 macro_log_feature(OPENGL_FOUND "OpenGL 3+" "Support for the OpenGL 3+ render system" "http://www.opengl.org/" FALSE "" "")
 
-# Find OpenGL ES 1.x
-find_package(OpenGLES)
-macro_log_feature(OPENGLES_FOUND "OpenGL ES 1.x" "Support for the OpenGL ES 1.x render system (DEPRECATED)" "http://www.khronos.org/opengles/" FALSE "" "")
+if(NOT OGRE_SKIP_GLES_SEARCHING)
+	# Find OpenGL ES 1.x
+	find_package(OpenGLES)
+	macro_log_feature(OPENGLES_FOUND "OpenGL ES 1.x" "Support for the OpenGL ES 1.x render system (DEPRECATED)" "http://www.khronos.org/opengles/" FALSE "" "")
 
-# Find OpenGL ES 2.x
-find_package(OpenGLES2)
-macro_log_feature(OPENGLES2_FOUND "OpenGL ES 2.x" "Support for the OpenGL ES 2.x render system" "http://www.khronos.org/opengles/" FALSE "" "")
+	# Find OpenGL ES 2.x
+	find_package(OpenGLES2)
+	macro_log_feature(OPENGLES2_FOUND "OpenGL ES 2.x" "Support for the OpenGL ES 2.x render system" "http://www.khronos.org/opengles/" FALSE "" "")
 
-# Find OpenGL ES 3.x
-find_package(OpenGLES3)
-macro_log_feature(OPENGLES3_FOUND "OpenGL ES 3.x" "Support for the OpenGL ES 2.x render system with OpenGL ES 3 support" "http://www.khronos.org/opengles/" FALSE "" "")
+	# Find OpenGL ES 3.x
+	find_package(OpenGLES3)
+	macro_log_feature(OPENGLES3_FOUND "OpenGL ES 3.x" "Support for the OpenGL ES 2.x render system with OpenGL ES 3 support" "http://www.khronos.org/opengles/" FALSE "" "")
+endif()
 
 # Find DirectX
 if(WIN32)
@@ -183,6 +185,10 @@ if( Remotery_LIBRARIES )
 endif()
 
 # Find Boost
+# Searching for Boost is a very time consuming process, and can significantly slowdown build in Android Studio if
+# Ogre's CMakeList.txt is directly included into the main CMakeList.txt. OGRE_SKIP_BOOST_SEARCHING can be used to
+# skip this step. Note, that in Ogre 2.4 we will replace Boost with a facilities from the C++11 standard libraries.
+if(NOT OGRE_SKIP_BOOST_SEARCHING)
 # Prefer static linking in all cases
 if (WIN32 OR APPLE)
 	set(Boost_USE_STATIC_LIBS TRUE)
@@ -241,6 +247,7 @@ if(Boost_VERSION GREATER 104900)
 	if(Boost_VERSION GREATER 105300)
 		macro_log_feature(Boost_ATOMIC_FOUND "boost-atomic" "Used for threading support" "http://boost.org" FALSE "" "")
 	endif()
+endif()
 endif()
 
 # POCO

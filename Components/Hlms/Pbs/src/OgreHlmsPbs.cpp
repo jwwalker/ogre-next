@@ -98,6 +98,7 @@ namespace Ogre
     const IdString PbsProperty::NumTextures     = IdString( "num_textures" );
     const IdString PbsProperty::NumSamplers     = IdString( "num_samplers" );
     const IdString PbsProperty::DiffuseMapGrayscale = IdString( "diffuse_map_grayscale" );
+    const IdString PbsProperty::EmissiveMapGrayscale= IdString( "emissive_map_grayscale" );
     const char *PbsProperty::DiffuseMap         = "diffuse_map";
     const char *PbsProperty::NormalMapTex       = "normal_map_tex";
     const char *PbsProperty::SpecularMap        = "specular_map";
@@ -549,6 +550,28 @@ namespace Ogre
             poseRanges[DescBindingTypes::TexBuffer].end = static_cast<uint16>( poseBufReg + 1 );
         }
 
+        const int32 numVctProbes = getProperty( PbsProperty::VctNumProbes );
+
+        if( numVctProbes > 1 )
+        {
+            int32 vctProbeIdx = getProperty( "vctProbes" );
+
+            rootLayout.addArrayBinding( DescBindingTypes::Texture,
+                                        RootLayout::ArrayDesc( static_cast<uint16>( vctProbeIdx ),
+                                                               static_cast<uint16>( numVctProbes ) ) );
+            if( getProperty( PbsProperty::VctAnisotropic ) )
+            {
+                for( int32 i = 0; i < 3; ++i )
+                {
+                    vctProbeIdx += numVctProbes;
+                    rootLayout.addArrayBinding(
+                        DescBindingTypes::Texture,
+                        RootLayout::ArrayDesc( static_cast<uint16>( vctProbeIdx ),
+                                               static_cast<uint16>( numVctProbes ) ) );
+                }
+            }
+        }
+
         mListener->setupRootLayout( rootLayout, mSetProperties );
     }
     //-----------------------------------------------------------------------------------
@@ -832,6 +855,16 @@ namespace Ogre
                     setProperty( PbsProperty::DiffuseMapGrayscale, 1 );
             }
 
+            if( datablock->getTexture( PBSM_EMISSIVE ) && getProperty( PbsProperty::EmissiveMap ) )
+            {
+                TextureGpu *emissiveTexture = datablock->getTexture( PBSM_EMISSIVE );
+                if( PixelFormatGpuUtils::getNumberOfComponents( emissiveTexture->getPixelFormat() ) ==
+                    1u )
+                {
+                    setProperty( PbsProperty::EmissiveMapGrayscale, 1 );
+                }
+            }
+
             //Save the name of the cubemap for hazard prevention
             //(don't sample the cubemap and render to it at the same time).
             const TextureGpu *reflectionTexture = datablock->getTexture( PBSM_REFLECTION );
@@ -1055,7 +1088,8 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void HlmsPbs::notifyPropertiesMergedPreGenerationStep(void)
     {
-        const bool hasVct = getProperty( PbsProperty::VctNumProbes ) > 0;
+        const int32 numVctProbes = getProperty( PbsProperty::VctNumProbes );
+        const bool hasVct = numVctProbes > 0;
         if( getProperty( HlmsBaseProp::DecalsNormals ) ||
             hasVct )
         {
@@ -1185,14 +1219,18 @@ namespace Ogre
         if( !casterPass && getProperty( PbsProperty::IrradianceVolumes ) )
             setTextureReg( PixelShader, "irradianceVolume", texUnit++ );
 
-        if( getProperty( PbsProperty::VctNumProbes ) > 0 )
+        if( numVctProbes > 0 )
         {
-            setTextureReg( PixelShader, "vctProbe", texUnit++ );
+            setTextureReg( PixelShader, "vctProbes", texUnit, numVctProbes );
+            texUnit += numVctProbes;
             if( getProperty( PbsProperty::VctAnisotropic ) )
             {
-                setTextureReg( PixelShader, "vctProbeX", texUnit++ );
-                setTextureReg( PixelShader, "vctProbeY", texUnit++ );
-                setTextureReg( PixelShader, "vctProbeZ", texUnit++ );
+                setTextureReg( PixelShader, "vctProbeX", texUnit, numVctProbes );
+                texUnit += numVctProbes;
+                setTextureReg( PixelShader, "vctProbeY", texUnit, numVctProbes );
+                texUnit += numVctProbes;
+                setTextureReg( PixelShader, "vctProbeZ", texUnit, numVctProbes );
+                texUnit += numVctProbes;
             }
         }
 
@@ -1382,13 +1420,18 @@ namespace Ogre
 #endif
         if( mVctLighting )
         {
-            TextureGpu **lightVoxelTexs = mVctLighting->getLightVoxelTextures();
+            const size_t numCascades = mVctLighting->getNumCascades();
             const size_t numVctTextures = mVctLighting->getNumVoxelTextures();
-            for( size_t i = 0; i < numVctTextures; ++i )
+
+            for( size_t cascadeIdx = 0; cascadeIdx < numCascades; ++cascadeIdx )
             {
-                barrierSolver.resolveTransition( resourceTransitions, lightVoxelTexs[i],
-                                                 ResourceLayout::Texture, ResourceAccess::Read,
-                                                 1u << PixelShader );
+                TextureGpu **lightVoxelTexs = mVctLighting->getLightVoxelTextures( cascadeIdx );
+                for( size_t i = 0; i < numVctTextures; ++i )
+                {
+                    barrierSolver.resolveTransition( resourceTransitions, lightVoxelTexs[i],
+                                                     ResourceLayout::Texture, ResourceAccess::Read,
+                                                     1u << PixelShader );
+                }
             }
         }
 
@@ -1586,7 +1629,8 @@ namespace Ogre
 
             if( mVctLighting )
             {
-                setProperty( PbsProperty::VctNumProbes, 1 );
+                setProperty( PbsProperty::VctNumProbes,
+                             static_cast<int32>( mVctLighting->getNumCascades() ) );
                 setProperty( PbsProperty::VctConeDirs, mVctFullConeCount ? 6 : 4 );
                 setProperty( PbsProperty::VctAnisotropic, mVctLighting->isAnisotropic() );
                 setProperty( PbsProperty::VctEnableSpecularSdfQuality,
@@ -2797,7 +2841,10 @@ namespace Ogre
             if( mIrradianceVolume )
                 mTexUnitSlotStart += 1;
             if( mVctLighting )
-                mTexUnitSlotStart += mVctLighting->getNumVoxelTextures();
+            {
+                mTexUnitSlotStart +=
+                    mVctLighting->getNumVoxelTextures() * mVctLighting->getNumCascades();
+            }
             if( mIrradianceField )
                 mTexUnitSlotStart += 2u;
             if( mParallaxCorrectedCubemap && !mParallaxCorrectedCubemap->isRendering() )
@@ -2988,15 +3035,20 @@ namespace Ogre
 
                 if( mVctLighting )
                 {
-                    TextureGpu **lightVoxelTexs = mVctLighting->getLightVoxelTextures();
+                    const size_t numCascades = mVctLighting->getNumCascades();
                     const size_t numVctTextures = mVctLighting->getNumVoxelTextures();
                     const HlmsSamplerblock *samplerblock =
                             mVctLighting->getBindTrilinearSamplerblock();
                     for( size_t i=0; i<numVctTextures; ++i )
                     {
-                        *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit, lightVoxelTexs[i],
-                                                                             samplerblock );
-                        ++texUnit;
+                        for( size_t cascadeIdx = 0; cascadeIdx < numCascades; ++cascadeIdx )
+                        {
+                            TextureGpu **lightVoxelTexs =
+                                mVctLighting->getLightVoxelTextures( cascadeIdx );
+                            *commandBuffer->addCommand<CbTexture>() =
+                                CbTexture( texUnit, lightVoxelTexs[i], samplerblock );
+                            ++texUnit;
+                        }
                     }
                 }
 
@@ -3333,9 +3385,10 @@ namespace Ogre
                 // According to this https://forums.ogre3d.org/viewtopic.php?f=25&t=95040#p545057
                 // "macOS uses an old OpenGL version which doesn't use baseVertex"
         #ifdef __APPLE__
-                size_t baseVertex = 0;
+                uint32 baseVertex = 0;
         #else
-                size_t baseVertex = vao->getBaseVertexBuffer()->_getFinalBufferStart();
+                uint32 baseVertex =
+                    static_cast<uint32>( vao->getBaseVertexBuffer()->_getFinalBufferStart() );
         #endif
                 memcpy( currentMappedTexBuffer, &baseVertex, sizeof( baseVertex ) );
                 size_t numVertices = vao->getBaseVertexBuffer()->getNumElements();

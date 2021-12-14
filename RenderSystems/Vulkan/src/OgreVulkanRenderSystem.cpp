@@ -451,6 +451,7 @@ namespace Ogre
             StringConverter::toString( properties.deviceID, 0, ' ', std::ios::hex ) );
 
         rsc->setDeviceName( properties.deviceName );
+        rsc->setDeviceId( properties.deviceID );
 
         switch( properties.vendorID )
         {
@@ -500,6 +501,9 @@ namespace Ogre
 
         if( mActiveDevice->mDeviceFeatures.imageCubeArray )
             rsc->setCapability( RSC_TEXTURE_CUBE_MAP_ARRAY );
+
+        if( mActiveDevice->hasDeviceExtension( VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME ) )
+            rsc->setCapability( RSC_VP_AND_RT_ARRAY_INDEX_FROM_ANY_SHADER );
 
         if( mActiveDevice->mDeviceFeatures.depthClamp )
             rsc->setCapability( RSC_DEPTH_CLAMP );
@@ -640,6 +644,9 @@ namespace Ogre
             Workarounds::mAdreno5xx6xxMinCaps = false;
 
             const uint32 c_adreno5xx6xxDeviceIds[] = {
+                0x4010800,  // 418
+                0x4030002,  // 430
+
                 0x5000400,  // 504
                 0x5000500,  // 505
                 0x5000600,  // 506
@@ -655,10 +662,12 @@ namespace Ogre
                 0x6010501,  // 615
                 0x6010600,  // 616
                 0x6010800,  // 618
+                0x6010900,  // 619
                 0x6020001,  // 620
                 0x6030001,  // 630
                 0x6040001,  // 640
                 0x6050002,  // 650
+                // 0x6060001 // 660 (doesn't need workaround)
             };
 
             const size_t numDevIds =
@@ -953,11 +962,6 @@ namespace Ogre
             mDevice = new VulkanDevice( mVkInstance, mVulkanSupport->getSelectedDeviceIdx(), this );
             mActiveDevice = mDevice;
 
-            mRealCapabilities = createRenderSystemCapabilities();
-            mCurrentCapabilities = mRealCapabilities;
-
-            initialiseFromRenderSystemCapabilities( mCurrentCapabilities, 0 );
-
             mNativeShadingLanguageVersion = 450;
 
             bool bCanRestrictImageViewUsage = false;
@@ -983,6 +987,8 @@ namespace Ogre
                     }
                     else if( extensionName == VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME )
                         deviceExtensions.push_back( VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME );
+                    else if( extensionName == VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME )
+                        deviceExtensions.push_back( VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME );
                 }
             }
 
@@ -1000,6 +1006,11 @@ namespace Ogre
 #endif
 
             mDevice->createDevice( deviceExtensions, 0u, 0u );
+
+            mRealCapabilities = createRenderSystemCapabilities();
+            mCurrentCapabilities = mRealCapabilities;
+
+            initialiseFromRenderSystemCapabilities( mCurrentCapabilities, 0 );
 
             VulkanVaoManager *vaoManager = OGRE_NEW VulkanVaoManager( mDevice, this, miscParams );
             mVaoManager = vaoManager;
@@ -1533,10 +1544,31 @@ namespace Ogre
         VulkanRootLayout *rootLayout = computeShader->getRootLayout();
         computeInfo.layout = rootLayout->createVulkanHandles();
 
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
+        mValidationError = false;
+#endif
+
         VkPipeline vulkanPso = 0u;
         VkResult result = vkCreateComputePipelines( mActiveDevice->mDevice, VK_NULL_HANDLE, 1u,
                                                     &computeInfo, 0, &vulkanPso );
         checkVkResult( result, "vkCreateComputePipelines" );
+
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+        if( mValidationError )
+        {
+            LogManager::getSingleton().logMessage( "Validation error:" );
+
+            if( newPso->computeShader )
+            {
+                VulkanProgram *shader =
+                    static_cast<VulkanProgram *>( newPso->computeShader->_getBindingDelegate() );
+
+                String debugDump;
+                shader->debugDump( debugDump );
+                LogManager::getSingleton().logMessage( debugDump );
+            }
+        }
+#endif
 
         VulkanHlmsPso *pso = new VulkanHlmsPso( vulkanPso, rootLayout );
         newPso->rsData = pso;
@@ -2813,6 +2845,8 @@ namespace Ogre
         viewportStateCi.viewportCount = 1u;
         viewportStateCi.scissorCount = 1u;
 
+        const float biasSign = mReverseDepth ? 1.0f : -1.0f;
+
         VkPipelineRasterizationStateCreateInfo rasterState;
         makeVkStruct( rasterState, VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO );
         rasterState.polygonMode = VulkanMappings::get( newPso->macroblock->mPolygonMode );
@@ -2820,9 +2854,9 @@ namespace Ogre
         rasterState.frontFace = VK_FRONT_FACE_CLOCKWISE;
         rasterState.depthClampEnable = newPso->macroblock->mDepthClamp;
         rasterState.depthBiasEnable = newPso->macroblock->mDepthBiasConstant != 0.0f;
-        rasterState.depthBiasConstantFactor = newPso->macroblock->mDepthBiasConstant;
+        rasterState.depthBiasConstantFactor = newPso->macroblock->mDepthBiasConstant * biasSign;
         rasterState.depthBiasClamp = 0.0f;
-        rasterState.depthBiasSlopeFactor = newPso->macroblock->mDepthBiasSlopeScale;
+        rasterState.depthBiasSlopeFactor = newPso->macroblock->mDepthBiasSlopeScale * biasSign;
         rasterState.lineWidth = 1.0f;
 
         VkPipelineMultisampleStateCreateInfo mssCi;
