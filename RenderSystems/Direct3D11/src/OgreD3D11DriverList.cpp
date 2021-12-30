@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -39,7 +39,7 @@ namespace Ogre
         mHiddenDriversCount = 0;
     }
     //-----------------------------------------------------------------------
-    D3D11DriverList::~D3D11DriverList(void)
+    D3D11DriverList::~D3D11DriverList()
     {
     }
     //-----------------------------------------------------------------------

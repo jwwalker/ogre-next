@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for OGRE
+# This file is part of the CMake build system for OGRE-Next
 #     (Object-oriented Graphics Rendering Engine)
 # For the latest info, see http://www.ogre3d.org/
 #
@@ -32,20 +32,6 @@ set(OGRE_THREAD_PROVIDER 0)
 if (OGRE_CONFIG_THREADS)
 	if (UNIX)
 		add_definitions(-pthread)
-	endif ()
-
-	if (OGRE_CONFIG_THREAD_PROVIDER STREQUAL "boost")
-		set(OGRE_THREAD_PROVIDER 1)
-		include_directories(${Boost_INCLUDE_DIRS})
-		# On MSVC Boost usually tries to autolink boost libraries. However since
-		# this behaviour is not available on all compilers, we need to find the libraries
-		# ourselves, anyway. Disable auto-linking to avoid mess-ups.
-		add_definitions(-DBOOST_ALL_NO_LIB)
-        if (MINGW AND Boost_USE_STATIC_LIBS)
-            # mingw needs this to link against static thread libraries
-            add_definitions(-DBOOST_THREAD_USE_LIB)
-        endif ()
-		set(OGRE_THREAD_LIBRARIES ${Boost_LIBRARIES})
 	endif ()
 
 	if (OGRE_CONFIG_THREAD_PROVIDER STREQUAL "poco")
@@ -109,7 +95,6 @@ set(OGRE_SET_ENABLE_LIGHT_OBB_RESTRAINT 0)
 set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 0)
 set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 0)
 set(OGRE_STATIC_LIB 0)
-set(OGRE_SET_USE_BOOST 0)
 set(OGRE_SET_PROFILING 0)
 set(OGRE_SET_PROFILING_EXHAUSTIVE 0)
 set(OGRE_SET_USE_SIMD 0)
@@ -191,9 +176,6 @@ endif()
 if (OGRE_STATIC)
   set(OGRE_STATIC_LIB 1)
 endif()
-if (OGRE_USE_BOOST)
-  set(OGRE_SET_USE_BOOST 1)
-endif()
 if (OGRE_PROFILING_PROVIDER STREQUAL "internal")
   set(OGRE_SET_PROFILING 1)
 elseif (OGRE_PROFILING_PROVIDER STREQUAL "remotery")
@@ -221,18 +203,6 @@ if (OGRE_TEST_BIG_ENDIAN)
   set(OGRE_CONFIG_BIG_ENDIAN 1)
 else ()
   set(OGRE_CONFIG_LITTLE_ENDIAN 1)
-endif ()
-
-if (OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS)
-	set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 1)
-else ()
-	set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 0)
-endif ()
-
-if (OGRE_BUILD_RTSHADERSYSTEM_EXT_SHADERS)
-	set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)
-else ()
-	set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 0)
 endif ()
 
 if (NOT OGRE_CONFIG_ENABLE_QUAD_BUFFER_STEREO)
@@ -270,9 +240,6 @@ if (UNIX)
     set(OGRE_ADDITIONAL_LIBS "${OGRE_ADDITIONAL_LIBS} -lpthread")
   endif ()
   if (OGRE_STATIC)
-    if (OGRE_CONFIG_THREADS)
-      set(OGRE_ADDITIONAL_LIBS "${OGRE_ADDITIONAL_LIBS} -lboost-thread-mt")
-    endif ()
     # there is no pkgconfig file for freeimage, so we need to add that lib manually
     set(OGRE_ADDITIONAL_LIBS "${OGRE_ADDITIONAL_LIBS} -lfreeimage")
     configure_file(${OGRE_TEMPLATES_DIR}/OGREStatic.pc.in ${OGRE_BINARY_DIR}/pkgconfig/OGRE.pc @ONLY)
@@ -291,19 +258,6 @@ if (UNIX)
   if (OGRE_BUILD_COMPONENT_MESHLODGENERATOR)
     configure_file(${OGRE_TEMPLATES_DIR}/OGRE-MeshLodGenerator.pc.in ${OGRE_BINARY_DIR}/pkgconfig/OGRE-MeshLodGenerator.pc @ONLY)
     install(FILES ${OGRE_BINARY_DIR}/pkgconfig/OGRE-MeshLodGenerator.pc DESTINATION ${OGRE_LIB_DIRECTORY}/pkgconfig)
-  endif ()
-  
-  if (OGRE_BUILD_COMPONENT_TERRAIN)
-    if (OGRE_BUILD_COMPONENT_PAGING)
-      set(OGRE_PAGING_ADDITIONAL_PACKAGES ", OGRE-Paging = ${OGRE_VERSION}")
-    endif ()
-    configure_file(${OGRE_TEMPLATES_DIR}/OGRE-Terrain.pc.in ${OGRE_BINARY_DIR}/pkgconfig/OGRE-Terrain.pc @ONLY)
-    install(FILES ${OGRE_BINARY_DIR}/pkgconfig/OGRE-Terrain.pc DESTINATION ${OGRE_LIB_DIRECTORY}/pkgconfig)
-  endif ()
-
-  if (OGRE_BUILD_COMPONENT_RTSHADERSYSTEM)
-    configure_file(${OGRE_TEMPLATES_DIR}/OGRE-RTShaderSystem.pc.in ${OGRE_BINARY_DIR}/pkgconfig/OGRE-RTShaderSystem.pc @ONLY)
-    install(FILES ${OGRE_BINARY_DIR}/pkgconfig/OGRE-RTShaderSystem.pc DESTINATION ${OGRE_LIB_DIRECTORY}/pkgconfig)
   endif ()
 
   if (OGRE_BUILD_COMPONENT_PROPERTY)

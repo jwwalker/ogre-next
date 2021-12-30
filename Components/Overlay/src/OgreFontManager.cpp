@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-This source file is a part of OGRE
+This source file is a part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 
 For the latest info, see http://www.ogre3d.org/
@@ -36,11 +36,11 @@ namespace Ogre
 {
     //---------------------------------------------------------------------
     template<> FontManager * Singleton< FontManager >::msSingleton = 0;
-    FontManager* FontManager::getSingletonPtr(void)
+    FontManager* FontManager::getSingletonPtr()
     {
         return msSingleton;
     }
-    FontManager& FontManager::getSingleton(void)
+    FontManager& FontManager::getSingleton()
     {  
         assert( msSingleton );  return ( *msSingleton );  
     }

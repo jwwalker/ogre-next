@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -126,7 +126,7 @@ namespace Ogre
             mMappingStart = 0;
     }
     //-----------------------------------------------------------------------------------
-    void StagingBuffer::addReferenceCount(void)
+    void StagingBuffer::addReferenceCount()
     {
         ++mRefCount;
 
@@ -134,7 +134,7 @@ namespace Ogre
             mVaoManager->_notifyStagingBufferLeftZeroRef( this );
     }
     //-----------------------------------------------------------------------------------
-    void StagingBuffer::removeReferenceCount(void)
+    void StagingBuffer::removeReferenceCount()
     {
         Timer *timer = mVaoManager->getTimer();
         --mRefCount;

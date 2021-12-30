@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -247,13 +247,13 @@ namespace v1
         op = mRenderOp;
     }
     //-----------------------------------------------------------------------------------
-    const LightList& Rectangle2D::getLights(void) const
+    const LightList& Rectangle2D::getLights() const
     {
         static const LightList l;
         return l;
     }
     //-----------------------------------------------------------------------
-    const String& Rectangle2D::getMovableType(void) const
+    const String& Rectangle2D::getMovableType() const
     {
         return Rectangle2DFactory::FACTORY_TYPE_NAME;
     }
@@ -262,7 +262,7 @@ namespace v1
     //-----------------------------------------------------------------------
     String Rectangle2DFactory::FACTORY_TYPE_NAME = "Rectangle2D";
     //-----------------------------------------------------------------------
-    const String& Rectangle2DFactory::getType(void) const
+    const String& Rectangle2DFactory::getType() const
     {
         return FACTORY_TYPE_NAME;
     }

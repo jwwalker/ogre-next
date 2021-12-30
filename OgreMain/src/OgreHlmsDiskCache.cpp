@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -53,7 +53,7 @@ namespace Ogre
         clearCache();
     }
     //-----------------------------------------------------------------------------------
-    void HlmsDiskCache::clearCache(void)
+    void HlmsDiskCache::clearCache()
     {
         mTemplatesOutOfDate = false;
         memset( mCache.templateHash, 0, sizeof( mCache.templateHash ) );

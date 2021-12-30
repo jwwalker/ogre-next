@@ -351,7 +351,7 @@ namespace Demo
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::deinitialize(void)
+    void GraphicsSystem::deinitialize()
     {
         BaseSystem::deinitialize();
 
@@ -521,7 +521,7 @@ namespace Demo
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::loadTextureCache(void)
+    void GraphicsSystem::loadTextureCache()
     {
 #if !OGRE_NO_JSON
         Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
@@ -561,7 +561,7 @@ namespace Demo
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::saveTextureCache(void)
+    void GraphicsSystem::saveTextureCache()
     {
         if( mRoot->getRenderSystem() )
         {
@@ -579,7 +579,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::loadHlmsDiskCache(void)
+    void GraphicsSystem::loadHlmsDiskCache()
     {
         if( !mUseMicrocodeCache && !mUseHlmsDiskCache )
             return;
@@ -637,7 +637,7 @@ namespace Demo
         archiveManager.unload( mWriteAccessFolder );
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::saveHlmsDiskCache(void)
+    void GraphicsSystem::saveHlmsDiskCache()
     {
         if( mRoot->getRenderSystem() && Ogre::GpuProgramManager::getSingletonPtr() &&
             (mUseMicrocodeCache || mUseHlmsDiskCache) )
@@ -679,7 +679,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::setupResources(void)
+    void GraphicsSystem::setupResources()
     {
         // Load resource paths from config file
         Ogre::ConfigFile cf;
@@ -707,7 +707,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::registerHlms(void)
+    void GraphicsSystem::registerHlms()
     {
         Ogre::ConfigFile cf;
         cf.load( AndroidSystems::openFile( mResourcePath + "resources2.cfg" ) );
@@ -804,7 +804,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::loadResources(void)
+    void GraphicsSystem::loadResources()
     {
         registerHlms();
 
@@ -832,7 +832,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::chooseSceneManager(void)
+    void GraphicsSystem::chooseSceneManager()
     {
 #if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
         //Debugging multithreaded code is a PITA, disable it.
@@ -856,7 +856,7 @@ namespace Demo
         mSceneManager->setShadowFarDistance( 500.0f );
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::createCamera(void)
+    void GraphicsSystem::createCamera()
     {
         mCamera = mSceneManager->createCamera( "Main Camera" );
 
@@ -869,7 +869,7 @@ namespace Demo
         mCamera->setAutoAspectRatio( true );
     }
     //-----------------------------------------------------------------------------------
-    Ogre::CompositorWorkspace* GraphicsSystem::setupCompositor(void)
+    Ogre::CompositorWorkspace* GraphicsSystem::setupCompositor()
     {
         Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
 
@@ -893,7 +893,7 @@ namespace Demo
         mAlwaysAskForConfig = alwaysAskForConfig;
     }
     //-----------------------------------------------------------------------------------
-    const char *GraphicsSystem::getMediaReadArchiveType( void ) const
+    const char *GraphicsSystem::getMediaReadArchiveType() const
     {
 #if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
         return "FileSystem";
@@ -902,7 +902,7 @@ namespace Demo
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::stopCompositor(void)
+    void GraphicsSystem::stopCompositor()
     {
         if( mWorkspace )
         {
@@ -912,7 +912,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    void GraphicsSystem::restartCompositor(void)
+    void GraphicsSystem::restartCompositor()
     {
         stopCompositor();
         mWorkspace = setupCompositor();

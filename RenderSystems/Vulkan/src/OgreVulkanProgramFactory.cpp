@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "OgreVulkanDevice.h"
 #include "OgreVulkanProgram.h"
 
-#include "OgreVulkanGlslangHeader.h"
+#include "glslang/Public/ShaderLang.h"
 
 namespace Ogre
 {
@@ -49,13 +49,13 @@ namespace Ogre
             glslang::InitializeProcess();
     }
     //-----------------------------------------------------------------------
-    VulkanProgramFactory::~VulkanProgramFactory( void )
+    VulkanProgramFactory::~VulkanProgramFactory()
     {
         if( mGlslLangInitializer )
             glslang::FinalizeProcess();
     }
     //-----------------------------------------------------------------------
-    const String &VulkanProgramFactory::getLanguage( void ) const { return mLanguageName; }
+    const String &VulkanProgramFactory::getLanguage() const { return mLanguageName; }
     //-----------------------------------------------------------------------
     HighLevelGpuProgram *VulkanProgramFactory::create( ResourceManager *creator, const String &name,
                                                        ResourceHandle handle, const String &group,

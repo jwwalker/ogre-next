@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -181,7 +181,7 @@ namespace Ogre {
 	//---------------------------------------------------------------------
 	ASTCCodec* ASTCCodec::msInstance = 0;
 	//---------------------------------------------------------------------
-	void ASTCCodec::startup(void)
+    void ASTCCodec::startup()
 	{
 		if (!msInstance)
 		{
@@ -193,7 +193,7 @@ namespace Ogre {
                                               "ASTC codec registering");
 	}
 	//---------------------------------------------------------------------
-	void ASTCCodec::shutdown(void)
+    void ASTCCodec::shutdown()
 	{
 		if(msInstance)
 		{

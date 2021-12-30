@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -230,12 +230,12 @@ namespace Ogre
         ///
         /// ArrayMemoryManager::destroySlot already does this when the number
         /// of fragmented slots reaches mCleanupThreshold
-        void defragment(void);
+        void defragment();
 
         /// Defragments memory, then reallocates a smaller pool that tightly fits
         /// the current number of objects. Useful when you know you won't be creating
         /// more slots and you need to reclaim memory.
-        void shrinkToFit(void);
+        void shrinkToFit();
 
         /// Returns mUsedMemory. When ARRAY_PACKED_REALS = 4, and 4 objects have been
         /// created but the 2nd one has been deleted, getNumUsedSlotsIncludingFragmented
@@ -292,14 +292,14 @@ namespace Ogre
     @version
         1.0
     */
-    class _OgreExport NodeArrayMemoryManager : public ArrayMemoryManager
+    class _OgreExport NodeArrayMemoryManager final : public ArrayMemoryManager
     {
         /// Dummy node where to point Transform::mParents[i] when they're unused slots.
         Node    *mDummyNode;
 
     protected:
         /// We overload to set all mParents to point to mDummyNode
-        virtual void initializeEmptySlots( size_t prevNumSlots );
+        void initializeEmptySlots( size_t prevNumSlots ) override;
 
     public:
         enum MemoryTypes
@@ -365,7 +365,7 @@ namespace Ogre
     @version
         1.0
     */
-    class _OgreExport ObjectDataArrayMemoryManager : public ArrayMemoryManager
+    class _OgreExport ObjectDataArrayMemoryManager final : public ArrayMemoryManager
     {
         /// Dummy node where to point ObjectData::mParents[i] when they're unused slots.
         Node            *mDummyNode;
@@ -373,7 +373,7 @@ namespace Ogre
 
     protected:
         /// We overload to set all mParents to point to mDummyNode
-        virtual void initializeEmptySlots( size_t prevNumSlots );
+        void initializeEmptySlots( size_t prevNumSlots ) override;
 
     public:
         enum MemoryTypes

@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for OGRE
+# This file is part of the CMake build system for OGRE-Next
 #     (Object-oriented Graphics Rendering Engine)
 # For the latest info, see http://www.ogre3d.org/
 #
@@ -116,15 +116,7 @@ endif ()
 
 
 # Add platform specific files
-if (OGRE_BUILD_PLATFORM_NACL)
-  include_directories("include/NaCl")
-  file(GLOB PLATFORM_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/NaCl/*.h")
-  file(GLOB PLATFORM_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/NaCl/*.cpp"
-    src/OgreSearchOps.cpp)
-
-  set(PLATFORM_LIBS nosys)
-  set(PLATFORM_HEADER_INSTALL "NaCl")
-elseif (EMSCRIPTEN)
+if (EMSCRIPTEN)
   include_directories(include/Emscripten)
 
   file(GLOB PLATFORM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/Emscripten/*.h)
@@ -294,15 +286,6 @@ set(THREAD_HEADER_FILES
 if (OGRE_THREAD_PROVIDER EQUAL 0)
 	list(APPEND THREAD_HEADER_FILES
 		include/Threading/OgreThreadDefinesNone.h
-		include/Threading/OgreDefaultWorkQueueStandard.h
-	)
-	list(APPEND THREAD_SOURCE_FILES
-		src/Threading/OgreDefaultWorkQueueStandard.cpp
-	)
-elseif (OGRE_THREAD_PROVIDER EQUAL 1)
-	list(APPEND THREAD_HEADER_FILES
-		include/Threading/OgreThreadDefinesBoost.h
-		include/Threading/OgreThreadHeadersBoost.h
 		include/Threading/OgreDefaultWorkQueueStandard.h
 	)
 	list(APPEND THREAD_SOURCE_FILES
@@ -506,27 +489,4 @@ install(FILES ${PLATFORM_HEADERS}
 )
 install(FILES ${THREAD_HEADER_FILES}
 	DESTINATION include/OGRE/Threading
-)
-
-set( DEPRECATED_HEADER_FILES
-	include/Deprecated/OgreDDSCodec.h
-	include/Deprecated/OgreDepthBuffer.h
-	include/Deprecated/OgreFreeImageCodec.h
-	include/Deprecated/OgreHardwarePixelBuffer.h
-	include/Deprecated/OgreImageCodec.h
-	include/Deprecated/OgreImage.h
-	include/Deprecated/OgrePixelBox.h
-	include/Deprecated/OgrePixelFormatDescriptions.h
-	include/Deprecated/OgrePixelFormat.h
-	include/Deprecated/OgreRenderTarget.h
-	include/Deprecated/OgreRenderTargetListener.h
-	include/Deprecated/OgreRenderTexture.h
-	include/Deprecated/OgreRenderToVertexBuffer.h
-	include/Deprecated/OgreRenderWindow.h
-	include/Deprecated/OgreTexture.h
-	include/Deprecated/OgreTextureManager.h
-)
-
-install(FILES ${DEPRECATED_HEADER_FILES}
-  DESTINATION include/OGRE/Deprecated
 )

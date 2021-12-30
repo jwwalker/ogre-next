@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -274,7 +274,7 @@ class MapIteratorWrapper  : public IteratorWrapper<T, IteratorType, typename T::
         }
 
         /** Returns the next(=current) key element in the collection, without advancing to the next. */
-        KeyType peekNextKey(void) const
+        KeyType peekNextKey() const
         {
             return this->mCurrent->first;
         }

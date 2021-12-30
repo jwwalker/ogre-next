@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -1696,12 +1696,12 @@ namespace Ogre
     // ScriptCompilerManager
     template<> ScriptCompilerManager *Singleton<ScriptCompilerManager>::msSingleton = 0;
     
-    ScriptCompilerManager* ScriptCompilerManager::getSingletonPtr(void)
+    ScriptCompilerManager* ScriptCompilerManager::getSingletonPtr()
     {
         return msSingleton;
     }
     //-----------------------------------------------------------------------
-    ScriptCompilerManager& ScriptCompilerManager::getSingleton(void)
+    ScriptCompilerManager& ScriptCompilerManager::getSingleton()
     {  
         assert( msSingleton );  return ( *msSingleton );  
     }
@@ -1792,12 +1792,12 @@ namespace Ogre
         mScriptPatterns.push_back(pattern);
     }
     //-----------------------------------------------------------------------
-    const StringVector& ScriptCompilerManager::getScriptPatterns(void) const
+    const StringVector& ScriptCompilerManager::getScriptPatterns() const
     {
         return mScriptPatterns;
     }
     //-----------------------------------------------------------------------
-    Real ScriptCompilerManager::getLoadingOrder(void) const
+    Real ScriptCompilerManager::getLoadingOrder() const
     {
         /// Load relatively early, before most script loaders run
         return 90.0f;

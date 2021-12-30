@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org
 
@@ -41,7 +41,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------
     VulkanXcbSupport::VulkanXcbSupport() { queryXcb(); }
     //-----------------------------------------------------------------------------
-    void VulkanXcbSupport::queryXcb( void )
+    void VulkanXcbSupport::queryXcb()
     {
         int scr = 0;
         xcb_connection_t *connection = xcb_connect( 0, &scr );

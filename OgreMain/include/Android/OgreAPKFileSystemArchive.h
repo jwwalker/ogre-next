@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -45,7 +45,7 @@ namespace Ogre{
         ~APKFileSystemArchive();
 
         /// @copydoc Archive::isCaseSensitive
-        bool isCaseSensitive(void) const;
+        bool isCaseSensitive() const;
 
         /// @copydoc Archive::load
         void load();
@@ -86,7 +86,7 @@ namespace Ogre{
         APKFileSystemArchiveFactory(AAssetManager* assetMgr) : mAssetMgr(assetMgr) {}
         virtual ~APKFileSystemArchiveFactory() {}
         /// @copydoc FactoryObj::getType
-        const String& getType(void) const;
+        const String& getType() const;
         /// @copydoc FactoryObj::createInstance
         Archive *createInstance( const String& name, bool readOnly ) 
         {

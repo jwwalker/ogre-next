@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -119,19 +119,17 @@ THE SOFTWARE.
 namespace Ogre {
     //-----------------------------------------------------------------------
     template<> Root* Singleton<Root>::msSingleton = 0;
-    Root* Root::getSingletonPtr(void)
+    Root* Root::getSingletonPtr()
     {
         return msSingleton;
     }
-    Root& Root::getSingleton(void)
+    Root& Root::getSingleton()
     {
         assert( msSingleton );  return ( *msSingleton );
     }
 
-#if OGRE_PLATFORM != OGRE_PLATFORM_NACL
-    typedef void (*DLL_START_PLUGIN)(void);
-    typedef void (*DLL_STOP_PLUGIN)(void);
-#endif
+    typedef void (*DLL_START_PLUGIN)();
+    typedef void (*DLL_STOP_PLUGIN)();
 
     //-----------------------------------------------------------------------
     Root::Root( const String &pluginFileName, const String &configFileName, const String &logFileName,
@@ -441,10 +439,10 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    void Root::saveConfig(void)
+    void Root::saveConfig()
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
-        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "saveConfig is not supported on NaCl",
+#if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
+        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "saveConfig is not supported on Emscripten",
             "Root::saveConfig");
 #endif
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
@@ -492,10 +490,10 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    bool Root::restoreConfig(void)
+    bool Root::restoreConfig()
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
-        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "restoreConfig is not supported on NaCl",
+#if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
+        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "restoreConfig is not supported on Emscripten",
             "Root::restoreConfig");
 #endif
 
@@ -629,10 +627,10 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     bool Root::showConfigDialog( ConfigDialog* aCustomDialog /*= 0*/ )
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || \
-    defined( OGRE_CONFIG_UNIX_NO_X11 )
-        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "showConfigDialog is not supported on NaCl",
-            "Root::showConfigDialog");
+#if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || defined( OGRE_CONFIG_UNIX_NO_X11 )
+        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE,
+                    "showConfigDialog is not supported on Emscripten",
+                    "Root::showConfigDialog");
 #endif
 
         // Displays the standard config dialog
@@ -653,7 +651,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    const RenderSystemList& Root::getAvailableRenderers(void)
+    const RenderSystemList& Root::getAvailableRenderers()
     {
         // Returns a vector of renders
 
@@ -714,7 +712,7 @@ namespace Ogre {
         mRenderers.push_back(newRend);
     }
     //-----------------------------------------------------------------------
-    SceneManager* Root::_getCurrentSceneManager(void) const
+    SceneManager* Root::_getCurrentSceneManager() const
     {
         if (mSceneManagerStack.empty())
             return 0;
@@ -734,7 +732,7 @@ namespace Ogre {
         mSceneManagerStack.pop_back();
     }
     //-----------------------------------------------------------------------
-    RenderSystem* Root::getRenderSystem(void)
+    RenderSystem* Root::getRenderSystem()
     {
         // Gets the currently active renderer
         return mActiveRenderer;
@@ -853,7 +851,7 @@ namespace Ogre {
     }
     //-----------------------------------------------------------------------
     SceneManagerEnumerator::MetaDataIterator
-    Root::getSceneManagerMetaDataIterator(void) const
+    Root::getSceneManagerMetaDataIterator() const
     {
         return mSceneManagerEnum->getMetaDataIterator();
 
@@ -886,12 +884,12 @@ namespace Ogre {
         return mSceneManagerEnum->hasSceneManager(instanceName);
     }
     //-----------------------------------------------------------------------
-    SceneManagerEnumerator::SceneManagerIterator Root::getSceneManagerIterator(void)
+    SceneManagerEnumerator::SceneManagerIterator Root::getSceneManagerIterator()
     {
         return mSceneManagerEnum->getSceneManagerIterator();
     }
     //-----------------------------------------------------------------------
-    v1::MeshManager* Root::getMeshManagerV1(void)
+    v1::MeshManager* Root::getMeshManagerV1()
     {
         return &v1::MeshManager::getSingleton();
     }
@@ -1087,12 +1085,12 @@ namespace Ogre {
         mQueuedEnd = state;
     }
     //-----------------------------------------------------------------------
-    bool Root::endRenderingQueued(void)
+    bool Root::endRenderingQueued()
     {
         return mQueuedEnd;
     }
     //-----------------------------------------------------------------------
-    void Root::startRendering(void)
+    void Root::startRendering()
     {
         assert(mActiveRenderer != 0);
 
@@ -1113,7 +1111,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    bool Root::renderOneFrame(void)
+    bool Root::renderOneFrame()
     {
         if(!_fireFrameStarted())
             return false;
@@ -1176,7 +1174,7 @@ namespace Ogre {
         return _fireFrameEnded(evt);
     }
     //-----------------------------------------------------------------------
-    void Root::shutdown(void)
+    void Root::shutdown()
     {
         // Since background thread might be access resources,
         // ensure shutdown before destroying resource manager.
@@ -1203,23 +1201,22 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Root::loadPlugins( const String& pluginsfile )
     {
-        StringVector pluginList;
-        String pluginDir;
         ConfigFile cfg;
 
-        try {
+        try
+        {
             cfg.load( pluginsfile );
         }
-        catch (Exception)
+        catch( Exception )
         {
-            LogManager::getSingleton().logMessage(pluginsfile + " not found, automatic plugin loading disabled.");
+            LogManager::getSingleton().logMessage( pluginsfile +
+                                                   " not found, automatic plugin loading disabled." );
             return;
         }
 
-        pluginDir = cfg.getSetting("PluginFolder"); // Ignored on Mac OS X, uses Resources/ directory
-        pluginList = cfg.getMultiSetting("Plugin");
-
-        if (!pluginDir.empty() && *pluginDir.rbegin() != '/' && *pluginDir.rbegin() != '\\')
+        String pluginDir =
+            cfg.getSetting( "PluginFolder" );  // Ignored on Mac OS X, uses Resources/ directory
+        if( !pluginDir.empty() && *pluginDir.rbegin() != '/' && *pluginDir.rbegin() != '\\' )
         {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
             pluginDir += "\\";
@@ -1228,14 +1225,25 @@ namespace Ogre {
 #endif
         }
 
-        for( StringVector::iterator it = pluginList.begin(); it != pluginList.end(); ++it )
         {
-            loadPlugin(pluginDir + (*it));
+            // First load optional plugins (which tend to be all RenderSystems)
+            const StringVector pluginList = cfg.getMultiSetting( "PluginOptional" );
+            for( StringVector::const_iterator it = pluginList.begin(); it != pluginList.end(); ++it )
+            {
+                loadPlugin( pluginDir + ( *it ), true );
+            }
         }
-
+        {
+            // Then load non-optional plugins (which tend to depend on RenderSystems)
+            const StringVector pluginList = cfg.getMultiSetting( "Plugin" );
+            for( StringVector::const_iterator it = pluginList.begin(); it != pluginList.end(); ++it )
+            {
+                loadPlugin( pluginDir + ( *it ), false );
+            }
+        }
     }
     //-----------------------------------------------------------------------
-    void Root::shutdownPlugins(void)
+    void Root::shutdownPlugins()
     {
         // NB Shutdown plugins in reverse order to enforce dependencies
         for (PluginInstanceList::reverse_iterator i = mPlugins.rbegin(); i != mPlugins.rend(); ++i)
@@ -1244,7 +1252,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void Root::initialisePlugins(void)
+    void Root::initialisePlugins()
     {
         for (PluginInstanceList::iterator i = mPlugins.begin(); i != mPlugins.end(); ++i)
         {
@@ -1252,22 +1260,25 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void Root::unloadPlugins(void)
+    void Root::unloadPlugins()
     {
-#if OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+#if OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
         // unload dynamic libs first
-        for (PluginLibList::reverse_iterator i = mPluginLibs.rbegin(); i != mPluginLibs.rend(); ++i)
+        for( PluginLibList::reverse_iterator i = mPluginLibs.rbegin(); i != mPluginLibs.rend(); ++i )
         {
-            // Call plugin shutdown
-            #ifdef __GNUC__
-            __extension__
-            #endif
-            DLL_STOP_PLUGIN pFunc = reinterpret_cast<DLL_STOP_PLUGIN>((*i)->getSymbol("dllStopPlugin"));
-            // this will call uninstallPlugin
-            pFunc();
+            if( ( *i )->isLoaded() )
+            {
+                // Call plugin shutdown
+#    ifdef __GNUC__
+                __extension__
+#    endif
+                    DLL_STOP_PLUGIN pFunc =
+                        reinterpret_cast<DLL_STOP_PLUGIN>( ( *i )->getSymbol( "dllStopPlugin" ) );
+                // this will call uninstallPlugin
+                pFunc();
+            }
             // Unload library & destroy
-            DynLibManager::getSingleton().unload(*i);
-
+            DynLibManager::getSingleton().unload( *i );
         }
         mPluginLibs.clear();
 
@@ -1366,7 +1377,7 @@ namespace Ogre {
         mActiveRenderer->convertColourValue(colour, pDest);
     }
     //-----------------------------------------------------------------------
-    Window* Root::getAutoCreatedWindow(void)
+    Window* Root::getAutoCreatedWindow()
     {
         return mAutoWindow;
     }
@@ -1459,65 +1470,90 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    void Root::loadPlugin(const String& pluginName)
+    void Root::loadPlugin( const String &pluginName, const bool bOptional )
     {
-#if OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+#if OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
         // Load plugin library
-        DynLib* lib = DynLibManager::getSingleton().load( pluginName );
+        DynLib* lib = DynLibManager::getSingleton().load( pluginName, bOptional );
+
         // Store for later unload
         // Check for existence, because if called 2+ times DynLibManager returns existing entry
         if (std::find(mPluginLibs.begin(), mPluginLibs.end(), lib) == mPluginLibs.end())
         {
             mPluginLibs.push_back(lib);
 
-            // Call startup function
-                        #ifdef __GNUC__
-                        __extension__
-                        #endif
-            DLL_START_PLUGIN pFunc = (DLL_START_PLUGIN)lib->getSymbol("dllStartPlugin");
+            if( lib->isLoaded() )
+            {
+                // Call startup function
+#    ifdef __GNUC__
+                __extension__
+#    endif
+                    DLL_START_PLUGIN pFunc = (DLL_START_PLUGIN)lib->getSymbol( "dllStartPlugin" );
 
-            if (!pFunc)
-                OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, "Cannot find symbol dllStartPlugin in library " + pluginName,
-                    "Root::loadPlugin");
+                if( !pFunc )
+                {
+                    OGRE_EXCEPT( Exception::ERR_ITEM_NOT_FOUND,
+                                 "Cannot find symbol dllStartPlugin in library " + pluginName,
+                                 "Root::loadPlugin" );
+                }
 
-            // This must call installPlugin
-            pFunc();
+                try
+                {
+                    // This must call installPlugin
+                    pFunc();
+                }
+                catch( Exception &e )
+                {
+                    if( !bOptional )
+                    {
+                        throw;
+                    }
+                    else
+                    {
+                        LogManager::getSingleton().logMessage(
+                            "Optional Plugin " + pluginName + " failed with exception:", LML_CRITICAL );
+                        LogManager::getSingleton().logMessage( e.getFullDescription(), LML_CRITICAL );
+                    }
+                }
+            }
         }
 #endif
     }
     //-----------------------------------------------------------------------
     void Root::unloadPlugin(const String& pluginName)
     {
-#if OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+#if OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
         PluginLibList::iterator i;
 
         for (i = mPluginLibs.begin(); i != mPluginLibs.end(); ++i)
         {
             if ((*i)->getName() == pluginName)
             {
-                // Call plugin shutdown
-                                #ifdef __GNUC__
-                                __extension__
-                                #endif
-                DLL_STOP_PLUGIN pFunc = (DLL_STOP_PLUGIN)(*i)->getSymbol("dllStopPlugin");
-                // this must call uninstallPlugin
-                pFunc();
+                if( ( *i )->isLoaded() )
+                {
+                    // Call plugin shutdown
+#    ifdef __GNUC__
+                    __extension__
+#    endif
+                        DLL_STOP_PLUGIN pFunc = ( DLL_STOP_PLUGIN )( *i )->getSymbol( "dllStopPlugin" );
+                    // this must call uninstallPlugin
+                    pFunc();
+                }
                 // Unload library (destroyed by DynLibManager)
-                DynLibManager::getSingleton().unload(*i);
-                mPluginLibs.erase(i);
+                DynLibManager::getSingleton().unload( *i );
+                mPluginLibs.erase( i );
                 return;
             }
-
         }
 #endif
     }
     //-----------------------------------------------------------------------
-    Timer* Root::getTimer(void)
+    Timer* Root::getTimer()
     {
         return mTimer;
     }
     //-----------------------------------------------------------------------
-    void Root::oneTimePostWindowInit(void)
+    void Root::oneTimePostWindowInit()
     {
         if (!mFirstTimePostWindowInit)
         {
@@ -1547,7 +1583,7 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    bool Root::_updateAllRenderTargets(void)
+    bool Root::_updateAllRenderTargets()
     {
         // update all targets but don't swap buffers
         //mActiveRenderer->_updateAllRenderTargets(false);
@@ -1591,7 +1627,7 @@ namespace Ogre {
         return ret;
     }
     //-----------------------------------------------------------------------
-    void Root::_renderingFrameEnded( void )
+    void Root::_renderingFrameEnded()
     {
         if( !mFrameStarted )
             return;
@@ -1617,12 +1653,12 @@ namespace Ogre {
         mFrameStarted = false;
     }
     //-----------------------------------------------------------------------
-    void Root::_notifyRenderingFrameStarted( void )
+    void Root::_notifyRenderingFrameStarted()
     {
         mFrameStarted = true;
     }
     //-----------------------------------------------------------------------
-    void Root::clearEventTimes(void)
+    void Root::clearEventTimes()
     {
         // Clear event times
         for(int i=0; i<FETT_COUNT; ++i)
@@ -1679,7 +1715,7 @@ namespace Ogre {
     }
     //---------------------------------------------------------------------
     Root::MovableObjectFactoryIterator
-    Root::getMovableObjectFactoryIterator(void) const
+    Root::getMovableObjectFactoryIterator() const
     {
         return MovableObjectFactoryIterator(mMovableObjectFactoryMap.begin(),
             mMovableObjectFactoryMap.end());

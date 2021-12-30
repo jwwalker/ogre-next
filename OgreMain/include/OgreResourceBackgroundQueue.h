@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -164,12 +164,12 @@ namespace Ogre {
         /** Initialise the background queue system. 
         @note Called automatically by Root::initialise.
         */
-        virtual void initialise(void);
+        virtual void initialise();
 
         /** Shut down the background queue system. 
         @note Called automatically by Root::shutdown.
         */
-        virtual void shutdown(void);
+        virtual void shutdown();
 
         /** Initialise a resource group in the background.
         @see ResourceGroupManager::initialiseResourceGroup
@@ -308,13 +308,14 @@ namespace Ogre {
         void abortRequest( BackgroundProcessTicket ticket );
 
         /// Implementation for WorkQueue::RequestHandler
-        bool canHandleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ);
+        bool canHandleRequest( const WorkQueue::Request *req, const WorkQueue *srcQ ) override;
         /// Implementation for WorkQueue::RequestHandler
-        WorkQueue::Response* handleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ);
+        WorkQueue::Response *handleRequest( const WorkQueue::Request *req,
+                                            const WorkQueue *srcQ ) override;
         /// Implementation for WorkQueue::ResponseHandler
-        bool canHandleResponse(const WorkQueue::Response* res, const WorkQueue* srcQ);
+        bool canHandleResponse( const WorkQueue::Response *res, const WorkQueue *srcQ ) override;
         /// Implementation for WorkQueue::ResponseHandler
-        void handleResponse(const WorkQueue::Response* res, const WorkQueue* srcQ);
+        void handleResponse( const WorkQueue::Response *res, const WorkQueue *srcQ ) override;
 
         /** Override standard Singleton retrieval.
         @remarks
@@ -331,7 +332,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ResourceBackgroundQueue& getSingleton(void);
+        static ResourceBackgroundQueue& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -347,7 +348,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ResourceBackgroundQueue* getSingletonPtr(void);
+        static ResourceBackgroundQueue* getSingletonPtr();
 
     };
 

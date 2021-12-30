@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -92,7 +92,7 @@ namespace Ogre {
         void unload(const String& filename);
         typedef MapIterator<ArchiveMap> ArchiveMapIterator;
         /** Get an iterator over the Archives in this Manager. */
-        ArchiveMapIterator getArchiveIterator(void);
+        ArchiveMapIterator getArchiveIterator();
 
         /** Adds a new ArchiveFactory to the list of available factories.
             @remarks
@@ -116,7 +116,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ArchiveManager& getSingleton(void);
+        static ArchiveManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -132,7 +132,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ArchiveManager* getSingletonPtr(void);
+        static ArchiveManager* getSingletonPtr();
     };
     /** @} */
     /** @} */

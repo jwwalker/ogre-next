@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -221,7 +221,7 @@ namespace Ogre
         macroStr.swap( inOutString );
     }
     //-------------------------------------------------------------------------
-    VkPipelineLayout VulkanRootLayout::createVulkanHandles( void )
+    VkPipelineLayout VulkanRootLayout::createVulkanHandles()
     {
         if( mRootLayout )
             return mRootLayout;

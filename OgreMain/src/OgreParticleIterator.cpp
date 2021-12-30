@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -39,12 +39,12 @@ namespace Ogre {
         mEnd = last;
     }
     //-----------------------------------------------------------------------
-    bool ParticleIterator::end(void)
+    bool ParticleIterator::end()
     {
         return (mPos == mEnd);
     }
     //-----------------------------------------------------------------------
-    Particle* ParticleIterator::getNext(void)
+    Particle* ParticleIterator::getNext()
     {
         return static_cast<Particle*>(*mPos++);
     }

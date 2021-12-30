@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -90,7 +90,7 @@ namespace Ogre {
         return *this;
     }
 
-    const String& Exception::getFullDescription(void) const
+    const String& Exception::getFullDescription() const
     {
         if (fullDesc.empty())
         {
@@ -112,7 +112,7 @@ namespace Ogre {
         return fullDesc;
     }
 
-    int Exception::getNumber(void) const throw()
+    int Exception::getNumber() const throw()
     {
         return number;
     }

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -51,20 +51,20 @@ namespace Ogre
                           size_t alignment, ID3D11Buffer *dstBuffer, ID3D11Buffer *srcBuffer,
                           ID3D11DeviceContextN *context );
 
-        void notifyDeviceLost( D3D11Device *device );
-        void notifyDeviceRestored( D3D11Device *device, unsigned pass );
+        void notifyDeviceLost( D3D11Device *device ) override;
+        void notifyDeviceRestored( D3D11Device *device, unsigned pass ) override;
 
     public:
         D3D11BufferInterfaceBase( size_t vboPoolIdx, ID3D11Buffer *d3dBuffer );
-        virtual ~D3D11BufferInterfaceBase();
+        ~D3D11BufferInterfaceBase() override;
 
-        size_t getVboPoolIndex(void)                { return mVboPoolIdx; }
-        ID3D11Buffer* getVboName(void) const        { return mVboName.Get(); }
+        size_t getVboPoolIndex()                { return mVboPoolIdx; }
+        ID3D11Buffer* getVboName() const        { return mVboName.Get(); }
 
-        virtual void copyTo( BufferInterface *dstBuffer, size_t dstOffsetBytes,
-                             size_t srcOffsetBytes, size_t sizeBytes );
+        void copyTo( BufferInterface *dstBuffer, size_t dstOffsetBytes, size_t srcOffsetBytes,
+                     size_t sizeBytes ) override;
 
-        void _ensureDelayedImmutableBuffersAreReady(void);
+        void _ensureDelayedImmutableBuffersAreReady() override;
     };
 }
 

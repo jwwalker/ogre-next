@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -44,7 +44,7 @@ namespace Ogre{
         virtual ~APKZipArchiveFactory() {}
 
         /// @copydoc FactoryObj::getType
-        const String& getType(void) const;
+        const String& getType() const;
 
         /// @copydoc FactoryObj::createInstance
         Archive *createInstance( const String& name, bool readOnly )

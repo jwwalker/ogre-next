@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -93,7 +93,7 @@ namespace Ogre
         destroyDescriptorSetUav();
     }
     //-----------------------------------------------------------------------------------
-    uint32 CompositorPassUav::calculateNumberUavSlots(void) const
+    uint32 CompositorPassUav::calculateNumberUavSlots() const
     {
         uint32 retVal = 0;
 
@@ -124,7 +124,7 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    void CompositorPassUav::setupDescriptorSetUav(void)
+    void CompositorPassUav::setupDescriptorSetUav()
     {
         destroyDescriptorSetUav();
 

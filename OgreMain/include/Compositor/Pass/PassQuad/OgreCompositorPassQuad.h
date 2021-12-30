@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -96,20 +96,20 @@ namespace Ogre
         Real        mHorizonalTexelOffset;
         Real        mVerticalTexelOffset;
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         CompositorPassQuad( const CompositorPassQuadDef *definition, Camera *defaultCamera,
                             CompositorNode *parentNode, const RenderTargetViewDef *rtv,
                             Real horizonalTexelOffset, Real verticalTexelOffset );
-        virtual ~CompositorPassQuad();
+        ~CompositorPassQuad() override;
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
 
         /// Don't make this const (useful for compile-time multithreading errors)
         /// Pointer can be null if using HLMS
-        Pass* getPass(void)                                     { return mPass; }
-        Camera* getCamera(void)                                 { return mCamera; }
+        Pass* getPass()                                     { return mPass; }
+        Camera* getCamera()                                 { return mCamera; }
     };
 
     /** @} */

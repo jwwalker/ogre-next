@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -35,12 +35,12 @@ namespace Ogre
 {
     //-----------------------------------------------------------------------
     template<> DynLibManager* Singleton<DynLibManager>::msSingleton = 0;
-    DynLibManager* DynLibManager::getSingletonPtr(void)
+    DynLibManager* DynLibManager::getSingletonPtr()
     {
         return msSingleton;
     }
     //-----------------------------------------------------------------------
-    DynLibManager& DynLibManager::getSingleton(void)
+    DynLibManager& DynLibManager::getSingleton()
     {  
         assert( msSingleton );  return ( *msSingleton );  
     }
@@ -49,17 +49,17 @@ namespace Ogre
     {
     }
     //-----------------------------------------------------------------------
-    DynLib* DynLibManager::load( const String& filename)
+    DynLib *DynLibManager::load( const String &filename, const bool bOptional )
     {
-        DynLibList::iterator i = mLibList.find(filename);
-        if (i != mLibList.end())
+        DynLibList::iterator i = mLibList.find( filename );
+        if( i != mLibList.end() )
         {
             return i->second;
         }
         else
         {
-            DynLib* pLib = OGRE_NEW DynLib(filename);
-            pLib->load();        
+            DynLib *pLib = OGRE_NEW DynLib( filename );
+            pLib->load( bOptional );
             mLibList[filename] = pLib;
             return pLib;
         }

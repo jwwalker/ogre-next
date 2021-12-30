@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -1083,7 +1083,7 @@ namespace Ogre
     ShadowNodeHelper::Resolution::Resolution( uint32 _x, uint32 _y ) :
         x( _x ), y( _y ) {}
     //-----------------------------------------------------------------------------------
-    uint64 ShadowNodeHelper::Resolution::asUint64(void) const
+    uint64 ShadowNodeHelper::Resolution::asUint64() const
     {
         return ((uint64)x << (uint64)32ul) | ((uint64)y);
     }

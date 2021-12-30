@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -49,7 +49,7 @@ typedef struct HINSTANCE__* hInstance;
 struct HINSTANCE__;
 typedef struct HINSTANCE__* hInstance;
 
-#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
+#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
 #    define DYNLIB_HANDLE void*
 #    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY | RTLD_LOCAL)
 #    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
@@ -86,7 +86,7 @@ namespace Ogre {
     protected:
         String mName;
         /// Gets the last loading error
-        String dynlibError(void);
+        String dynlibError();
     public:
         /** Default constructor - used by DynLibManager.
             @warning
@@ -99,13 +99,17 @@ namespace Ogre {
         ~DynLib();
 
         /** Load the library
+        @param bOptional When true, we will skip it if it fails to initialize
         */
-        void load();
+        void load( const bool bOptional );
         /** Unload the library
         */
         void unload();
         /// Get the name of the library
-        const String& getName(void) const { return mName; }
+        const String& getName() const { return mName; }
+
+        /// Returns true if it's successfully loaded
+        bool isLoaded() const;
 
         /**
             Returns the address of the given symbol from the loaded library.

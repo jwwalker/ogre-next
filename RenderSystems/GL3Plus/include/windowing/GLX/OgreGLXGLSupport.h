@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -35,7 +35,7 @@
 
 namespace Ogre {
 
-    class _OgrePrivate GLXGLSupport : public GL3PlusSupport
+    class _OgrePrivate GLXGLSupport final : public GL3PlusSupport
     {
     public:
         GLXGLSupport();
@@ -46,33 +46,33 @@ namespace Ogre {
         Atom mAtomState;
 
         /** @copydoc see GL3PlusSupport::addConfig */
-        void addConfig(void);
+        void addConfig() override;
 
         /** @copydoc see GL3PlusSupport::validateConfig */
-        String validateConfig(void);
+        String validateConfig() override;
 
         /** @copydoc see GL3PlusSupport::setConfigOption */
-        void setConfigOption(const String &name, const String &value);
+        void setConfigOption(const String &name, const String &value) override;
 
         /// @copydoc GL3PlusSupport::createWindow
         Window* createWindow( bool autoCreateWindow, GL3PlusRenderSystem* renderSystem,
-                              const String& windowTitle );
+                              const String& windowTitle ) override;
 
         /// @copydoc RenderSystem::createRenderWindow
         Window* newWindow( const String &name, uint32 width, uint32 height,
-                           bool fullScreen, const NameValuePairList *miscParams = 0 );
+                           bool fullScreen, const NameValuePairList *miscParams = 0 ) override;
 
         /** @copydoc see GL3PlusSupport::start */
-        void start();
+        void start() override;
 
         /** @copydoc see GL3PlusSupport::stop */
-        void stop();
+        void stop() override;
 
         /** @copydoc see GL3PlusSupport::initialiseExtensions */
-        void initialiseExtensions();
+        void initialiseExtensions() override;
 
         /** @copydoc see GL3PlusSupport::getProcAddress */
-        void* getProcAddress(const char* procname) const;
+        void* getProcAddress(const char* procname) const override;
 
         // The remaining functions are internal to the GLX Rendersystem:
 
@@ -89,7 +89,7 @@ namespace Ogre {
          *
          * @returns              Display name.
          */
-        String getDisplayName (void);
+        String getDisplayName ();
 
         /**
          * Get the Display connection used for rendering
@@ -98,14 +98,14 @@ namespace Ogre {
          *
          * @returns              Display connection
          */
-        Display* getGLDisplay(void);
+        Display* getGLDisplay();
 
         /**
          * Get the Display connection used for window management & events
          *
          * @returns              Display connection
          */
-        Display* getXDisplay(void);
+        Display* getXDisplay();
 
         /**
          * Switch video modes
@@ -119,7 +119,7 @@ namespace Ogre {
         /**
          * Switch back to original video mode
          */
-        void switchMode (void);
+        void switchMode ();
 
         /**
          * Loads an icon from an Ogre resource into the X Server. This currently only
@@ -199,7 +199,7 @@ namespace Ogre {
         /**
          * Refresh config options to reflect dependencies
          */
-        void refreshConfig(void);
+        void refreshConfig();
 
         Display* mGLDisplay; // used for GL/GLX commands
         Display* mXDisplay;  // used for other X commands and events

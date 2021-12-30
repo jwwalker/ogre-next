@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -107,12 +107,12 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    const Radian& RotationAffector::getRotationSpeedRangeStart(void) const
+    const Radian& RotationAffector::getRotationSpeedRangeStart() const
     {
         return mRotationSpeedRangeStart;
     }
     //-----------------------------------------------------------------------
-    const Radian& RotationAffector::getRotationSpeedRangeEnd(void) const
+    const Radian& RotationAffector::getRotationSpeedRangeEnd() const
     {
         return mRotationSpeedRangeEnd;
     }
@@ -127,12 +127,12 @@ namespace Ogre {
         mRotationSpeedRangeEnd = val;
     }
     //-----------------------------------------------------------------------
-    const Radian& RotationAffector::getRotationRangeStart(void) const
+    const Radian& RotationAffector::getRotationRangeStart() const
     {
         return mRotationRangeStart;
     }
     //-----------------------------------------------------------------------
-    const Radian& RotationAffector::getRotationRangeEnd(void) const
+    const Radian& RotationAffector::getRotationRangeEnd() const
     {
         return mRotationRangeEnd;
     }

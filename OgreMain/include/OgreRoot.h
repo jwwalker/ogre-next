@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -185,7 +185,7 @@ namespace Ogre
         void unloadPlugins();
 
         /// Internal method for one-time tasks after first window creation
-        void oneTimePostWindowInit(void);
+        void oneTimePostWindowInit();
 
         /** Set of registered frame listeners */
         set<FrameListener*>::type mFrameListeners;
@@ -241,7 +241,7 @@ namespace Ogre
                 Stores details of the current configuration so it may be
                 restored later on.
         */
-        void saveConfig(void);
+        void saveConfig();
 
         /** Checks for saved video/sound/etc settings
             @remarks
@@ -255,7 +255,7 @@ namespace Ogre
                 If there is no saved configuration, or if the system failed
                 with the last config settings, <b>false</b> is returned.
         */
-        bool restoreConfig(void);
+        bool restoreConfig();
 
         /** Displays a dialog asking the user to choose system settings.
             @param aCustomDialog If left null ogre will use the default config
@@ -296,7 +296,7 @@ namespace Ogre
                 list of RenderSystem subclasses. Can be used to build a
                 custom settings dialog.
         */
-        const RenderSystemList& getAvailableRenderers(void);
+        const RenderSystemList& getAvailableRenderers();
 
         /** Retrieve a pointer to the render system by the given name
             @param
@@ -327,12 +327,12 @@ namespace Ogre
 
         /** Retrieve a pointer to the currently selected render system.
         */
-        RenderSystem* getRenderSystem(void);
+        RenderSystem* getRenderSystem();
 
-        const String &getAppName( void ) const { return mAppName; }
+        const String &getAppName() const { return mAppName; }
 
         /// Gets the HlmsManager, which is needed to register generators at startup.
-        HlmsManager* getHlmsManager(void) const                     { return mHlmsManager; }
+        HlmsManager* getHlmsManager() const                     { return mHlmsManager; }
 
         CompositorManager2* getCompositorManager2() const           { return mCompositorManager2; }
 
@@ -355,7 +355,7 @@ namespace Ogre
                             const String& customCapabilitiesConfig = BLANKSTRING );
 
 		/** Returns whether the system is initialised or not. */
-		bool isInitialised(void) const { return mIsInitialised; }
+		bool isInitialised() const { return mIsInitialised; }
 
         /** Requests active RenderSystem to use custom RenderSystemCapabilities
         @remarks
@@ -399,7 +399,7 @@ namespace Ogre
         /** Iterate over all types of SceneManager available for construction, 
             providing some information about each one.
         */
-        SceneManagerEnumerator::MetaDataIterator getSceneManagerMetaDataIterator(void) const;
+        SceneManagerEnumerator::MetaDataIterator getSceneManagerMetaDataIterator() const;
 
         /** Create a SceneManager instance of a given type.
         @remarks
@@ -461,14 +461,14 @@ namespace Ogre
         */
         bool hasSceneManager(const String& instanceName) const;
         /** Get an iterator over all the existing SceneManager instances. */
-        SceneManagerEnumerator::SceneManagerIterator getSceneManagerIterator(void);
+        SceneManagerEnumerator::SceneManagerIterator getSceneManagerIterator();
 
         /** Retrieves a reference to the current MeshManager.
             @remarks
                 This performs the same function as MeshManager::getSingleton
                 and is provided for convenience to scripting engines.
         */
-        v1::MeshManager* getMeshManagerV1(void);
+        v1::MeshManager* getMeshManagerV1();
 
         /** Utility function for getting a better description of an error
             code.
@@ -515,9 +515,9 @@ namespace Ogre
             @see
                 Root, Root::queueEndRendering, Root::startRendering
         */
-        bool endRenderingQueued(void);
+        bool endRenderingQueued();
 
-        const FrameStats* getFrameStats(void) const             { return mFrameStats; }
+        const FrameStats* getFrameStats() const             { return mFrameStats; }
 
         /** Starts / restarts the automatic rendering cycle.
             @remarks
@@ -546,14 +546,14 @@ namespace Ogre
                 This method can only be called after Root::initialise has
                 been called.
         */
-        void startRendering(void);
+        void startRendering();
 
         /** Render one frame. 
         @remarks
             Updates all the render targets automatically and then returns,
             raising frame events before and after.
         */
-        bool renderOneFrame(void);
+        bool renderOneFrame();
 
         /** Render one frame, with custom frame time information. 
         @remarks
@@ -570,7 +570,7 @@ namespace Ogre
                 convenience, especially for dealing with unexpected errors or
                 for systems which need to shut down Ogre on demand.
         */
-        void shutdown(void);
+        void shutdown();
 
         /** Adds a location to the list of searchable locations for a
             Resource type.
@@ -690,7 +690,7 @@ namespace Ogre
                 returns a null pointer when Root has not been initialised with
                 the option of creating a window.
         */
-        Window* getAutoCreatedWindow(void);
+        Window* getAutoCreatedWindow();
 
         /** @copydoc RenderSystem::_createRenderWindow
         */
@@ -711,8 +711,9 @@ namespace Ogre
             method which instantiates a Plugin subclass and calls Root::installPlugin.
             It should also implement dllStopPlugin (see Root::unloadPlugin)
         @param pluginName Name of the plugin library to load
+        @param bOptional When true, we will skip it if it fails to initialize
         */
-        void loadPlugin(const String& pluginName);
+        void loadPlugin(const String& pluginName, const bool bOptional);
 
         /** Manually unloads a Plugin contained in a DLL / DSO.
          @remarks
@@ -751,7 +752,7 @@ namespace Ogre
         const PluginInstanceList& getInstalledPlugins() const { return mPlugins; }
 
         /** Gets a pointer to the central timer used for all OGRE timings */
-        Timer* getTimer(void);
+        Timer* getTimer();
 
         /** Method for raising frame started events. 
         @remarks
@@ -854,14 +855,14 @@ namespace Ogre
             the current frame have been queued, thus reflecting that if you 
             start performing changes then, you will actually see them in the 
             next frame. */
-        unsigned long getNextFrameNumber(void) const { return mNextFrame; }
+        unsigned long getNextFrameNumber() const { return mNextFrame; }
 
         /** Returns the scene manager currently being used to render a frame.
         @remarks
             This is only intended for internal use; it is only valid during the
             rendering of a frame.
         */
-        SceneManager* _getCurrentSceneManager(void) const;
+        SceneManager* _getCurrentSceneManager() const;
         /** Pushes the scene manager currently being used to render.
         @remarks
             This is only intended for internal use.
@@ -883,7 +884,7 @@ namespace Ogre
             individual RenderTarget instances using their own update() method.
         @return false if a FrameListener indicated it wishes to exit the render loop
         */
-        bool _updateAllRenderTargets(void);
+        bool _updateAllRenderTargets();
 
         /** Internal method used for updating all RenderTarget objects (windows, 
             renderable textures etc) which are set to auto-update, with a custom time
@@ -898,8 +899,8 @@ namespace Ogre
         */
         bool _updateAllRenderTargets(FrameEvent& evt);
 
-        void _renderingFrameEnded( void );
-        void _notifyRenderingFrameStarted( void );
+        void _renderingFrameEnded();
+        void _notifyRenderingFrameStarted();
 
         /** Override standard Singleton retrieval.
             @remarks
@@ -916,7 +917,7 @@ namespace Ogre
                 but the implementation stays in this single compilation unit,
                 preventing link errors.
         */
-        static Root& getSingleton(void);
+        static Root& getSingleton();
         /** Override standard Singleton retrieval.
             @remarks
                 Why do we do this? Well, it's because the Singleton
@@ -932,7 +933,7 @@ namespace Ogre
                 but the implementation stays in this single compilation unit,
                 preventing link errors.
         */
-        static Root* getSingletonPtr(void);
+        static Root* getSingletonPtr();
 
         /** Clears the history of all event times. 
         @remarks
@@ -942,7 +943,7 @@ namespace Ogre
             if you're resuming rendering after a break, call this method to reset
             the stored times
         */
-        void clearEventTimes(void);
+        void clearEventTimes();
 
         /** Sets the period over which OGRE smooths out fluctuations in frame times.
         @remarks
@@ -958,7 +959,7 @@ namespace Ogre
         */
         void setFrameSmoothingPeriod(Real period) { mFrameSmoothingTime = period; }
         /** Gets the period over which OGRE smooths out fluctuations in frame times. */
-        Real getFrameSmoothingPeriod(void) const { return mFrameSmoothingTime; }
+        Real getFrameSmoothingPeriod() const { return mFrameSmoothingTime; }
 
         /** Register a new MovableObjectFactory which will create new MovableObject
             instances of a particular type, as identified by the getType() method.
@@ -991,7 +992,7 @@ namespace Ogre
         /** Return an iterator over all the MovableObjectFactory instances currently
             registered.
         */
-        MovableObjectFactoryIterator getMovableObjectFactoryIterator(void) const;
+        MovableObjectFactoryIterator getMovableObjectFactoryIterator() const;
 
         /**
         * Gets the number of display monitors.
@@ -1051,7 +1052,7 @@ namespace Ogre
         Real getDefaultMinPixelSize() { return mDefaultMinPixelSize; }
 
         void _setLightProfilesInvHeight( float invHeight ) { mLightProfilesInvHeight = invHeight; }
-        float getLightProfilesInvHeight( void ) const { return mLightProfilesInvHeight; }
+        float getLightProfilesInvHeight() const { return mLightProfilesInvHeight; }
     };
     /** @} */
     /** @} */

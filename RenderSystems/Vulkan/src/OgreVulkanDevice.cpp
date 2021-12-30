@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -336,7 +336,7 @@ namespace Ogre
         return itor != mDeviceExtensions.end() && *itor == extension;
     }
     //-------------------------------------------------------------------------
-    void VulkanDevice::initQueues( void )
+    void VulkanDevice::initQueues()
     {
         VkQueue queue = 0;
         vkGetDeviceQueue( mDevice, mGraphicsQueue.mFamilyIdx, mGraphicsQueue.mQueueIdx, &queue );
@@ -372,7 +372,7 @@ namespace Ogre
         mGraphicsQueue.commitAndNextCommandBuffer( submissionType );
     }
     //-------------------------------------------------------------------------
-    void VulkanDevice::stall( void )
+    void VulkanDevice::stall()
     {
         // We must flush the cmd buffer and our bindings because we take the
         // moment to delete all delayed buffers and API handles after a stall.

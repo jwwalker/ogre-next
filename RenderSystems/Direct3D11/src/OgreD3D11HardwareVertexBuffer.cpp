@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -60,7 +60,7 @@ namespace v1 {
         return mBufferImpl->lock(offset, length, options);
     }
     //---------------------------------------------------------------------
-    void D3D11HardwareVertexBuffer::unlock(void)
+    void D3D11HardwareVertexBuffer::unlock()
     {
         mBufferImpl->unlock();
     }
@@ -94,13 +94,13 @@ namespace v1 {
 		}
 	}
 	//---------------------------------------------------------------------
-	bool D3D11HardwareVertexBuffer::isLocked(void) const
+	bool D3D11HardwareVertexBuffer::isLocked() const
 	{
 		return mBufferImpl->isLocked();
 	}
 	//---------------------------------------------------------------------
     //---------------------------------------------------------------------
-    ID3D11Buffer * D3D11HardwareVertexBuffer::getD3DVertexBuffer( void ) const
+    ID3D11Buffer * D3D11HardwareVertexBuffer::getD3DVertexBuffer() const
     {
         return mBufferImpl->getD3DBuffer();
     }

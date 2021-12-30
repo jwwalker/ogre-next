@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -51,14 +51,14 @@ namespace Ogre
             the creation of resources (in this case mesh data),
             working within a fixed memory budget.
     */
-    class _OgreExport MeshManager: public ResourceManager, public Singleton<MeshManager>, 
+    class _OgreExport MeshManager final : public ResourceManager, public Singleton<MeshManager>,
         public ManualResourceLoader
     {
     protected:
         /// @copydoc ResourceManager::createImpl
         Resource* createImpl(const String& name, ResourceHandle handle,
             const String& group, bool isManual, ManualResourceLoader* loader,
-            const NameValuePairList* createParams);
+            const NameValuePairList* createParams) override;
 
         VaoManager *mVaoManager;
 
@@ -70,10 +70,10 @@ namespace Ogre
 
     public:
         MeshManager();
-        ~MeshManager();
+        ~MeshManager() override;
 
         /** Initialises the manager, only to be called by OGRE internally. */
-        void _initialise(void);
+        void _initialise();
         void _setVaoManager( VaoManager *vaoManager );
 
         /// Get a resource by name
@@ -238,7 +238,7 @@ namespace Ogre
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MeshManager& getSingleton(void);
+        static MeshManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -254,12 +254,12 @@ namespace Ogre
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MeshManager* getSingletonPtr(void);
+        static MeshManager* getSingletonPtr();
 
         /** Gets the factor by which the bounding box of an entity is padded.
             Default is 0.01
         */
-        Real getBoundsPaddingFactor(void);
+        Real getBoundsPaddingFactor();
     
         /** Sets the factor by which the bounding box of an entity is padded
         */
@@ -274,7 +274,7 @@ namespace Ogre
         //MeshSerializerListener *getListener();
 
         /** @see ManualResourceLoader::loadResource */
-        void loadResource(Resource* res);
+        void loadResource(Resource* res) override;
 
     protected:
         /** Saved parameters used to (re)build a manual mesh built by this class */

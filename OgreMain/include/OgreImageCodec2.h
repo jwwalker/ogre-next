@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -77,14 +77,14 @@ namespace Ogre {
             bool                        freeOnDestruction;
 
         public:
-            virtual String dataType() const
+            String dataType() const override
             {
                 return "ImageData2";
             }
         };
 
     public:
-        virtual String getDataType() const
+        String getDataType() const override
         {
             return "ImageCodec2";
         }

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -105,15 +105,18 @@ namespace Ogre
         virtual void calculateHashForPreCreate( Renderable *renderable, PiecesMap *inOutPieces );
         virtual void calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces );
 
-        virtual void notifyPropertiesMergedPreGenerationStep( void );
+        virtual void notifyPropertiesMergedPreGenerationStep();
 
-        virtual void destroyAllBuffers(void);
+        virtual void destroyAllBuffers();
 
         FORCEINLINE uint32 fillBuffersFor( const HlmsCache *cache,
                                            const QueuedRenderable &queuedRenderable,
                                            bool casterPass, uint32 lastCacheHash,
                                            CommandBuffer *commandBuffer, bool isV1 );
 
+        HlmsUnlit( Archive *dataFolder, ArchiveVec *libraryFolders, size_t constBufferSize );
+        HlmsUnlit( Archive *dataFolder, ArchiveVec *libraryFolders,
+                   HlmsTypes type, const String &typeName, size_t constBufferSize );
     public:
         HlmsUnlit( Archive *dataFolder, ArchiveVec *libraryFolders );
         HlmsUnlit( Archive *dataFolder, ArchiveVec *libraryFolders,
@@ -143,14 +146,14 @@ namespace Ogre
                                          bool casterPass, uint32 lastCacheHash,
                                          CommandBuffer *commandBuffer );
 
-        virtual void frameEnded(void);
+        virtual void frameEnded();
 
         void setShadowSettings( bool useExponentialShadowMaps );
-        bool getShadowFilter(void) const                    { return mUsingExponentialShadowMaps; }
+        bool getShadowFilter() const                    { return mUsingExponentialShadowMaps; }
 
         /// @copydoc HlmsPbs::setEsmK
         void setEsmK( uint16 K );
-        uint16 getEsmK(void) const                          { return mEsmK; }
+        uint16 getEsmK() const                          { return mEsmK; }
 
         /// @copydoc HlmsPbs::getDefaultPaths
         static void getDefaultPaths( String& outDataFolderPath, StringVector& outLibraryFoldersPaths );

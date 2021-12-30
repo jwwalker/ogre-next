@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -599,7 +599,7 @@ namespace Ogre
             mDepthBuffer->_transitionTo( GpuResidency::Resident, (uint8*)0 );
     }
     //-----------------------------------------------------------------------------------
-    void GLXWindow::destroy(void)
+    void GLXWindow::destroy()
     {
         if( mClosed )
             return;

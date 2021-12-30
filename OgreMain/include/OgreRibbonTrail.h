@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -95,7 +95,7 @@ namespace v1 {
         /** Remove tracking on a given node. */
         virtual void removeNode(Node* n);
         /** Get an iterator over the nodes which are being tracked. */
-        virtual NodeIterator getNodeIterator(void) const;
+        virtual NodeIterator getNodeIterator() const;
         /** Get the chain index for a given Node being tracked. */
         virtual size_t getChainIndexForNode(const Node* n);
 
@@ -107,14 +107,14 @@ namespace v1 {
         */
         virtual void setTrailLength(Real len);
         /** Get the length of the trail. */
-        virtual Real getTrailLength(void) const { return mTrailLength; }
+        virtual Real getTrailLength() const { return mTrailLength; }
 
         /** @copydoc BillboardChain::setMaxChainElements */
-        void setMaxChainElements(size_t maxElements);
+        void setMaxChainElements(size_t maxElements) override;
         /** @copydoc BillboardChain::setNumberOfChains */
-        void setNumberOfChains(size_t numChains);
+        void setNumberOfChains(size_t numChains) override;
         /** @copydoc BillboardChain::clearChain */
-        void clearChain(size_t chainIndex);
+        void clearChain(size_t chainIndex) override;
 
         /** Set the starting ribbon colour for a given segment. 
         @param chainIndex The index of the chain
@@ -165,15 +165,15 @@ namespace v1 {
         virtual const ColourValue& getColourChange(size_t chainIndex) const;
 
         /// @see Node::Listener::nodeUpdated
-        void nodeUpdated(const Node* node);
+        void nodeUpdated(const Node* node) override;
         /// @see Node::Listener::nodeDestroyed
-        void nodeDestroyed(const Node* node);
+        void nodeDestroyed(const Node* node) override;
 
         /// Perform any fading / width delta required; internal method
         virtual void _timeUpdate(Real time);
 
         /** Overridden from MovableObject */
-        const String& getMovableType(void) const;
+        const String& getMovableType() const override;
 
     protected:
         /// List of nodes being trailed
@@ -212,37 +212,35 @@ namespace v1 {
         ControllerValueRealPtr mTimeControllerValue;
 
         /// Manage updates to the time controller
-        virtual void manageController(void);
+        virtual void manageController();
         /// Node has changed position, update
         virtual void updateTrail(size_t index, const Node* node);
         /// Reset the tracked chain to initial state
         virtual void resetTrail(size_t index, Node* node);
         /// Reset all tracked chains to initial state
-        virtual void resetAllTrails(void);
+        virtual void resetAllTrails();
 
     };
 
-
     /** Factory object for creating RibbonTrail instances */
-    class _OgreExport RibbonTrailFactory : public MovableObjectFactory
+    class _OgreExport RibbonTrailFactory final : public MovableObjectFactory
     {
     protected:
-        virtual MovableObject* createInstanceImpl( IdType id, ObjectMemoryManager *objectMemoryManager,
-                                                   SceneManager *manager,
-                                                   const NameValuePairList* params = 0 );
+        MovableObject *createInstanceImpl( IdType id, ObjectMemoryManager *objectMemoryManager,
+                                           SceneManager *manager,
+                                           const NameValuePairList *params = 0 ) override;
+
     public:
         RibbonTrailFactory() {}
-        ~RibbonTrailFactory() {}
+        ~RibbonTrailFactory() override {}
 
         static String FACTORY_TYPE_NAME;
 
-        const String& getType(void) const;
-        void destroyInstance( MovableObject* obj);  
-
+        const String &getType() const override;
+        void destroyInstance( MovableObject *obj ) override;
     };
     /** @} */
     /** @} */
-
 }
 }
 

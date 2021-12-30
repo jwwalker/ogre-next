@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -50,7 +50,7 @@ namespace Ogre {
     * Updated on 12/7/2004 by Chris McGuirk
     * Updated on 4/8/2005 by Tuan Kuranes email: tuan.kuranes@free.fr
     */
-    class _OgreD3D11Export D3D11HardwareOcclusionQuery : public HardwareOcclusionQuery
+    class _OgreD3D11Export D3D11HardwareOcclusionQuery final : public HardwareOcclusionQuery
     {
         //----------------------------------------------------------------------
         // Public methods
@@ -66,17 +66,17 @@ namespace Ogre {
         /**
         * Object destructor
         */
-        ~D3D11HardwareOcclusionQuery();
+        ~D3D11HardwareOcclusionQuery() override;
 
         //------------------------------------------------------------------
         // Occlusion query functions (see base class documentation for this)
         //--
 
-        void beginOcclusionQuery(); 
-        void endOcclusionQuery();
-        bool pullOcclusionQuery( unsigned int* NumOfFragments);
+        void beginOcclusionQuery() override;
+        void endOcclusionQuery() override;
+        bool pullOcclusionQuery( unsigned int* NumOfFragments) override;
         unsigned int getLastQuerysPixelcount() { return mPixelCount; }
-        bool isStillOutstanding(void);
+        bool isStillOutstanding() override;
 
     
 

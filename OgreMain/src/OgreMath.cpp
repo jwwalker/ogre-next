@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -86,7 +86,7 @@ namespace Ogre
     }
 
     //-----------------------------------------------------------------------
-    void Math::buildTrigTables(void)
+    void Math::buildTrigTables()
     {
         // Build trig lookup tables
         // Could get away with building only PI sized Sin table but simpler this 
@@ -202,7 +202,7 @@ namespace Ogre
        msAngleUnit = unit;
    }
    //-----------------------------------------------------------------------
-   Math::AngleUnit Math::getAngleUnit(void)
+   Math::AngleUnit Math::getAngleUnit()
    {
        return msAngleUnit;
    }

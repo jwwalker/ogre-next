@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -37,13 +37,6 @@ THE SOFTWARE.
 #include <iosfwd>
 
 #include "OgreHeaderPrefix.h"
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL
-namespace pp
-{
-    class Instance;
-}
-#endif
 
 namespace Ogre {
 
@@ -225,13 +218,6 @@ namespace Ogre {
                 return *this;
             }
         };
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL
-    protected:
-        static pp::Instance* mInstance;
-    public:
-        static void setInstance(pp::Instance* instance) {mInstance = instance;};
-#endif
-
     };
     /** @} */
     /** @} */

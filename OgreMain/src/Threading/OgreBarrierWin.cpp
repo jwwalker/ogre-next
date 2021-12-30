@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -59,7 +59,7 @@ namespace Ogre
             CloseHandle( mSemaphores[i] );
     }
     //-----------------------------------------------------------------------------------
-    void Barrier::sync(void)
+    void Barrier::sync()
     {
         //We need to be absolutely certain we read mIndex before incrementing mLockCount
         volatile size_t idx = mIndex;

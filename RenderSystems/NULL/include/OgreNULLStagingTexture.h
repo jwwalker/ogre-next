@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -43,7 +43,7 @@ namespace Ogre
         void    *mLastMappedPtr;
 
         virtual bool belongsToUs( const TextureBox &box );
-        virtual void* RESTRICT_ALIAS_RETURN mapRegionImplRawPtr(void);
+        virtual void* RESTRICT_ALIAS_RETURN mapRegionImplRawPtr();
 
     public:
         NULLStagingTexture( VaoManager *vaoManager, PixelFormatGpu formatFamily, size_t size );

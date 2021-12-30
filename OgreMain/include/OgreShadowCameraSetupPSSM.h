@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -130,12 +130,12 @@ namespace Ogre
         ///
         /// The default is numStableSplits = 0 which disables the feature
         void setNumStableSplits( uint32 numStableSplits ) { mNumStableSplits = numStableSplits; }
-        uint32 getNumStableSplits( void ) const { return mNumStableSplits; }
+        uint32 getNumStableSplits() const { return mNumStableSplits; }
 
         /// Returns a LiSPSM shadow camera with PSSM splits base on iteration.
-        virtual void getShadowCamera( const Ogre::SceneManager *sm, const Ogre::Camera *cam,
-                                      const Ogre::Light *light, Ogre::Camera *texCam, size_t iteration,
-                                      const Vector2 &viewportRealSize ) const;
+        void getShadowCamera( const Ogre::SceneManager *sm, const Ogre::Camera *cam,
+                              const Ogre::Light *light, Ogre::Camera *texCam, size_t iteration,
+                              const Vector2 &viewportRealSize ) const override;
 
         /// Returns the calculated split points.
         inline const SplitPointList& getSplitPoints() const

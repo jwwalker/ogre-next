@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -38,15 +38,15 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-    class _OgreGL3PlusExport GL3PlusStagingTexture : public StagingTextureBufferImpl
+    class _OgreGL3PlusExport GL3PlusStagingTexture final : public StagingTextureBufferImpl
     {
         GL3PlusDynamicBuffer    *mDynamicBuffer;
         size_t                  mUnmapTicket;
         void                    *mMappedPtr;
         void                    *mLastMappedPtr;
 
-        virtual bool belongsToUs( const TextureBox &box );
-        virtual void* RESTRICT_ALIAS_RETURN mapRegionImplRawPtr(void);
+        bool belongsToUs( const TextureBox &box ) override;
+        void* RESTRICT_ALIAS_RETURN mapRegionImplRawPtr() override;
 
         void uploadCubemap( const TextureBox &srcBox, PixelFormatGpu pixelFormat,
                             uint8 mipLevel, GLenum format, GLenum type,
@@ -57,19 +57,19 @@ namespace Ogre
         GL3PlusStagingTexture( VaoManager *vaoManager, PixelFormatGpu formatFamily,
                                size_t size, size_t internalBufferStart, size_t vboPoolIdx,
                                GL3PlusDynamicBuffer *dynamicBuffer );
-        virtual ~GL3PlusStagingTexture();
+        ~GL3PlusStagingTexture() override;
 
-        void _unmapBuffer(void);
+        void _unmapBuffer();
 
-        virtual void startMapRegion(void);
-        virtual void stopMapRegion(void);
+        void startMapRegion() override;
+        void stopMapRegion() override;
 
-        virtual void upload( const TextureBox &srcBox, TextureGpu *dstTexture,
-                             uint8 mipLevel, const TextureBox *cpuSrcBox=0,
-                             const TextureBox *dstBox=0, bool skipSysRamCopy=false );
+        void upload( const TextureBox &srcBox, TextureGpu *dstTexture, uint8 mipLevel,
+                     const TextureBox *cpuSrcBox = 0, const TextureBox *dstBox = 0,
+                     bool skipSysRamCopy = false ) override;
 
-        GL3PlusDynamicBuffer* _getDynamicBuffer(void)           { return mDynamicBuffer; }
-        void _resetDynamicBuffer(void)                          { mDynamicBuffer = 0; }
+        GL3PlusDynamicBuffer* _getDynamicBuffer()           { return mDynamicBuffer; }
+        void _resetDynamicBuffer()                          { mDynamicBuffer = 0; }
     };
 }
 

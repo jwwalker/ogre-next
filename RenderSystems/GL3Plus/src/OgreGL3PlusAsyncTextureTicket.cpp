@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -341,14 +341,14 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusAsyncTextureTicket::unmapImpl(void)
+    void GL3PlusAsyncTextureTicket::unmapImpl()
     {
         GLuint vboName = mTmpVboName ? mTmpVboName : mVboName;
         OCGE( glBindBuffer( GL_PIXEL_PACK_BUFFER, vboName ) );
         OCGE( glUnmapBuffer( GL_PIXEL_PACK_BUFFER ) );
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusAsyncTextureTicket::waitForDownloadToFinish(void)
+    void GL3PlusAsyncTextureTicket::waitForDownloadToFinish()
     {
         if( mStatus != Downloading )
             return; //We're done.
@@ -366,7 +366,7 @@ namespace Ogre
         mStatus = Ready;
     }
     //-----------------------------------------------------------------------------------
-    bool GL3PlusAsyncTextureTicket::queryIsTransferDone(void)
+    bool GL3PlusAsyncTextureTicket::queryIsTransferDone()
     {
         if( !AsyncTextureTicket::queryIsTransferDone() )
         {

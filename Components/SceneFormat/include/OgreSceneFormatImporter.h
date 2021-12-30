@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -80,8 +80,8 @@ namespace Ogre
         SceneNode *mRootNodes[NUM_SCENE_MEMORY_MANAGER_TYPES];
         SceneNode *mParentlessRootNodes[NUM_SCENE_MEMORY_MANAGER_TYPES];
 
-        void destroyInstantRadiosity(void);
-        void destroyParallaxCorrectedCubemap(void);
+        void destroyInstantRadiosity();
+        void destroyParallaxCorrectedCubemap();
 
         static inline Light::LightTypes parseLightType( const char *value );
         inline bool isFloat( const rapidjson::Value &jsonValue ) const;

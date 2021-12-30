@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -52,7 +52,7 @@ namespace Ogre
                          const NameValuePairList *miscParams,
                          D3D11Device &device, D3D11RenderSystem *renderSystem );
         virtual ~D3D11WindowCoreWindow();
-        virtual void destroy(void);
+        virtual void destroy();
 
         Windows::UI::Core::CoreWindow^ getCoreWindow() const    { return mCoreWindow.Get(); }
 

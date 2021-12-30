@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -39,7 +39,7 @@ namespace Ogre {
     _OgreExport String macBundlePath();
     _OgreExport String macFrameworksPath();
     _OgreExport String macCachePath();
-    _OgreExport String macTempFileName(void);
+    _OgreExport String macTempFileName();
     _OgreExport String macResourcesPath();
     _OgreExport String macLogPath();
     _OgreExport String macWriteAccessFolderPath();

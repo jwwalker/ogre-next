@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -62,7 +62,7 @@ namespace Ogre {
   * Updated on 13/9/2005 by Tuan Kuranes email: tuan.kuranes@free.fr
   */
 
-class _OgreGL3PlusExport GL3PlusHardwareOcclusionQuery : public HardwareOcclusionQuery
+class _OgreGL3PlusExport GL3PlusHardwareOcclusionQuery final : public HardwareOcclusionQuery
 {
 //----------------------------------------------------------------------
 // Public methods
@@ -81,10 +81,10 @@ public:
     //------------------------------------------------------------------
     // Occlusion query functions (see base class documentation for this)
     //--
-    void beginOcclusionQuery();
-    void endOcclusionQuery();
-    bool pullOcclusionQuery(unsigned int* NumOfFragments);
-    bool isStillOutstanding(void);
+    void beginOcclusionQuery() override;
+    void endOcclusionQuery() override;
+    bool pullOcclusionQuery(unsigned int* NumOfFragments) override;
+    bool isStillOutstanding() override;
 
     private:
         GLuint mQueryID;

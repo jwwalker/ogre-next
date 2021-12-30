@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -93,14 +93,14 @@ namespace Ogre {
         typedef map<String, SettingsMultiMap*>::type SettingsBySection;
         typedef MapIterator<SettingsBySection> SectionIterator;
         /** Get an iterator over all the available sections in the config file */
-        SectionIterator getSectionIterator(void);
+        SectionIterator getSectionIterator();
         /** Get an iterator over all the available settings in a section */
         SettingsIterator getSettingsIterator(const String& section = BLANKSTRING);
 
 
         
         /** Clear the settings */
-        void clear(void);
+        void clear();
     protected:
         SettingsBySection mSettings;
     };

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -151,11 +151,11 @@ namespace Ogre {
 
     //-----------------------------------------------------------------------
     template<> DistanceLodSphereStrategy* Singleton<DistanceLodSphereStrategy>::msSingleton = 0;
-    DistanceLodSphereStrategy* DistanceLodSphereStrategy::getSingletonPtr(void)
+    DistanceLodSphereStrategy* DistanceLodSphereStrategy::getSingletonPtr()
     {
         return msSingleton;
     }
-    DistanceLodSphereStrategy& DistanceLodSphereStrategy::getSingleton(void)
+    DistanceLodSphereStrategy& DistanceLodSphereStrategy::getSingleton()
     {
         assert( msSingleton );  return ( *msSingleton );
     }
@@ -181,11 +181,11 @@ namespace Ogre {
 
     //-----------------------------------------------------------------------
     template<> DistanceLodBoxStrategy* Singleton<DistanceLodBoxStrategy>::msSingleton = 0;
-    DistanceLodBoxStrategy* DistanceLodBoxStrategy::getSingletonPtr(void)
+    DistanceLodBoxStrategy* DistanceLodBoxStrategy::getSingletonPtr()
     {
         return msSingleton;
     }
-    DistanceLodBoxStrategy& DistanceLodBoxStrategy::getSingleton(void)
+    DistanceLodBoxStrategy& DistanceLodBoxStrategy::getSingleton()
     {
         assert( msSingleton );  return ( *msSingleton );
     }

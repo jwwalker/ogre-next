@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -50,9 +50,9 @@ namespace Ogre
         {
         }
 
-        virtual BufferPackedTypes getBufferPackedType(void) const   { return BP_TYPE_INDEX; }
+        BufferPackedTypes getBufferPackedType() const override { return BP_TYPE_INDEX; }
 
-        IndexType getIndexType(void) const  { return mBytesPerElement == 2 ? IT_16BIT : IT_32BIT; }
+        IndexType getIndexType() const  { return mBytesPerElement == 2 ? IT_16BIT : IT_32BIT; }
     };
 }
 

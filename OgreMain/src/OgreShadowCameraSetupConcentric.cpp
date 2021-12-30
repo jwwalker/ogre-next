@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -41,9 +41,9 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-    ConcentricShadowCamera::ConcentricShadowCamera( void ) {}
+    ConcentricShadowCamera::ConcentricShadowCamera() {}
     //-----------------------------------------------------------------------
-    ConcentricShadowCamera::~ConcentricShadowCamera( void ) {}
+    ConcentricShadowCamera::~ConcentricShadowCamera() {}
     //-----------------------------------------------------------------------
     void ConcentricShadowCamera::getShadowCamera( const SceneManager *sm, const Camera *cam,
                                                   const Light *light, Camera *texCam, size_t iteration,

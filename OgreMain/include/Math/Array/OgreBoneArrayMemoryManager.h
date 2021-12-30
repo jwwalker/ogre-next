@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -45,11 +45,11 @@ namespace Ogre
     @version
         1.0
     */
-    class _OgreExport BoneArrayMemoryManager : public ArrayMemoryManager
+    class _OgreExport BoneArrayMemoryManager final : public ArrayMemoryManager
     {
     protected:
         /// We overload to set all mParentTransform to point to a dummy matrix
-        virtual void initializeEmptySlots( size_t prevNumSlots );
+        void initializeEmptySlots( size_t prevNumSlots ) override;
 
     public:
         enum MemoryTypes

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -35,7 +35,7 @@ namespace Ogre {
 namespace v1 {
 
     /// Specialisation of HardwareVertexBuffer for OpenGL
-    class _OgreGL3PlusExport GL3PlusHardwareVertexBuffer : public HardwareVertexBuffer
+    class _OgreGL3PlusExport GL3PlusHardwareVertexBuffer final : public HardwareVertexBuffer
     {
     private:
         GLuint mBufferId;
@@ -48,30 +48,30 @@ namespace v1 {
 
     protected:
         /** See HardwareBuffer. */
-        void* lockImpl(size_t offset, size_t length, LockOptions options);
+        void* lockImpl(size_t offset, size_t length, LockOptions options) override;
         /** See HardwareBuffer. */
-        void unlockImpl(void);
+        void unlockImpl() override;
 
     public:
         GL3PlusHardwareVertexBuffer(HardwareBufferManagerBase* mgr, size_t vertexSize, size_t numVertices,
                                     HardwareBuffer::Usage usage, bool useShadowBuffer);
-        ~GL3PlusHardwareVertexBuffer();
+        ~GL3PlusHardwareVertexBuffer() override;
 
         /** See HardwareBuffer. */
-        void readData(size_t offset, size_t length, void* pDest);
+        void readData(size_t offset, size_t length, void* pDest) override;
 
         /** See HardwareBuffer. */
         void writeData(size_t offset, size_t length,
-                       const void* pSource, bool discardWholeBuffer = false);
+                       const void* pSource, bool discardWholeBuffer = false) override;
 
         /** See HardwareBuffer. */
         void copyData(HardwareBuffer& srcBuffer, size_t srcOffset,
-                      size_t dstOffset, size_t length, bool discardWholeBuffer = false);
+                      size_t dstOffset, size_t length, bool discardWholeBuffer = false) override;
 
         /** See HardwareBuffer. */
-        void _updateFromShadow(void);
+        void _updateFromShadow() override;
 
-        inline GLuint getGLBufferId(void) const { return mBufferId; }
+        inline GLuint getGLBufferId() const { return mBufferId; }
     };
 }
 }

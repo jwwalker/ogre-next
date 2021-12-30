@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -382,12 +382,12 @@ namespace Ogre
         mRenderSystem->fireDeviceEvent( &mDevice, "WindowResized", this );
     }
     //-----------------------------------------------------------------------------------
-    void D3D11WindowSwapChainBased::notifyResolutionChanged(void)
+    void D3D11WindowSwapChainBased::notifyResolutionChanged()
     {
         TODO_notify_listeners;
     }
     //-----------------------------------------------------------------------------------
-    void D3D11WindowSwapChainBased::swapBuffers(void)
+    void D3D11WindowSwapChainBased::swapBuffers()
     {
         mRenderSystem->fireDeviceEvent( &mDevice,"BeforeDevicePresent",this );
 

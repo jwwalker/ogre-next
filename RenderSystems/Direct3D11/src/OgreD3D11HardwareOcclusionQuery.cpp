@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -127,7 +127,7 @@ namespace Ogre {
         return true;
     }
     //------------------------------------------------------------------
-    bool D3D11HardwareOcclusionQuery::isStillOutstanding(void)
+    bool D3D11HardwareOcclusionQuery::isStillOutstanding()
     {       
         // in case you already asked for this query
         if (!mIsQueryResultStillOutstanding)

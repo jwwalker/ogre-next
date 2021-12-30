@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include "OgreD3D11Mappings.h"
 #include "OgreGpuProgramManager.h"
 #include "OgreHardwareBufferManager.h"
-#include "OgreD3D11HardwareUniformBuffer.h"
 #include "OgreD3D11RenderSystem.h"
 #include "OgreStringConverter.h"
 
@@ -105,7 +104,7 @@ namespace Ogre {
     }
 
 
-    class HLSLIncludeHandler : public ID3DInclude
+    class HLSLIncludeHandler final : public ID3DInclude
     {
     public:
         HLSLIncludeHandler(Resource* sourceProgram) 
@@ -117,7 +116,7 @@ namespace Ogre {
             LPCVOID pParentData,
             LPCVOID *ppData,
             UINT *pByteLen
-            )
+            ) override
         {
             // find & load source code
             DataStreamPtr stream = 
@@ -136,7 +135,7 @@ namespace Ogre {
             return S_OK;
         }
 
-        STDMETHOD(Close)(LPCVOID pData)
+        STDMETHOD(Close)(LPCVOID pData) override
         {
             char* pChar = (char*)pData;
             delete [] pChar;
@@ -258,7 +257,7 @@ namespace Ogre {
         defines.push_back(macro);
     }       
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::loadFromSource(void)
+    void D3D11HLSLProgram::loadFromSource()
     {
         if ( GpuProgramManager::getSingleton().isMicrocodeAvailableInCache(getNameForMicrocodeCache()) )
         {
@@ -270,7 +269,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::getMicrocodeFromCache(void)
+    void D3D11HLSLProgram::getMicrocodeFromCache()
     {
         GpuProgramManager::Microcode cacheMicrocode = 
             GpuProgramManager::getSingleton().getMicrocodeFromCache(getNameForMicrocodeCache());
@@ -442,7 +441,7 @@ namespace Ogre {
         analizeMicrocode();
     }
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::compileMicrocode(void)
+    void D3D11HLSLProgram::compileMicrocode()
     {
         OgreProfileExhaustive( "D3D11HLSLProgram::compileMicrocode" );
 
@@ -1163,15 +1162,32 @@ namespace Ogre {
                     BufferInfo *it = &mDefaultBuffers[bufferType];
 
                     // Guard to create uniform buffer only once
-                    if (it->mUniformBuffer.isNull())
+                    if (!it->mConstBuffer)
                     {
-                        v1::HardwareUniformBufferSharedPtr uBuffer = v1::HardwareBufferManager::getSingleton().createUniformBuffer(
-                                    mD3d11ShaderBufferDescs[b].Size, v1::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE, false);
-                        it->mUniformBuffer = v1::HardwareUniformBufferSharedPtr(uBuffer);
+                        D3D11_BUFFER_DESC desc;
+                        memset( &desc, 0, sizeof( desc ) );
+                        desc.ByteWidth = mD3d11ShaderBufferDescs[b].Size;
+                        desc.Usage = D3D11_USAGE_DYNAMIC;
+                        desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+                        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+                        const HRESULT hr = mDevice->CreateBuffer(
+                            &desc, NULL, it->mConstBuffer.ReleaseAndGetAddressOf() );
+                        if( FAILED( hr ) || mDevice.isError() )
+                        {
+                            String msg = mDevice.getErrorDescription( hr );
+                            OGRE_EXCEPT_EX( Exception::ERR_RENDERINGAPI_ERROR, hr,
+                                            "Cannot create D3D11 buffer: " + msg,
+                                            "D3D11HLSLProgram::analizeMicrocode" );
+                        }
                     }
                     else
                     {
-                        assert (it->mUniformBuffer->getSizeInBytes() == mD3d11ShaderBufferDescs[b].Size);
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+                        D3D11_BUFFER_DESC desc;
+                        it->mConstBuffer->GetDesc(&desc);
+                        OGRE_ASSERT( desc.ByteWidth == mD3d11ShaderBufferDescs[b].Size );
+#endif
                     }
 
                     // Now, parse variables for this buffer
@@ -1223,8 +1239,7 @@ namespace Ogre {
                                     it->mShaderVars.push_back(newVar);
                                 }
                                 break;
-                            };
-
+                            }
                         }
                     }
                 }
@@ -1255,13 +1270,13 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::createLowLevelImpl(void)
+    void D3D11HLSLProgram::createLowLevelImpl()
     {
         // Create a low-level program, give it the same name as us
         mAssemblerProgram = GpuProgramPtr(dynamic_cast<GpuProgram*>(this), SPFM_NONE);
     }
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::unloadHighLevelImpl(void)
+    void D3D11HLSLProgram::unloadHighLevelImpl()
     {
         mSlotMap.clear();
         for( size_t i=0; i<NumDefaultBufferTypes; ++i )
@@ -1560,7 +1575,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    bool D3D11HLSLProgram::isSupported(void) const
+    bool D3D11HLSLProgram::isSupported() const
     {
         // Use the current render system
         RenderSystem* rs = Root::getSingleton().getRenderSystem();
@@ -1569,7 +1584,7 @@ namespace Ogre {
         return rs->getCapabilities()->isShaderProfileSupported(getCompatibleTarget()) && GpuProgram::isSupported();
     }
     //-----------------------------------------------------------------------
-    GpuProgramParametersSharedPtr D3D11HLSLProgram::createParameters(void)
+    GpuProgramParametersSharedPtr D3D11HLSLProgram::createParameters()
     {
         // Call superclass
         GpuProgramParametersSharedPtr params = HighLevelGpuProgram::createParameters();
@@ -1603,7 +1618,7 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    const String& D3D11HLSLProgram::getCompatibleTarget(void) const
+    const String& D3D11HLSLProgram::getCompatibleTarget() const
     {
         static const String
             vs_4_0           = "vs_4_0",
@@ -1631,7 +1646,7 @@ namespace Ogre {
         return mTarget;
     }
     //-----------------------------------------------------------------------
-    const String& D3D11HLSLProgram::getLanguage(void) const
+    const String& D3D11HLSLProgram::getLanguage() const
     {
         static const String language = "hlsl";
 
@@ -1741,7 +1756,7 @@ namespace Ogre {
         }
     }
 
-    void D3D11HLSLProgram::reinterpretGSForStreamOut(void)
+    void D3D11HLSLProgram::reinterpretGSForStreamOut()
     {
         assert(mGeometryShader);
         unloadHighLevel();
@@ -2090,41 +2105,49 @@ namespace Ogre {
         for( size_t i=0; i<NumDefaultBufferTypes; ++i )
         {
             BufferInfo *it = &mDefaultBuffers[i];
-            if (!it->mUniformBuffer.isNull())
+            if (it->mConstBuffer)
             {
-                v1::HardwareBufferLockGuard uniformLock(it->mUniformBuffer, v1::HardwareBuffer::HBL_DISCARD);
+                D3D11_MAPPED_SUBRESOURCE mappedSubres;
+                const HRESULT hr = mDevice.GetImmediateContext()->Map(
+                    it->mConstBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubres );
+
+                if( FAILED( hr ) || mDevice.isError() )
+                {
+                    String msg = mDevice.getErrorDescription( hr );
+                    OGRE_EXCEPT_EX( Exception::ERR_RENDERINGAPI_ERROR, hr, "Error calling Map: " + msg,
+                                    "D3D11HLSLProgram::getConstantBuffers" );
+                }
 
                 // Only iterate through parsed variables (getting size of list)
                 void* src = 0;
                 ShaderVarWithPosInBuf* iter = &(it->mShaderVars[0]);
-                unsigned int lSize = it->mShaderVars.size();
-                for (size_t i = 0 ; i < lSize; i++, iter++)
+                const size_t lSize = it->mShaderVars.size();
+                for( size_t i = 0; i < lSize; i++, iter++ )
                 {
-                    const GpuConstantDefinition& def = params->getConstantDefinition(iter->name);
-                    // Since we are mapping with write discard, contents of the buffer are undefined.
-                    // We must set every variable, even if it has not changed.
-                    //if (def.variability & variabilityMask)
+                    const GpuConstantDefinition &def = params->getConstantDefinition( iter->name );
+                    if( def.isFloat() )
                     {
-                        if(def.isFloat())
-                        {
-                            src = (void *)&(*(params->getFloatConstantList().begin() + def.physicalIndex));
-                        }
-                        else if( def.isUnsignedInt() )
-                        {
-                            src = (void *)&(*(params->getUnsignedIntConstantList().begin() + def.physicalIndex));
-                        }
-                        else
-                        {
-                            src = (void *)&(*(params->getIntConstantList().begin() + def.physicalIndex));
-                        }
-
-                        memcpy( &(((char *)(uniformLock.pData))[iter->startOffset]), src , iter->size);
+                        src =
+                            (void *)&( *( params->getFloatConstantList().begin() + def.physicalIndex ) );
                     }
+                    else if( def.isUnsignedInt() )
+                    {
+                        src = (void *)&(
+                            *( params->getUnsignedIntConstantList().begin() + def.physicalIndex ) );
+                    }
+                    else
+                    {
+                        src = (void *)&( *( params->getIntConstantList().begin() + def.physicalIndex ) );
+                    }
+
+                    memcpy( &( ( (char *)( mappedSubres.pData ) )[iter->startOffset] ), src,
+                            iter->size );
                 }
 
+                mDevice.GetImmediateContext()->Unmap( it->mConstBuffer.Get(), 0u );
+
                 // Add buffer to list
-                buffers[numBuffers] = static_cast<v1::D3D11HardwareUniformBuffer*>(
-                            it->mUniformBuffer.get())->getD3DConstantBuffer();
+                buffers[numBuffers] = it->mConstBuffer.Get();
                 // Increment number of buffers
                 ++numBuffers;
             }
@@ -2149,60 +2172,60 @@ namespace Ogre {
 //        }
     }
     //-----------------------------------------------------------------------------
-    ID3D11VertexShader* D3D11HLSLProgram::getVertexShader(void) const 
+    ID3D11VertexShader* D3D11HLSLProgram::getVertexShader() const 
     { 
         assert(mType == GPT_VERTEX_PROGRAM);
         assert(mVertexShader);
         return mVertexShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    ID3D11PixelShader* D3D11HLSLProgram::getPixelShader(void) const 
+    ID3D11PixelShader* D3D11HLSLProgram::getPixelShader() const 
     { 
         assert(mType == GPT_FRAGMENT_PROGRAM);
         assert(mPixelShader);
         return mPixelShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    ID3D11GeometryShader* D3D11HLSLProgram::getGeometryShader(void) const 
+    ID3D11GeometryShader* D3D11HLSLProgram::getGeometryShader() const 
     { 
         assert(mType == GPT_GEOMETRY_PROGRAM);
         assert(mGeometryShader);
         return mGeometryShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    ID3D11DomainShader* D3D11HLSLProgram::getDomainShader(void) const 
+    ID3D11DomainShader* D3D11HLSLProgram::getDomainShader() const 
     { 
         assert(mType == GPT_DOMAIN_PROGRAM);
         assert(mDomainShader);
         return mDomainShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    ID3D11HullShader* D3D11HLSLProgram::getHullShader(void) const 
+    ID3D11HullShader* D3D11HLSLProgram::getHullShader() const 
     { 
         assert(mType == GPT_HULL_PROGRAM);
         assert(mHullShader);
         return mHullShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    ID3D11ComputeShader* D3D11HLSLProgram::getComputeShader(void) const 
+    ID3D11ComputeShader* D3D11HLSLProgram::getComputeShader() const 
     { 
         assert(mType == GPT_COMPUTE_PROGRAM);
         assert(mComputeShader);
         return mComputeShader.Get(); 
     }
     //-----------------------------------------------------------------------------
-    const MicroCode & D3D11HLSLProgram::getMicroCode(void) const 
+    const MicroCode & D3D11HLSLProgram::getMicroCode() const 
     { 
         assert(mMicroCode.size() > 0);
         return mMicroCode; 
     }
     //-----------------------------------------------------------------------------
-    unsigned int D3D11HLSLProgram::getNumInputs( void ) const
+    unsigned int D3D11HLSLProgram::getNumInputs() const
     {
         return mD3d11ShaderInputParameters.size();
     }
     //-----------------------------------------------------------------------------
-    unsigned int D3D11HLSLProgram::getNumOutputs( void ) const
+    unsigned int D3D11HLSLProgram::getNumOutputs() const
     {
         return mD3d11ShaderOutputParameters.size();
     }

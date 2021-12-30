@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -51,7 +51,7 @@ namespace v1
         mDiscardBufferManager = 0;
     }
     //-----------------------------------------------------------------------------------
-    void VulkanHardwareBufferManagerBase::_notifyDeviceStalled( void )
+    void VulkanHardwareBufferManagerBase::_notifyDeviceStalled()
     {
         {
             OGRE_LOCK_MUTEX( mVertexBuffersMutex );
@@ -106,21 +106,6 @@ namespace v1
             mIndexBuffers.insert( buf );
         }
         return HardwareIndexBufferSharedPtr( buf );
-    }
-    //-----------------------------------------------------------------------------------
-    HardwareUniformBufferSharedPtr VulkanHardwareBufferManagerBase::createUniformBuffer(
-        size_t sizeBytes, HardwareBuffer::Usage usage, bool useShadowBuffer, const String &name )
-    {
-        OGRE_EXCEPT( Exception::ERR_NOT_IMPLEMENTED, "Use v2 interfaces.",
-                     "VulkanHardwareBufferManagerBase::createUniformBuffer" );
-        return HardwareUniformBufferSharedPtr();
-    }
-    //-----------------------------------------------------------------------------------
-    HardwareCounterBufferSharedPtr VulkanHardwareBufferManagerBase::createCounterBuffer(
-        size_t sizeBytes, HardwareBuffer::Usage usage, bool useShadowBuffer, const String &name )
-    {
-        OGRE_EXCEPT( Exception::ERR_NOT_IMPLEMENTED, "Use v2 interfaces.",
-                     "VulkanHardwareBufferManagerBase::createCounterBuffer" );
     }
 }  // namespace v1
 }  // namespace Ogre

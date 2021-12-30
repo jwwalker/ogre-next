@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -197,7 +197,7 @@ namespace v1 {
         @remarks
             The caller takes responsibility for deleting the returned structure.
         */
-        EdgeData* build(void);
+        EdgeData* build();
 
         /// Debugging method
         void log(Log* l);

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -256,7 +256,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void ArrayMemoryManager::defragment(void)
+    void ArrayMemoryManager::defragment()
     {
         //Sort, last values first. This may improve performance in some
         //scenarios by reducing the amount of data to be shifted
@@ -308,7 +308,7 @@ namespace Ogre
         mAvailableSlots.clear();
     }
     //-----------------------------------------------------------------------------------
-    void ArrayMemoryManager::shrinkToFit(void)
+    void ArrayMemoryManager::shrinkToFit()
     {
         if( !mAvailableSlots.empty() )
             defragment();

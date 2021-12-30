@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -32,26 +32,26 @@ THE SOFTWARE.
 namespace Ogre {
 
     String sNullLang = "null";
-    class NullProgram : public HighLevelGpuProgram
+    class NullProgram final : public HighLevelGpuProgram
     {
     protected:
         /** Internal load implementation, must be implemented by subclasses.
         */
-        void loadFromSource(void) {}
+        void loadFromSource() override {}
         /** Internal method for creating an appropriate low-level program from this
         high-level program, must be implemented by subclasses. */
-        void createLowLevelImpl(void) {}
+        void createLowLevelImpl() override {}
         /// Internal unload implementation, must be implemented by subclasses
-        void unloadHighLevelImpl(void) {}
+        void unloadHighLevelImpl() override {}
         /// Populate the passed parameters with name->index map, must be overridden
-        void populateParameterNames(GpuProgramParametersSharedPtr params)
+        void populateParameterNames(GpuProgramParametersSharedPtr params) override
         {
             // Skip the normal implementation
             // Ensure we don't complain about missing parameter names
             params->setIgnoreMissingParams(true);
 
         }
-        void buildConstantDefinitions() const
+        void buildConstantDefinitions() const override
         {
             // do nothing
         }
@@ -60,15 +60,15 @@ namespace Ogre {
             const String& name, ResourceHandle handle, const String& group, 
             bool isManual, ManualResourceLoader* loader)
             : HighLevelGpuProgram(creator, name, handle, group, isManual, loader){}
-        ~NullProgram() {}
+        ~NullProgram() override {}
         /// Overridden from GpuProgram - never supported
-        bool isSupported(void) const { return false; }
+        bool isSupported() const override { return false; }
         /// Overridden from GpuProgram
-        const String& getLanguage(void) const { return sNullLang; }
-        size_t calculateSize(void) const { return 0; }
+        const String& getLanguage() const override { return sNullLang; }
+        size_t calculateSize() const override { return 0; }
 
         /// Overridden from StringInterface
-        bool setParameter(const String& name, const String& value)
+        bool setParameter(const String& /*name*/, const String& /*value*/) override
         {
             // always silently ignore all parameters so as not to report errors on
             // unsupported platforms
@@ -76,23 +76,23 @@ namespace Ogre {
         }
 
     };
-    class NullProgramFactory : public HighLevelGpuProgramFactory
+    class NullProgramFactory final : public HighLevelGpuProgramFactory
     {
     public:
         NullProgramFactory() {}
-        ~NullProgramFactory() {}
+        ~NullProgramFactory() override {}
         /// Get the name of the language this factory creates programs for
-        const String& getLanguage(void) const 
+        const String& getLanguage() const override
         { 
             return sNullLang;
         }
         HighLevelGpuProgram* create(ResourceManager* creator, 
             const String& name, ResourceHandle handle,
-            const String& group, bool isManual, ManualResourceLoader* loader)
+            const String& group, bool isManual, ManualResourceLoader* loader) override
         {
             return OGRE_NEW NullProgram(creator, name, handle, group, isManual, loader);
         }
-        void destroy(HighLevelGpuProgram* prog)
+        void destroy(HighLevelGpuProgram* prog) override
         {
             OGRE_DELETE prog;
         }
@@ -101,11 +101,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     template<> HighLevelGpuProgramManager* 
     Singleton<HighLevelGpuProgramManager>::msSingleton = 0;
-    HighLevelGpuProgramManager* HighLevelGpuProgramManager::getSingletonPtr(void)
+    HighLevelGpuProgramManager* HighLevelGpuProgramManager::getSingletonPtr()
     {
         return msSingleton;
     }
-    HighLevelGpuProgramManager& HighLevelGpuProgramManager::getSingleton(void)
+    HighLevelGpuProgramManager& HighLevelGpuProgramManager::getSingleton()
     {  
         assert( msSingleton );  return ( *msSingleton );  
     }

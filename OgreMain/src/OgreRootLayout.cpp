@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -737,7 +737,7 @@ namespace Ogre
         flushLwString( jsonStr, outJson );
     }
     //-------------------------------------------------------------------------
-    size_t RootLayout::calculateNumUsedSets( void ) const
+    size_t RootLayout::calculateNumUsedSets() const
     {
         size_t numSets = 0u;
         for( size_t i = 0u; i < OGRE_MAX_NUM_BOUND_DESCRIPTOR_SETS; ++i )

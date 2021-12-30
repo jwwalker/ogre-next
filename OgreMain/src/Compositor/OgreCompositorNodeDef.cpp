@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -53,7 +53,7 @@ namespace Ogre
         return &mTargetPasses.back();
     }
     //-----------------------------------------------------------------------------------
-    size_t CompositorNodeDef::calculateNumPasses( void ) const
+    size_t CompositorNodeDef::calculateNumPasses() const
     {
         size_t numPasses = 0u;
         CompositorTargetDefVec::const_iterator itor = mTargetPasses.begin();

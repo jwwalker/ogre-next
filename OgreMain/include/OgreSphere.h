@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -63,13 +63,13 @@ namespace Ogre {
             : mRadius(radius), mCenter(center) {}
 
         /** Returns the radius of the sphere. */
-        Real getRadius(void) const { return mRadius; }
+        Real getRadius() const { return mRadius; }
 
         /** Sets the radius of the sphere. */
         void setRadius(Real radius) { mRadius = radius; }
 
         /** Returns the center point of the sphere. */
-        const Vector3& getCenter(void) const { return mCenter; }
+        const Vector3& getCenter() const { return mCenter; }
 
         /** Sets the center point of the sphere. */
         void setCenter(const Vector3& center) { mCenter = center; }

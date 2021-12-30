@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -35,7 +35,6 @@
 #include "OgreGLSLShader.h"
 #include "OgreGLSLShader.h"
 #include "OgreGLSLMonolithicProgramManager.h"
-#include "OgreGLSLSeparableProgramManager.h"
 #include "OgreGLSLPreprocessor.h"
 
 #include "OgreLwString.h"
@@ -62,7 +61,6 @@ namespace Ogre {
         const String& group, bool isManual, ManualResourceLoader* loader)
         : HighLevelGpuProgram(creator, name, handle, group, isManual, loader)
         , mGLShaderHandle(0)
-        , mGLProgramHandle(0)
         , mCompiled(0)
         , mColumnMajorMatrices(true)
         , mReplaceVersionMacro(false)
@@ -137,7 +135,7 @@ namespace Ogre {
     @brief GLSLShader::replaceVersionMacros
         Finds the first occurrence of "ogre_glsl_ver_xxx" and only leaves it with "xxx"
     */
-    void GLSLShader::replaceVersionMacros( void )
+    void GLSLShader::replaceVersionMacros()
     {
         const String matchStr = "ogre_glsl_ver_";
         const size_t pos = mSource.find( matchStr );
@@ -145,7 +143,7 @@ namespace Ogre {
             mSource.erase( pos, matchStr.size() );
     }
 
-    void GLSLShader::loadFromSource(void)
+    void GLSLShader::loadFromSource()
     {
         if( mMonolithicCacheStatus == MCS_INVALIDATE )
         {
@@ -289,49 +287,6 @@ namespace Ogre {
         // submit shader source to OpenGL.
         if (!mSource.empty())
         {
-            // Add standard shader input and output blocks, if missing.
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-            {
-                // Assume blocks are missing if gl_Position is missing.
-                if (mSource.find("vec4 gl_Position") == String::npos)
-                {
-                    size_t mainPos = mSource.find("void main");
-                    // Only add blocks if shader is not a child
-                    // shader, i.e. has a main function.
-                    if (mainPos != String::npos)
-                    {
-                        size_t versionPos = mSource.find("#version");
-                        int shaderVersion = StringConverter::parseInt(mSource.substr(versionPos+9, 3));
-                        if (shaderVersion >= 150)
-                        {
-                            size_t belowVersionPos = mSource.find("\n", versionPos) + 1;
-                            switch (mType)
-                            {
-                            case GPT_VERTEX_PROGRAM:
-                                mSource.insert(belowVersionPos, "out gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n};\n\n");
-                                break;
-                            case GPT_GEOMETRY_PROGRAM:
-                                mSource.insert(belowVersionPos, "out gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n};\n\n");
-                                mSource.insert(belowVersionPos, "in gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n} gl_in[];\n\n");
-                                break;
-                            case GPT_DOMAIN_PROGRAM:
-                                mSource.insert(belowVersionPos, "out gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n};\n\n");
-                                mSource.insert(belowVersionPos, "in gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n} gl_in[];\n\n");
-                                break;
-                            case GPT_HULL_PROGRAM:
-                                mSource.insert(belowVersionPos, "out gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n} gl_out[];\n\n");
-                                mSource.insert(belowVersionPos, "in gl_PerVertex\n{\nvec4 gl_Position;\nfloat gl_PointSize;\nfloat gl_ClipDistance[];\n} gl_in[];\n\n");
-                                break;
-                            case GPT_FRAGMENT_PROGRAM:
-                            case GPT_COMPUTE_PROGRAM:
-                                // Fragment and compute shaders do
-                                // not have standard blocks.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
             // Submit shader source.
             const char *source = mSource.c_str();
             OGRE_CHECK_GL_ERROR(glShaderSource(mGLShaderHandle, 1, &source, NULL));
@@ -368,7 +323,7 @@ namespace Ogre {
     }
 
 
-    void GLSLShader::createLowLevelImpl(void)
+    void GLSLShader::createLowLevelImpl()
     {
         // mAssemblerProgram = GpuProgramPtr(OGRE_NEW GLSLShader(this));
         // // Shader params need to be forwarded to low level implementation
@@ -388,17 +343,11 @@ namespace Ogre {
     }
 
 
-    void GLSLShader::unloadHighLevelImpl(void)
+    void GLSLShader::unloadHighLevelImpl()
     {
         OGRE_CHECK_GL_ERROR(glDeleteShader(mGLShaderHandle));
 
-        if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS) && mGLProgramHandle)
-        {
-            OGRE_CHECK_GL_ERROR(glDeleteProgram(mGLProgramHandle));
-        }
-
         mGLShaderHandle = 0;
-        mGLProgramHandle = 0;
         mCompiled = 0;
     }
 
@@ -418,14 +367,8 @@ namespace Ogre {
 
         // Therefore instead parse the source code manually and extract the uniforms.
         createParameterMappingStructures(true);
-        if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-        {
-            GLSLSeparableProgramManager::getSingleton().extractUniformsFromGLSL(mSource, *mConstantDefs.get(), mName);
-        }
-        else
-        {
-            GLSLMonolithicProgramManager::getSingleton().extractUniformsFromGLSL(mSource, *mConstantDefs.get(), mName);
-        }
+
+        GLSLMonolithicProgramManager::getSingleton().extractUniformsFromGLSL(mSource, *mConstantDefs.get(), mName);
 
         // Also parse any attached sources.
         for (GLSLShaderContainer::const_iterator i = mAttachedGLSLShaders.begin();
@@ -433,33 +376,25 @@ namespace Ogre {
         {
             GLSLShader* childShader = *i;
 
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-            {
-                GLSLSeparableProgramManager::getSingleton().extractUniformsFromGLSL(childShader->getSource(),
-                                                                                    *mConstantDefs.get(), childShader->getName());
-            }
-            else
-            {
-                GLSLMonolithicProgramManager::getSingleton().extractUniformsFromGLSL(childShader->getSource(),
-                                                                                     *mConstantDefs.get(), childShader->getName());
-            }
+            GLSLMonolithicProgramManager::getSingleton().extractUniformsFromGLSL(childShader->getSource(),
+                                                                                 *mConstantDefs.get(), childShader->getName());
         }
     }
 
 
-    inline bool GLSLShader::getPassSurfaceAndLightStates(void) const
+    inline bool GLSLShader::getPassSurfaceAndLightStates() const
     {
         // Scenemanager should pass on light & material state to the rendersystem.
         return true;
     }
 
-    inline bool GLSLShader::getPassTransformStates(void) const
+    inline bool GLSLShader::getPassTransformStates() const
     {
         // Scenemanager should pass on transform state to the rendersystem.
         return true;
     }
 
-    inline bool GLSLShader::getPassFogStates(void) const
+    inline bool GLSLShader::getPassFogStates() const
     {
         // Scenemanager should pass on fog state to the rendersystem.
         return true;
@@ -606,7 +541,7 @@ namespace Ogre {
         }
     }
 
-    const String& GLSLShader::getLanguage(void) const
+    const String& GLSLShader::getLanguage() const
     {
         static const String language = "glsl";
 
@@ -615,7 +550,7 @@ namespace Ogre {
 
     void GLSLShader::setReplaceVersionMacro( bool bReplace ) { mReplaceVersionMacro = bReplace; }
 
-    Ogre::GpuProgramParametersSharedPtr GLSLShader::createParameters(void)
+    Ogre::GpuProgramParametersSharedPtr GLSLShader::createParameters()
     {
         GpuProgramParametersSharedPtr params = HighLevelGpuProgram::createParameters();
         return params;
@@ -679,19 +614,9 @@ namespace Ogre {
     {
         GLuint programHandle = 0;
 
-        const RenderSystemCapabilities *caps = Root::getSingleton().getRenderSystem()->getCapabilities();
-        if( caps->hasCapability( RSC_SEPARATE_SHADER_OBJECTS ) )
-        {
-            GLSLSeparableProgram *activeLinkProgram =
-                    GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-            programHandle = activeLinkProgram->getGLProgramHandle();
-        }
-        else
-        {
-            GLSLMonolithicProgram *activeLinkProgram =
-                    GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-            programHandle = activeLinkProgram->getGLProgramHandle();
-        }
+        GLSLMonolithicProgram *activeLinkProgram =
+            GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+        programHandle = activeLinkProgram->getGLProgramHandle();
 
         GLuint blockIdx = glGetUniformBlockIndex( programHandle, blockName );
         if( blockIdx != GL_INVALID_INDEX )
@@ -809,161 +734,70 @@ namespace Ogre {
         return 0;
     }
 
-
-    GLuint GLSLShader::getGLProgramHandle() {
-        //TODO This should be removed and the compile() function
-        // should use glCreateShaderProgramv
-        // for separable programs which includes creating a program.
-        if (mGLProgramHandle == 0)
-        {
-            OGRE_CHECK_GL_ERROR(mGLProgramHandle = glCreateProgram());
-            if (mGLProgramHandle == 0)
-            {
-                //TODO error handling
-            }
-        }
-        return mGLProgramHandle;
-    }
-
-
-    void GLSLShader::bind(void)
+    void GLSLShader::bind()
     {
-        if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
+        // Tell the Link Program Manager what shader is to become active.
+        switch( mType )
         {
-            // Tell the Program Pipeline Manager what pipeline is to become active.
-            switch (mType)
-            {
-            case GPT_VERTEX_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveVertexShader(this);
-                break;
-            case GPT_FRAGMENT_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveFragmentShader(this);
-                break;
-            case GPT_GEOMETRY_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveGeometryShader(this);
-                break;
-            case GPT_HULL_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveTessHullShader(this);
-                break;
-            case GPT_DOMAIN_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveTessDomainShader(this);
-                break;
-            case GPT_COMPUTE_PROGRAM:
-                GLSLSeparableProgramManager::getSingleton().setActiveComputeShader(this);
-            default:
-                break;
-            }
-        }
-        else
-        {
-            // Tell the Link Program Manager what shader is to become active.
-            switch (mType)
-            {
-            case GPT_VERTEX_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveVertexShader(this);
-                break;
-            case GPT_FRAGMENT_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveFragmentShader(this);
-                break;
-            case GPT_GEOMETRY_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveGeometryShader(this);
-                break;
-            case GPT_HULL_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveHullShader(this);
-                break;
-            case GPT_DOMAIN_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveDomainShader(this);
-                break;
-            case GPT_COMPUTE_PROGRAM:
-                GLSLMonolithicProgramManager::getSingleton().setActiveComputeShader(this);
-            default:
-                break;
-            }
+        case GPT_VERTEX_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveVertexShader( this );
+            break;
+        case GPT_FRAGMENT_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveFragmentShader( this );
+            break;
+        case GPT_GEOMETRY_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveGeometryShader( this );
+            break;
+        case GPT_HULL_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveHullShader( this );
+            break;
+        case GPT_DOMAIN_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveDomainShader( this );
+            break;
+        case GPT_COMPUTE_PROGRAM:
+            GLSLMonolithicProgramManager::getSingleton().setActiveComputeShader( this );
+            break;
         }
     }
 
-    void GLSLShader::unbind(void)
+    void GLSLShader::unbind()
     {
-        if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
+        // Tell the Link Program Manager what shader is to become inactive.
+        if( mType == GPT_VERTEX_PROGRAM )
         {
-            // Tell the Program Pipeline Manager what pipeline is to become inactive.
-            if (mType == GPT_VERTEX_PROGRAM)
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveVertexShader(NULL);
-            }
-            else if (mType == GPT_GEOMETRY_PROGRAM)
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveGeometryShader(NULL);
-            }
-            else if (mType == GPT_HULL_PROGRAM)
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveTessHullShader(NULL);
-            }
-            else if (mType == GPT_DOMAIN_PROGRAM)
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveTessDomainShader(NULL);
-            }
-            else if (mType == GPT_COMPUTE_PROGRAM)
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveComputeShader(NULL);
-            }
-            else // It's a fragment shader
-            {
-                GLSLSeparableProgramManager::getSingleton().setActiveFragmentShader(NULL);
-            }
+            GLSLMonolithicProgramManager::getSingleton().setActiveVertexShader( NULL );
         }
-        else
+        else if( mType == GPT_GEOMETRY_PROGRAM )
         {
-            // Tell the Link Program Manager what shader is to become inactive.
-            if (mType == GPT_VERTEX_PROGRAM)
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveVertexShader(NULL);
-            }
-            else if (mType == GPT_GEOMETRY_PROGRAM)
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveGeometryShader(NULL);
-            }
-            else if (mType == GPT_HULL_PROGRAM)
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveHullShader(NULL);
-            }
-            else if (mType == GPT_DOMAIN_PROGRAM)
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveDomainShader(NULL);
-            }
-            else if (mType == GPT_COMPUTE_PROGRAM)
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveComputeShader(NULL);
-            }
-            else // It's a fragment shader
-            {
-                GLSLMonolithicProgramManager::getSingleton().setActiveFragmentShader(NULL);
-            }
+            GLSLMonolithicProgramManager::getSingleton().setActiveGeometryShader( NULL );
+        }
+        else if( mType == GPT_HULL_PROGRAM )
+        {
+            GLSLMonolithicProgramManager::getSingleton().setActiveHullShader( NULL );
+        }
+        else if( mType == GPT_DOMAIN_PROGRAM )
+        {
+            GLSLMonolithicProgramManager::getSingleton().setActiveDomainShader( NULL );
+        }
+        else if( mType == GPT_COMPUTE_PROGRAM )
+        {
+            GLSLMonolithicProgramManager::getSingleton().setActiveComputeShader( NULL );
+        }
+        else  // It's a fragment shader
+        {
+            GLSLMonolithicProgramManager::getSingleton().setActiveFragmentShader( NULL );
         }
     }
 
-    void GLSLShader::unbindAll(void)
+    void GLSLShader::unbindAll()
     {
-        if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-        {
-            GLSLSeparableProgramManager &glslManager = GLSLSeparableProgramManager::getSingleton();
-            glslManager.setActiveVertexShader(NULL);
-            glslManager.setActiveGeometryShader(NULL);
-            glslManager.setActiveTessHullShader(NULL);
-            glslManager.setActiveTessDomainShader(NULL);
-            glslManager.setActiveComputeShader(NULL);
-            glslManager.setActiveFragmentShader(NULL);
-        }
-        else
-        {
-            GLSLMonolithicProgramManager &glslManager = GLSLMonolithicProgramManager::getSingleton();
-            glslManager.setActiveVertexShader(NULL);
-            glslManager.setActiveGeometryShader(NULL);
-            glslManager.setActiveHullShader(NULL);
-            glslManager.setActiveDomainShader(NULL);
-            glslManager.setActiveComputeShader(NULL);
-            glslManager.setActiveFragmentShader(NULL);
-        }
+        GLSLMonolithicProgramManager &glslManager = GLSLMonolithicProgramManager::getSingleton();
+        glslManager.setActiveVertexShader( NULL );
+        glslManager.setActiveGeometryShader( NULL );
+        glslManager.setActiveHullShader( NULL );
+        glslManager.setActiveDomainShader( NULL );
+        glslManager.setActiveComputeShader( NULL );
+        glslManager.setActiveFragmentShader( NULL );
     }
 
 
@@ -972,73 +806,30 @@ namespace Ogre {
         // Link can throw exceptions, ignore them at this point.
         try
         {
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-            {
-                // Activate the program pipeline object.
-                GLSLSeparableProgram* separableProgram = GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-                // Pass on parameters from params to program object uniforms.
-                separableProgram->updateUniforms(params, mask, mType);
-                separableProgram->updateAtomicCounters(params, mask, mType);
-            }
-            else
-            {
-                // Activate the link program object.
-                GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-                // Pass on parameters from params to program object uniforms.
-                monolithicProgram->updateUniforms(params, mask, mType);
-                //TODO add atomic counter support
-                //monolithicProgram->updateAtomicCounters(params, mask, mType);
-            }
+            // Activate the link program object.
+            GLSLMonolithicProgram *monolithicProgram =
+                GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+            // Pass on parameters from params to program object uniforms.
+            monolithicProgram->updateUniforms( params, mask, mType );
+            // TODO add atomic counter support
+            // monolithicProgram->updateAtomicCounters(params, mask, mType);
         }
-        catch (Exception&) {}
+        catch( Exception & )
+        {
+        }
     }
 
 
     void GLSLShader::bindPassIterationParameters(GpuProgramParametersSharedPtr params)
     {
-        if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-        {
-            // Activate the program pipeline object.
-            GLSLSeparableProgram* separableProgram = GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-            // Pass on parameters from params to program object uniforms.
-            separableProgram->updatePassIterationUniforms(params);
-        }
-        else
-        {
-            // Activate the link program object.
-            GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-            // Pass on parameters from params to program object uniforms.
-            monolithicProgram->updatePassIterationUniforms(params);
-        }
+        // Activate the link program object.
+        GLSLMonolithicProgram *monolithicProgram =
+            GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+        // Pass on parameters from params to program object uniforms.
+        monolithicProgram->updatePassIterationUniforms( params );
     }
 
-
-    void GLSLShader::bindSharedParameters(GpuProgramParametersSharedPtr params, uint16 mask)
-    {
-        // Link can throw exceptions, ignore them at this point.
-        try
-        {
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-            {
-                // Activate the program pipeline object.
-                GLSLSeparableProgram* separableProgram = GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-                // Pass on parameters from params to program object uniforms.
-                separableProgram->updateUniformBlocks(params, mask, mType);
-                // separableProgram->updateShaderStorageBlock(params, mask, mType);
-            }
-            else
-            {
-                // Activate the link program object.
-                GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-                // Pass on parameters from params to program object uniforms.
-                monolithicProgram->updateUniformBlocks(params, mask, mType);
-            }
-        }
-        catch (Exception&) {}
-    }
-
-
-    size_t GLSLShader::calculateSize(void) const
+    size_t GLSLShader::calculateSize() const
     {
         size_t memSize = 0;
 

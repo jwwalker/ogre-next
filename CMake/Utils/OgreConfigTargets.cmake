@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for OGRE
+# This file is part of the CMake build system for OGRE-Next
 #     (Object-oriented Graphics Rendering Engine)
 # For the latest info, see http://www.ogre3d.org/
 #
@@ -17,7 +17,7 @@ if(APPLE)
 
   if(NOT OGRE_BUILD_PLATFORM_ANDROID AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
     set(PLATFORM_NAME "macosx")
-  elseif(OGRE_BUILD_PLATFORM_APPLE_IOS)
+  elseif(OGRE_BUILD_PLATFORM_APPLE_IOS AND NOT CMAKE_GENERATOR STREQUAL "Ninja")
     set(PLATFORM_NAME "$(PLATFORM_NAME)")
   endif()
 endif()

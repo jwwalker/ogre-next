@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -96,7 +96,7 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    void HlmsBufferManager::unmapConstBuffer(void)
+    void HlmsBufferManager::unmapConstBuffer()
     {
         if( mStartMappedConstBuffer )
         {
@@ -269,7 +269,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void HlmsBufferManager::destroyAllBuffers(void)
+    void HlmsBufferManager::destroyAllBuffers()
     {
         mCurrentConstBuffer = 0;
         mCurrentTexBuffer   = 0;
@@ -333,7 +333,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void HlmsBufferManager::frameEnded(void)
+    void HlmsBufferManager::frameEnded()
     {
         mCurrentConstBuffer = 0;
         mCurrentTexBuffer   = 0;

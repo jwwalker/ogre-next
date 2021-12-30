@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -145,17 +145,17 @@ namespace Ogre {
         mInnerSize.z = z;
     }
     //-----------------------------------------------------------------------
-    Real HollowEllipsoidEmitter::getInnerSizeX(void) const
+    Real HollowEllipsoidEmitter::getInnerSizeX() const
     {
         return mInnerSize.x;
     }
     //-----------------------------------------------------------------------
-    Real HollowEllipsoidEmitter::getInnerSizeY(void) const
+    Real HollowEllipsoidEmitter::getInnerSizeY() const
     {
         return mInnerSize.y;
     }
     //-----------------------------------------------------------------------
-    Real HollowEllipsoidEmitter::getInnerSizeZ(void) const
+    Real HollowEllipsoidEmitter::getInnerSizeZ() const
     {
         return mInnerSize.z;
     }

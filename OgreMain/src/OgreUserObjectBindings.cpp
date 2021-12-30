@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -57,7 +57,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    const Any& UserObjectBindings::getUserAny( void ) const
+    const Any& UserObjectBindings::getUserAny() const
     {
         // Allocate attributes on demand.
         if (mAttributes == NULL)

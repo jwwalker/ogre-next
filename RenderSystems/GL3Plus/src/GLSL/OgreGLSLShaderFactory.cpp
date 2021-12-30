@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -28,7 +28,6 @@
 
 #include "OgreGLSLShaderFactory.h"
 #include "OgreGLSLMonolithicProgramManager.h"
-#include "OgreGLSLSeparableProgramManager.h"
 #include "OgreGLSLShader.h"
 #include "OgreRoot.h"
 
@@ -36,7 +35,6 @@ namespace Ogre
 {
 
     GLSLMonolithicProgramManager* GLSLShaderFactory::mMonolithicProgramManager = NULL;
-    GLSLSeparableProgramManager* GLSLShaderFactory::mSeparableProgramManager = NULL;
     
     String GLSLShaderFactory::mLanguageName = "glsl";
     
@@ -47,36 +45,20 @@ namespace Ogre
         {
             mMonolithicProgramManager = new GLSLMonolithicProgramManager(support);
         }
-        if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-        {
-            if (mSeparableProgramManager == NULL)
-            {
-                mSeparableProgramManager = new GLSLSeparableProgramManager(support);
-            }
-        }
     }
     
 
-    GLSLShaderFactory::~GLSLShaderFactory(void)
+    GLSLShaderFactory::~GLSLShaderFactory()
     {
         if (mMonolithicProgramManager)
         {
             delete mMonolithicProgramManager;
             mMonolithicProgramManager = NULL;
         }
-
-        if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
-        {
-            if (mSeparableProgramManager)
-            {
-                delete mSeparableProgramManager;
-                mSeparableProgramManager = NULL;
-            }
-        }
     }
     
 
-    const String& GLSLShaderFactory::getLanguage(void) const
+    const String& GLSLShaderFactory::getLanguage() const
     {
         return mLanguageName;
     }

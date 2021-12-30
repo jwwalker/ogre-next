@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -36,25 +36,24 @@ namespace Ogre
 {
     /** Factory class for GLSL shaders.
      */
-    class _OgreGL3PlusExport GLSLShaderFactory : public HighLevelGpuProgramFactory
+    class _OgreGL3PlusExport GLSLShaderFactory final : public HighLevelGpuProgramFactory
     {
     protected:
         static String mLanguageName;
 
     public:
         GLSLShaderFactory(const GL3PlusSupport& support);
-        ~GLSLShaderFactory(void);
+        ~GLSLShaderFactory() override;
         /// Get the name of the language this factory creates shaders for.
-        const String& getLanguage(void) const;
+        const String& getLanguage() const override;
         /// Create an instance of GLSLProgram.
-        HighLevelGpuProgram* create(ResourceManager* creator,
-                                    const String& name, ResourceHandle handle,
-                                    const String& group, bool isManual, ManualResourceLoader* loader);
-        void destroy(HighLevelGpuProgram* prog);
+        HighLevelGpuProgram *create( ResourceManager *creator, const String &name, ResourceHandle handle,
+                                     const String &group, bool isManual,
+                                     ManualResourceLoader *loader ) override;
+        void destroy( HighLevelGpuProgram *prog ) override;
 
     private:
         static GLSLMonolithicProgramManager* mMonolithicProgramManager;
-        static GLSLSeparableProgramManager* mSeparableProgramManager;
     };
 }
 

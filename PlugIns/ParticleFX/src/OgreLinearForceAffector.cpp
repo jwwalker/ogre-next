@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -105,12 +105,12 @@ namespace Ogre {
         mForceApplication = fa;
     }
     //-----------------------------------------------------------------------
-    Vector3 LinearForceAffector::getForceVector(void) const
+    Vector3 LinearForceAffector::getForceVector() const
     {
         return mForceVector;
     }
     //-----------------------------------------------------------------------
-    LinearForceAffector::ForceApplication LinearForceAffector::getForceApplication(void) const
+    LinearForceAffector::ForceApplication LinearForceAffector::getForceApplication() const
     {
         return mForceApplication;
     }

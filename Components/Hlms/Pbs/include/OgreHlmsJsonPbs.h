@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -60,6 +60,7 @@ namespace Ogre
         static void parseScale( const rapidjson::Value &jsonArray, Vector4 &offsetScale );
 
         static inline Vector3 parseVector3Array( const rapidjson::Value &jsonArray );
+        static inline Vector4 parseVector4Array( const rapidjson::Value &jsonArray );
         static inline ColourValue parseColourValueArray(
                 const rapidjson::Value &jsonArray,
                 const ColourValue &defaultValue = ColourValue::White );

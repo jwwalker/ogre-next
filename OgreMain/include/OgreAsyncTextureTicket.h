@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -93,7 +93,7 @@ namespace Ogre
         DelayedDownload     mDelayedDownload;
 
         virtual TextureBox mapImpl( uint32 slice ) = 0;
-        virtual void unmapImpl(void) = 0;
+        virtual void unmapImpl() = 0;
 
         virtual void downloadFromGpu( TextureGpu *textureSrc, uint8 mipLevel,
                                       bool accurateTracking, TextureBox *srcBox=0 );
@@ -105,9 +105,8 @@ namespace Ogre
         virtual ~AsyncTextureTicket();
 
         /// TextureGpuListener overload
-        virtual void notifyTextureChanged( TextureGpu *texture,
-                                           TextureGpuListener::Reason reason,
-                                           void *extraData );
+        void notifyTextureChanged( TextureGpu *texture, TextureGpuListener::Reason reason,
+                                   void *extraData ) override;
 
         /** Downloads textureSrc into this ticket.
             The size (resolution) of this ticket must match exactly of the region to download.
@@ -164,25 +163,25 @@ namespace Ogre
         TextureBox map( uint32 slice );
 
         /// Unmaps the pointer mapped with map().
-        void unmap(void);
+        void unmap();
 
         /// See Image2::convertFromTexture for an example of how to use AyncTextureTicket
-        virtual bool canMapMoreThanOneSlice(void) const     { return true; }
+        virtual bool canMapMoreThanOneSlice() const     { return true; }
 
-        uint32 getWidth(void) const;
-        uint32 getHeight(void) const;
-        uint32 getDepthOrSlices(void) const;
+        uint32 getWidth() const;
+        uint32 getHeight() const;
+        uint32 getDepthOrSlices() const;
         /// For TypeCube & TypeCubeArray, this value returns 1.
-        uint32 getDepth(void) const;
+        uint32 getDepth() const;
         /// For TypeCube this value returns 6.
         /// For TypeCubeArray, value returns numSlices * 6u.
-        uint32 getNumSlices(void) const;
-        PixelFormatGpu getPixelFormatFamily(void) const;
+        uint32 getNumSlices() const;
+        PixelFormatGpu getPixelFormatFamily() const;
 
-        size_t getBytesPerRow(void) const;
-        size_t getBytesPerImage(void) const;
+        size_t getBytesPerRow() const;
+        size_t getBytesPerImage() const;
 
-        virtual bool queryIsTransferDone(void);
+        virtual bool queryIsTransferDone();
     };
 }
 

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -424,17 +424,17 @@ namespace Ogre
         return mEnablePlanarReflection[textureUnit];
     }
     //-----------------------------------------------------------------------------------
-    ColourValue HlmsUnlitDatablock::getDiffuseColour(void) const
+    ColourValue HlmsUnlitDatablock::getDiffuseColour() const
     {
         return ColourValue( 0, 0, 0, 0 );
     }
     //-----------------------------------------------------------------------------------
-    ColourValue HlmsUnlitDatablock::getEmissiveColour(void) const
+    ColourValue HlmsUnlitDatablock::getEmissiveColour() const
     {
         return hasColour() ? getColour() : ColourValue::White;
     }
     //-----------------------------------------------------------------------------------
-    TextureGpu* HlmsUnlitDatablock::getEmissiveTexture(void) const
+    TextureGpu* HlmsUnlitDatablock::getEmissiveTexture() const
     {
         return getTexture( 0 );
     }

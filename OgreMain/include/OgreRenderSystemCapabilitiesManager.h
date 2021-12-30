@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -90,7 +90,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static RenderSystemCapabilitiesManager& getSingleton(void);
+        static RenderSystemCapabilitiesManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -106,7 +106,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static RenderSystemCapabilitiesManager* getSingletonPtr(void);
+        static RenderSystemCapabilitiesManager* getSingletonPtr();
 
     protected:
 

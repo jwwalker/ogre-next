@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -425,7 +425,7 @@ namespace Ogre
         mComputeJobs.clear();
     }
     //-----------------------------------------------------------------------------------
-    void HlmsCompute::clearShaderCache(void)
+    void HlmsCompute::clearShaderCache()
     {
         if( mRenderSystem )
             mRenderSystem->_setComputePso( 0 );
@@ -655,7 +655,7 @@ namespace Ogre
         return retVal;
     }
     //----------------------------------------------------------------------------------
-    HlmsDatablock* HlmsCompute::createDefaultDatablock(void)
+    HlmsDatablock* HlmsCompute::createDefaultDatablock()
     {
         return 0;
     }

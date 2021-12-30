@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -43,25 +43,25 @@ namespace Ogre {
     *  @{
     */
     /// Factory for default scene manager
-    class _OgreExport DefaultSceneManagerFactory : public SceneManagerFactory
+    class _OgreExport DefaultSceneManagerFactory final : public SceneManagerFactory
     {
     protected:
-        void initMetaData(void) const;
+        void initMetaData() const override;
     public:
         DefaultSceneManagerFactory() {}
-        ~DefaultSceneManagerFactory() {}
+        ~DefaultSceneManagerFactory() override {}
         /// Factory type name
         static const String FACTORY_TYPE_NAME;
-        SceneManager* createInstance( const String& instanceName, size_t numWorkerThreads );
-        void destroyInstance(SceneManager* instance);
+        SceneManager* createInstance( const String& instanceName, size_t numWorkerThreads ) override;
+        void destroyInstance(SceneManager* instance) override;
     };
     /// Default scene manager
-    class _OgreExport DefaultSceneManager : public SceneManager
+    class _OgreExport DefaultSceneManager final : public SceneManager
     {
     public:
         DefaultSceneManager( const String& name, size_t numWorkerThreads );
-        ~DefaultSceneManager();
-        const String& getTypeName(void) const;
+        ~DefaultSceneManager() override;
+        const String& getTypeName() const override;
     };
 
     /** Enumerates the SceneManager classes available to applications.
@@ -135,7 +135,7 @@ namespace Ogre {
         /** Iterate over all types of SceneManager available for construction, 
             providing some information about each one.
         */
-        MetaDataIterator getMetaDataIterator(void) const;
+        MetaDataIterator getMetaDataIterator() const;
 
         /** Create a SceneManager instance of a given type.
         @remarks
@@ -182,14 +182,14 @@ namespace Ogre {
 
         typedef MapIterator<Instances> SceneManagerIterator;
         /** Get an iterator over all the existing SceneManager instances. */
-        SceneManagerIterator getSceneManagerIterator(void);
+        SceneManagerIterator getSceneManagerIterator();
 
         /** Notifies all SceneManagers of the destination rendering system.
         */
         void setRenderSystem(RenderSystem* rs);
 
         /// Utility method to control shutdown of the managers
-        void shutdownAll(void);
+        void shutdownAll();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -205,7 +205,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static SceneManagerEnumerator& getSingleton(void);
+        static SceneManagerEnumerator& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -221,7 +221,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static SceneManagerEnumerator* getSingletonPtr(void);
+        static SceneManagerEnumerator* getSingletonPtr();
 
     };
 

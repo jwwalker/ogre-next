@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -65,7 +65,7 @@ namespace v1
         virtual ~KeyFrame() {}
 
         /** Gets the time of this keyframe in the animation sequence. */
-        Real getTime(void) const { return mTime; }
+        Real getTime() const { return mTime; }
 
         /** Clone a keyframe (internal use only) */
         virtual KeyFrame* _clone(AnimationTrack* newParent) const;
@@ -79,7 +79,7 @@ namespace v1
 
     /** Specialised KeyFrame which stores any numeric value.
     */
-    class _OgreExport NumericKeyFrame : public KeyFrame
+    class _OgreExport NumericKeyFrame final : public KeyFrame
     {
     public:
         /** Default constructor, you should not call this but use AnimationTrack::createKeyFrame instead. */
@@ -87,7 +87,7 @@ namespace v1
         ~NumericKeyFrame() {}
 
         /** Get the value at this keyframe. */
-        virtual const AnyNumeric& getValue(void) const;
+        virtual const AnyNumeric& getValue() const;
         /** Set the value at this keyframe.
         @remarks
             All keyframe values must have a consistent type. 
@@ -95,19 +95,19 @@ namespace v1
         virtual void setValue(const AnyNumeric& val);
 
         /** Clone a keyframe (internal use only) */
-        KeyFrame* _clone(AnimationTrack* newParent) const;
+        KeyFrame* _clone(AnimationTrack* newParent) const override;
     protected:
         AnyNumeric mValue;
     };
 
 
     /** Specialised KeyFrame which stores a full transform. */
-    class _OgreExport TransformKeyFrame : public KeyFrame
+    class _OgreExport TransformKeyFrame final : public KeyFrame
     {
     public:
         /** Default constructor, you should not call this but use AnimationTrack::createKeyFrame instead. */
         TransformKeyFrame(const AnimationTrack* parent, Real time);
-        ~TransformKeyFrame() {}
+        ~TransformKeyFrame() override {}
         /** Sets the translation associated with this keyframe. 
         @remarks    
         The translation factor affects how much the keyframe translates (moves) it's animable
@@ -117,7 +117,7 @@ namespace v1
         virtual void setTranslate(const Vector3& trans);
 
         /** Gets the translation applied by this keyframe. */
-        const Vector3& getTranslate(void) const;
+        const Vector3& getTranslate() const;
 
         /** Sets the scaling factor applied by this keyframe to the animable
         object at it's time index.
@@ -127,7 +127,7 @@ namespace v1
         virtual void setScale(const Vector3& scale);
 
         /** Gets the scaling factor applied by this keyframe. */
-        virtual const Vector3& getScale(void) const;
+        virtual const Vector3& getScale() const;
 
         /** Sets the rotation applied by this keyframe.
         @param rot The rotation applied; use Quaternion methods to convert from angle/axis or Matrix3 if
@@ -136,10 +136,10 @@ namespace v1
         virtual void setRotation(const Quaternion& rot);
 
         /** Gets the rotation applied by this keyframe. */
-        virtual const Quaternion& getRotation(void) const;
+        virtual const Quaternion& getRotation() const;
 
         /** Clone a keyframe (internal use only) */
-        KeyFrame* _clone(AnimationTrack* newParent) const;
+        KeyFrame* _clone(AnimationTrack* newParent) const override;
     protected:
         Vector3 mTranslate;
         Vector3 mScale;
@@ -169,10 +169,10 @@ namespace v1
         void setVertexBuffer(const HardwareVertexBufferSharedPtr& buf);
 
         /** Gets the vertex buffer containing positions for this keyframe. */
-        const HardwareVertexBufferSharedPtr& getVertexBuffer(void) const;
+        const HardwareVertexBufferSharedPtr& getVertexBuffer() const;
 
         /** Clone a keyframe (internal use only) */
-        KeyFrame* _clone(AnimationTrack* newParent) const;      
+        KeyFrame* _clone(AnimationTrack* newParent) const override;
 
     protected:
         HardwareVertexBufferSharedPtr mBuffer;
@@ -226,23 +226,23 @@ namespace v1
         */
         void removePoseReference(ushort poseIndex);
         /** Remove all pose references. */
-        void removeAllPoseReferences(void);
+        void removeAllPoseReferences();
 
 
         /** Get a const reference to the list of pose references. */
-        const PoseRefList& getPoseReferences(void) const;
+        const PoseRefList& getPoseReferences() const;
 
         typedef VectorIterator<PoseRefList> PoseRefIterator;
         typedef ConstVectorIterator<PoseRefList> ConstPoseRefIterator;
 
         /** Get an iterator over the pose references. */
-        PoseRefIterator getPoseReferenceIterator(void);
+        PoseRefIterator getPoseReferenceIterator();
 
         /** Get a const iterator over the pose references. */
-        ConstPoseRefIterator getPoseReferenceIterator(void) const;
+        ConstPoseRefIterator getPoseReferenceIterator() const;
 
         /** Clone a keyframe (internal use only) */
-        KeyFrame* _clone(AnimationTrack* newParent) const;
+        KeyFrame* _clone(AnimationTrack* newParent) const override;
         
         void _applyBaseKeyFrame(const VertexPoseKeyFrame* base);
         

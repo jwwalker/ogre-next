@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -94,7 +94,7 @@ namespace Ogre
         /// Expects caller to call flushRenderables if we return true.
         virtual bool bakeTextures( bool hasSeparateSamplers );
         /// Expects caller to call flushRenderables if we return true.
-        bool bakeSamplers(void);
+        bool bakeSamplers();
 
         virtual void cloneImpl( HlmsDatablock *datablock ) const;
 
@@ -166,7 +166,7 @@ namespace Ogre
                                            void *extraData );
         virtual bool shouldStayLoaded( TextureGpu *texture );
 
-        void loadAllTextures(void);
+        void loadAllTextures();
     };
 }
 

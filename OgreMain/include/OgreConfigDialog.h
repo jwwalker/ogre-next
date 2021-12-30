@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -45,8 +45,6 @@ THE SOFTWARE.
 #elif( OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD ) && \
     !defined( OGRE_CONFIG_UNIX_NO_X11 )
 #    include "GLX/OgreConfigDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_NACL
-# include "NaCl/OgreConfigDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 # include "OSX/OgreConfigDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS

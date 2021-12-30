@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -58,16 +58,16 @@ namespace Ogre
     protected:
         SceneManager    *mSceneManager;
 
-        virtual bool allowResolveStoreActionsWithoutResolveTexture(void) const;
-        virtual void postRenderPassDescriptorSetup( RenderPassDescriptor *renderPassDesc );
+        bool allowResolveStoreActionsWithoutResolveTexture() const override;
+        void postRenderPassDescriptorSetup( RenderPassDescriptor *renderPassDesc ) override;
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         CompositorPassClear( const CompositorPassClearDef *definition, SceneManager *sceneManager,
                              const RenderTargetViewDef *rtv, CompositorNode *parentNode );
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
 
     private:
         CompositorPassClearDef const *mDefinition;

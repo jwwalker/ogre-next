@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -32,7 +32,7 @@ THE SOFTWARE.
 namespace Ogre {
     void* mac_loadDylib(const char* name);
     _OgreExport String macCachePath();
-    _OgreExport String macBundlePath(void);
-    _OgreExport String macTempFileName(void);
-    _OgreExport String iOSDocumentsDirectory(void);
+    _OgreExport String macBundlePath();
+    _OgreExport String macTempFileName();
+    _OgreExport String iOSDocumentsDirectory();
 }

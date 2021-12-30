@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -61,19 +61,19 @@ namespace Ogre {
         @remarks
             Temporary frustum and camera set up here.
         */
-        FocusedShadowCameraSetup(void);
+        FocusedShadowCameraSetup();
 
         /** Default destructor.
         @remarks
             Temporary frustum and camera destroyed here.
         */
-        virtual ~FocusedShadowCameraSetup(void);
+        virtual ~FocusedShadowCameraSetup();
 
         /** Returns a uniform shadow camera with a focused view.
         */
-        virtual void getShadowCamera( const SceneManager *sm, const Camera *cam,
-                                      const Light *light, Camera *texCam, size_t iteration,
-                                      const Vector2 &viewportRealSize ) const;
+        void getShadowCamera( const SceneManager *sm, const Camera *cam, const Light *light,
+                              Camera *texCam, size_t iteration,
+                              const Vector2 &viewportRealSize ) const override;
 
         /**
         @brief setXYPadding

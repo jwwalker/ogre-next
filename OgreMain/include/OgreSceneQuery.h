@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -149,7 +149,7 @@ namespace Ogre {
         */
         virtual void setQueryMask(uint32 mask);
         /** Returns the current mask for this query. */
-        virtual uint32 getQueryMask(void) const;
+        virtual uint32 getQueryMask() const;
 
         /** Tells the query what kind of world geometry to return from queries;
             often the full renderable geometry is not what is needed. 
@@ -164,10 +164,10 @@ namespace Ogre {
         virtual void setWorldFragmentType(enum WorldFragmentType wft);
 
         /** Gets the current world fragment types to be returned from the query. */
-        virtual WorldFragmentType getWorldFragmentType(void) const;
+        virtual WorldFragmentType getWorldFragmentType() const;
 
         /** Returns the types of world fragments this query supports. */
-        virtual const set<WorldFragmentType>::type* getSupportedWorldFragmentTypes(void) const
+        virtual const set<WorldFragmentType>::type* getSupportedWorldFragmentTypes() const
             {return &mSupportedWorldFragments;}
 
         
@@ -232,7 +232,7 @@ namespace Ogre {
             executed, or clearResults() is called. An more lightweight version of
             this method that returns results through a listener is also available.
         */
-        virtual SceneQueryResult& execute(void);
+        virtual SceneQueryResult& execute();
 
         /** Executes the query and returns each match through a listener interface. 
         @remarks
@@ -246,19 +246,19 @@ namespace Ogre {
         /** Gets the results of the last query that was run using this object, provided
             the query was executed using the collection-returning version of execute. 
         */
-        virtual SceneQueryResult& getLastResults(void) const;
+        virtual SceneQueryResult& getLastResults() const;
         /** Clears the results of the last query execution.
         @remarks
             You only need to call this if you specifically want to free up the memory
             used by this object to hold the last query results. This object clears the
             results itself when executing and when destroying itself.
         */
-        virtual void clearResults(void);
+        virtual void clearResults();
 
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(MovableObject* first);
+        bool queryResult(MovableObject* first) override;
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(SceneQuery::WorldFragment* fragment);
+        bool queryResult(SceneQuery::WorldFragment* fragment) override;
     };
 
     /** Specialises the SceneQuery class for querying within an axis aligned box. */
@@ -274,7 +274,7 @@ namespace Ogre {
         void setBox(const AxisAlignedBox& box);
 
         /** Gets the box which is being used for this query. */
-        const AxisAlignedBox& getBox(void) const;
+        const AxisAlignedBox& getBox() const;
 
     };
 
@@ -382,7 +382,7 @@ namespace Ogre {
         /** Sets the ray which is to be used for this query. */
         virtual void setRay(const Ray& ray);
         /** Gets the ray which is to be used for this query. */
-        virtual const Ray& getRay(void) const;
+        virtual const Ray& getRay() const;
         /** Sets whether the results of this query will be sorted by distance along the ray.
         @remarks
             Often you want to know what was the first object a ray intersected with, and this 
@@ -403,10 +403,10 @@ namespace Ogre {
         */
         virtual void setSortByDistance(bool sort, ushort maxresults = 0);
         /** Gets whether the results are sorted by distance. */
-        virtual bool getSortByDistance(void) const;
+        virtual bool getSortByDistance() const;
         /** Gets the maximum number of results returned from the query (only relevant if 
         results are being sorted) */
-        virtual ushort getMaxResults(void) const;
+        virtual ushort getMaxResults() const;
         /** Executes the query, returning the results back in one list.
         @remarks
             This method executes the scene query as configured, gathers the results
@@ -415,7 +415,7 @@ namespace Ogre {
             executed, or clearResults() is called. An more lightweight version of
             this method that returns results through a listener is also available.
         */
-        virtual RaySceneQueryResult& execute(void);
+        virtual RaySceneQueryResult& execute();
 
         /** Executes the query and returns each match through a listener interface. 
         @remarks
@@ -429,23 +429,19 @@ namespace Ogre {
         /** Gets the results of the last query that was run using this object, provided
             the query was executed using the collection-returning version of execute. 
         */
-        virtual RaySceneQueryResult& getLastResults(void);
+        virtual RaySceneQueryResult& getLastResults();
         /** Clears the results of the last query execution.
         @remarks
             You only need to call this if you specifically want to free up the memory
             used by this object to hold the last query results. This object clears the
             results itself when executing and when destroying itself.
         */
-        virtual void clearResults(void);
+        virtual void clearResults();
 
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(MovableObject* obj, Real distance);
+        bool queryResult(MovableObject* obj, Real distance) override;
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(SceneQuery::WorldFragment* fragment, Real distance);
-
-
-
-
+        bool queryResult(SceneQuery::WorldFragment* fragment, Real distance) override;
     };
 
     /** Alternative listener class for dealing with IntersectionSceneQuery.
@@ -521,7 +517,7 @@ namespace Ogre {
             executed, or clearResults() is called. An more lightweight version of
             this method that returns results through a listener is also available.
         */
-        virtual IntersectionSceneQueryResult& execute(void);
+        virtual IntersectionSceneQueryResult& execute();
 
         /** Executes the query and returns each match through a listener interface. 
         @remarks
@@ -535,19 +531,19 @@ namespace Ogre {
         /** Gets the results of the last query that was run using this object, provided
             the query was executed using the collection-returning version of execute. 
         */
-        virtual IntersectionSceneQueryResult& getLastResults(void) const;
+        virtual IntersectionSceneQueryResult& getLastResults() const;
         /** Clears the results of the last query execution.
         @remarks
             You only need to call this if you specifically want to free up the memory
             used by this object to hold the last query results. This object clears the
             results itself when executing and when destroying itself.
         */
-        virtual void clearResults(void);
+        virtual void clearResults();
 
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(MovableObject* first, MovableObject* second);
+        bool queryResult(MovableObject* first, MovableObject* second) override;
         /** Self-callback in order to deal with execute which returns collection. */
-        bool queryResult(MovableObject* movable, SceneQuery::WorldFragment* fragment);
+        bool queryResult(MovableObject* movable, SceneQuery::WorldFragment* fragment) override;
     };
     
     /** @} */

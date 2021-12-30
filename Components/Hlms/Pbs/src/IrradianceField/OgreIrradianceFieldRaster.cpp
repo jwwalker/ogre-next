@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -79,7 +79,7 @@ namespace Ogre
     //-------------------------------------------------------------------------
     IrradianceFieldRaster::~IrradianceFieldRaster() { destroyWorkspace(); }
     //-------------------------------------------------------------------------
-    void IrradianceFieldRaster::createWorkspace( void )
+    void IrradianceFieldRaster::createWorkspace()
     {
         destroyWorkspace();
 
@@ -163,7 +163,7 @@ namespace Ogre
         mNumProbesParam = mShaderParamsConvertToIfd->findParameter( "numProbes" );
     }
     //-------------------------------------------------------------------------
-    void IrradianceFieldRaster::destroyWorkspace( void )
+    void IrradianceFieldRaster::destroyWorkspace()
     {
         if( !mRenderWorkspace )
             return;

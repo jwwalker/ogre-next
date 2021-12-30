@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -65,27 +65,26 @@ namespace v1 {
     public:
         /// Constructor
         SimpleRenderable( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager );
+        ~SimpleRenderable() override;
 
         virtual void setMaterial( const String& matName );
-        virtual void setMaterial(const MaterialPtr& mat);
-        virtual const MaterialPtr& getMaterial(void) const;
+        void setMaterial(const MaterialPtr& mat) override;
+        virtual const MaterialPtr& getMaterial() const;
 
         virtual void setRenderOperation( const RenderOperation& rend );
-        virtual void getRenderOperation(RenderOperation& op, bool casterPass);
+        void getRenderOperation(RenderOperation& op, bool casterPass) override;
 
         void setWorldTransform( const Matrix4& xform );
-        virtual void getWorldTransforms( Matrix4* xform ) const;
+        void getWorldTransforms( Matrix4* xform ) const override;
 
         void setBoundingBox( const AxisAlignedBox& box );
-        virtual const AxisAlignedBox& getBoundingBox(void) const;
-
-        virtual ~SimpleRenderable();
+        virtual const AxisAlignedBox& getBoundingBox() const;
 
         /** Overridden from MovableObject */
-        virtual const String& getMovableType(void) const;
+        const String& getMovableType() const override;
 
         /** @copydoc Renderable::getLights */
-        const LightList& getLights(void) const;
+        const LightList& getLights() const override;
 
     };
     /** @} */

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -51,7 +51,7 @@ namespace Ogre
         Note that some SceneManager implementations (i.e. Octree like) may want to have more
         than one NodeMemoryManager, for example one per octant.
     */
-    class _OgreExport NodeMemoryManager : ArrayMemoryManager::RebaseListener
+    class _OgreExport NodeMemoryManager final : ArrayMemoryManager::RebaseListener
     {
         typedef vector<NodeArrayMemoryManager>::type ArrayMemoryManagerVec;
         /// ArrayMemoryManagers grouped by hierarchy depth
@@ -81,7 +81,7 @@ namespace Ogre
         /// @See mMemoryManagerType
         void _setTwin( SceneMemoryMgrTypes memoryManagerType, NodeMemoryManager *twinMemoryManager );
 
-        SceneNode* _getDummyNode(void) const                        { return mDummyNode; }
+        SceneNode* _getDummyNode() const                        { return mDummyNode; }
 
         /// Note the return value can be null
         NodeMemoryManager* getTwin() const                          { return mTwinMemoryManager; }
@@ -189,10 +189,10 @@ namespace Ogre
                                  NodeMemoryManager *dstNodeMemoryManager );
 
         /// @copydoc ArrayMemoryManager::defragment
-        void defragment(void);
+        void defragment();
 
         /// @copydoc ArrayMemoryManager::shrinkToFit
-        void shrinkToFit(void);
+        void shrinkToFit();
 
         /** Retrieves the number of depth levels that have been created.
         @remarks
@@ -211,14 +211,13 @@ namespace Ogre
         */
         size_t getFirstNode( Transform &outTransform, size_t depth );
 
-        //Derived from ArrayMemoryManager::RebaseListener
-        virtual void buildDiffList( uint16 level, const MemoryPoolVec &basePtrs,
-                                    ArrayMemoryManager::PtrdiffVec &outDiffsList );
-        virtual void applyRebase( uint16 level, const MemoryPoolVec &newBasePtrs,
-                                  const ArrayMemoryManager::PtrdiffVec &diffsList );
-        virtual void performCleanup( uint16 level, const MemoryPoolVec &basePtrs,
-                                     size_t const *elementsMemSizes,
-                                     size_t startInstance, size_t diffInstances );
+        // Derived from ArrayMemoryManager::RebaseListener
+        void buildDiffList( uint16 level, const MemoryPoolVec &basePtrs,
+                            ArrayMemoryManager::PtrdiffVec &outDiffsList ) override;
+        void applyRebase( uint16 level, const MemoryPoolVec &newBasePtrs,
+                          const ArrayMemoryManager::PtrdiffVec &diffsList ) override;
+        void performCleanup( uint16 level, const MemoryPoolVec &basePtrs, size_t const *elementsMemSizes,
+                             size_t startInstance, size_t diffInstances ) override;
     };
 
     /** @} */

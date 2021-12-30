@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -63,7 +63,7 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    ReadOnlyBufferPacked *NULLUavBufferPacked::getAsReadOnlyBufferImpl( void )
+    ReadOnlyBufferPacked *NULLUavBufferPacked::getAsReadOnlyBufferImpl()
     {
         OGRE_ASSERT_HIGH( dynamic_cast<NULLBufferInterface *>( mBufferInterface ) );
 

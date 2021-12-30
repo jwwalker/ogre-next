@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -62,7 +62,6 @@ namespace Ogre {
         mutable bool mDirty;
         static String msMovableType;
     public:
-
         MovablePlane( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager );
         MovablePlane( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager,
                       const Plane& rhs );
@@ -73,15 +72,16 @@ namespace Ogre {
                       const Vector3& rkNormal, const Vector3& rkPoint );
         MovablePlane( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager,
                       const Vector3& rkPoint0, const Vector3& rkPoint1, const Vector3& rkPoint2 );
-        ~MovablePlane() {}
+
+        ~MovablePlane() override {}
         /// Overridden from MovableObject
-        const AxisAlignedBox& getBoundingBox(void) const { return mNullBB; }
+        const AxisAlignedBox& getBoundingBox() const { return mNullBB; }
         /// Overridden from MovableObject
-        void _updateRenderQueue(RenderQueue*, Camera *camera, const Camera *lodCamera) { /* do nothing */}
+        void _updateRenderQueue( RenderQueue *, Camera *, const Camera * ) override {}
         /// Overridden from MovableObject
-        const String& getMovableType(void) const;
+        const String& getMovableType() const override;
         /// Get the derived plane as transformed by its parent node. 
-        const Plane& _getDerivedPlane(void) const;
+        const Plane& _getDerivedPlane() const;
     };
     /** @} */
     /** @} */

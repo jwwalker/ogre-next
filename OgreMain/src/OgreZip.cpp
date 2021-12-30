@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -272,20 +272,6 @@ namespace Ogre {
         return ret;
     }
     //-----------------------------------------------------------------------
-#if __cplusplus < 201103L
-    struct FileNameCompare
-    {
-        typedef FileInfo first_argument_type;
-        typedef String second_argument_type;
-        typedef bool result_type;
-
-        bool operator()(const Ogre::FileInfo& lhs, const String& filename) const
-        {
-            return lhs.filename == filename;
-        }
-    };
-#endif
-    //-----------------------------------------------------------------------
     bool ZipArchive::exists(const String& filename)
     {       
         OGRE_LOCK_AUTO_MUTEX;
@@ -296,13 +282,9 @@ namespace Ogre {
             cleanName = tokens[tokens.size() - 1];
         }
 
-#if __cplusplus >= 201103L
-        return std::find_if( mFileList.begin(), mFileList.end(), [&cleanName](const FileInfo& fi){ return fi.filename == cleanName; }) != mFileList.end();
-#elif OGRE_COMPILER == OGRE_COMPILER_MSVC && OGRE_COMP_VER >= 1910
-        return std::find_if( mFileList.begin(), mFileList.end(), std::bind( FileNameCompare(), std::placeholders::_1, cleanName ) ) != mFileList.end();
-#else
-        return std::find_if( mFileList.begin(), mFileList.end(), std::bind2nd<FileNameCompare>( FileNameCompare(), cleanName ) ) != mFileList.end();
-#endif
+        return std::find_if( mFileList.begin(), mFileList.end(), [&cleanName]( const FileInfo &fi ) {
+                   return fi.filename == cleanName;
+               } ) != mFileList.end();
     }
     //---------------------------------------------------------------------
     time_t ZipArchive::getModifiedTime(const String& filename)
@@ -411,7 +393,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    size_t ZipDataStream::tell(void) const
+    size_t ZipDataStream::tell() const
     {
         zzip_off_t pos = zzip_tell(mZzipFile);
         if (pos<0)
@@ -419,12 +401,12 @@ namespace Ogre {
         return static_cast<size_t>(pos) - mCache.avail();
     }
     //-----------------------------------------------------------------------
-    bool ZipDataStream::eof(void) const
+    bool ZipDataStream::eof() const
     {
         return (tell() >= mSize);
     }
     //-----------------------------------------------------------------------
-    void ZipDataStream::close(void)
+    void ZipDataStream::close()
     {
         mAccess = 0;
         if (mZzipFile != 0)
@@ -439,7 +421,7 @@ namespace Ogre {
     //  ZipArchiveFactory
     //-----------------------------------------------------------------------
     //-----------------------------------------------------------------------
-    const String& ZipArchiveFactory::getType(void) const
+    const String& ZipArchiveFactory::getType() const
     {
         static String name = "Zip";
         return name;
@@ -652,7 +634,7 @@ namespace Ogre {
     {
     }    
     //-----------------------------------------------------------------------
-    const String& EmbeddedZipArchiveFactory::getType(void) const
+    const String& EmbeddedZipArchiveFactory::getType() const
     {
         static String name = "EmbeddedZip";
         return name;

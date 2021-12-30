@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -108,7 +108,7 @@ namespace v1 {
         ushort mHardwarePoseCount;
 
         /** Internal method for preparing this Entity for use in animation. */
-        void prepareTempBlendBuffers(void);
+        void prepareTempBlendBuffers();
 
     public:
         /** Sets a Material to be used.
@@ -117,26 +117,26 @@ namespace v1 {
                 uses. This call can alter that so that the Material is different
                 for this instance.
         */
-        virtual void setMaterial( const MaterialPtr& material );
+        void setMaterial( const MaterialPtr& material ) override;
 
         /** Make every setDatablock method from Renderable available.
             See http://www.research.att.com/~bs/bs_faq2.html#overloadderived
         */
         using Renderable::setDatablock;
 
-        virtual void setDatablock( HlmsDatablock *datablock );
-        virtual void _setNullDatablock(void);
+        void setDatablock( HlmsDatablock *datablock ) override;
+        void _setNullDatablock() override;
 
         /** Accessor method to read mesh data.
         */
-        SubMesh* getSubMesh(void) const;
+        SubMesh* getSubMesh() const;
 
         /** Accessor to get parent Entity */
-        Entity* getParent(void) const { return mParentEntity; }
+        Entity* getParent() const { return mParentEntity; }
 
         /** Overridden - see Renderable.
         */
-        void getRenderOperation(RenderOperation& op, bool casterPass);
+        void getRenderOperation(RenderOperation& op, bool casterPass) override;
 
         /** Tells this SubEntity to draw a subset of the SubMesh by adjusting the index buffer extents.
          * Default value is zero so that the entire index buffer is used when drawing.
@@ -165,16 +165,16 @@ namespace v1 {
 
         /** Overridden - see Renderable.
         */
-        void getWorldTransforms(Matrix4* xform) const;
+        void getWorldTransforms(Matrix4* xform) const override;
         /** Overridden - see Renderable.
         */
-        unsigned short getNumWorldTransforms(void) const;
+        unsigned short getNumWorldTransforms() const override;
         /** Overridden, see Renderable */
         Real getSquaredViewDepth(const Camera* cam) const;
         /** @copydoc Renderable::getLights */
-        const LightList& getLights(void) const;
+        const LightList& getLights() const override;
         /** @copydoc Renderable::getCastsShadows */
-        bool getCastsShadows(void) const;
+        bool getCastsShadows() const override;
         /** Advanced method to get the temporarily blended vertex information
         for entities which are software skinned. 
         @remarks
@@ -184,7 +184,7 @@ namespace v1 {
         @note
             The positions/normals of the returned vertex data is in object space.
         */
-        VertexData* _getSkelAnimVertexData(void);
+        VertexData* _getSkelAnimVertexData();
         /** Advanced method to get the temporarily blended software morph vertex information
         @remarks
             Internal engine will eliminate software animation if possible, this
@@ -193,32 +193,32 @@ namespace v1 {
         @note
             The positions/normals of the returned vertex data is in object space.
         */
-        VertexData* _getSoftwareVertexAnimVertexData(void);
+        VertexData* _getSoftwareVertexAnimVertexData();
         /** Advanced method to get the hardware morph vertex information
         @note
             The positions/normals of the returned vertex data is in object space.
         */
-        VertexData* _getHardwareVertexAnimVertexData(void);
+        VertexData* _getHardwareVertexAnimVertexData();
         /** Advanced method to get the temp buffer information for software 
         skeletal animation.
         */
-        TempBlendedBufferInfo* _getSkelAnimTempBufferInfo(void);
+        TempBlendedBufferInfo* _getSkelAnimTempBufferInfo();
         /** Advanced method to get the temp buffer information for software 
         morph animation.
         */
-        TempBlendedBufferInfo* _getVertexAnimTempBufferInfo(void);
-        const TempBlendedBufferInfo* _getVertexAnimTempBufferInfo(void) const;
+        TempBlendedBufferInfo* _getVertexAnimTempBufferInfo();
+        const TempBlendedBufferInfo* _getVertexAnimTempBufferInfo() const;
         /// Retrieve the VertexData which should be used for GPU binding
         VertexData* getVertexDataForBinding( bool casterPass );
 
         /** Mark all vertex data as so far unanimated. 
         */
-        void _markBuffersUnusedForAnimation(void);
+        void _markBuffersUnusedForAnimation();
         /** Mark all vertex data as animated. 
         */
-        void _markBuffersUsedForAnimation(void);
+        void _markBuffersUsedForAnimation();
         /** Are buffers already marked as vertex animated? */
-        bool _getBuffersMarkedForAnimation(void) const { return mVertexAnimationAppliedThisFrame; }
+        bool _getBuffersMarkedForAnimation() const { return mVertexAnimationAppliedThisFrame; }
         /** Internal method to copy original vertex data to the morph structures
         should there be no active animation in use.
         */
@@ -226,7 +226,7 @@ namespace v1 {
 
         /** Overridden from Renderable to provide some custom behaviour. */
         void _updateCustomGpuParameter( const GpuProgramParameters_AutoConstantEntry &constantEntry,
-                                        GpuProgramParameters *params ) const;
+                                        GpuProgramParameters *params ) const override;
     };
     /** @} */
     /** @} */

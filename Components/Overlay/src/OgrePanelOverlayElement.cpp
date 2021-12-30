@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -86,7 +86,7 @@ namespace v1 {
         OGRE_DELETE mRenderOp.vertexData;
     }
     //---------------------------------------------------------------------
-    void PanelOverlayElement::initialise(void)
+    void PanelOverlayElement::initialise()
     {
         bool init = !mInitialised;
 
@@ -185,7 +185,7 @@ namespace v1 {
         mTransparent = inTransparent;
     }
     //---------------------------------------------------------------------
-    bool PanelOverlayElement::isTransparent(void) const
+    bool PanelOverlayElement::isTransparent() const
     {
         return mTransparent;
     }
@@ -206,7 +206,7 @@ namespace v1 {
         v2 = mV2;
     }
     //---------------------------------------------------------------------
-    const String& PanelOverlayElement::getTypeName(void) const
+    const String& PanelOverlayElement::getTypeName() const
     {
         return msTypeName;
     }
@@ -242,7 +242,7 @@ namespace v1 {
         }
     }
     //---------------------------------------------------------------------
-    void PanelOverlayElement::updatePositionGeometry(void)
+    void PanelOverlayElement::updatePositionGeometry()
     {
         /*
             0-----2
@@ -290,7 +290,7 @@ namespace v1 {
         *pPos++ = zValue;
     }
     //---------------------------------------------------------------------
-    void PanelOverlayElement::updateTextureGeometry(void)
+    void PanelOverlayElement::updateTextureGeometry()
     {
         // Generate for as many texture layers as there are in material
         if (!mMaterialName.empty() && mInitialised)
@@ -394,7 +394,7 @@ namespace v1 {
         }
     }
     //-----------------------------------------------------------------------
-    void PanelOverlayElement::addBaseParameters(void)
+    void PanelOverlayElement::addBaseParameters()
     {
         OverlayContainer::addBaseParameters();
         ParamDictionary* dict = getParamDictionary();

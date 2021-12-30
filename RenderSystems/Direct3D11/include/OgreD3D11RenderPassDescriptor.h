@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -58,9 +58,9 @@ namespace Ogre
         share the same RTV setup. This doesn't mean these RenderPassDescriptor are exactly the
         same, as they may have different clear, loadAction or storeAction values.
     */
-    class _OgreD3D11Export D3D11RenderPassDescriptor : public RenderPassDescriptor,
-                                                       public RenderSystem::Listener,
-                                                       protected D3D11DeviceResource
+    class _OgreD3D11Export D3D11RenderPassDescriptor final : public RenderPassDescriptor,
+                                                             public RenderSystem::Listener,
+                                                             protected D3D11DeviceResource
     {
     protected:
         ComPtr<ID3D11RenderTargetView>  mColourRtv[OGRE_MAX_MULTIPLE_RENDER_TARGETS];
@@ -73,14 +73,14 @@ namespace Ogre
         D3D11Device         &mDevice;
         D3D11RenderSystem   *mRenderSystem;
 
-        void notifyDeviceLost( D3D11Device *device );
-        void notifyDeviceRestored( D3D11Device *device, unsigned pass );
+        void notifyDeviceLost( D3D11Device *device ) override;
+        void notifyDeviceRestored( D3D11Device *device, unsigned pass ) override;
 
-        void checkRenderWindowStatus(void);
-        void calculateSharedKey(void);
+        void checkRenderWindowStatus();
+        void calculateSharedKey();
 
         void updateColourRtv( uint8 lastNumColourEntries );
-        void updateDepthRtv(void);
+        void updateDepthRtv();
 
         /// Returns a mask of RenderPassDescriptor::EntryTypes bits set that indicates
         /// if 'other' wants to perform clears on colour, depth and/or stencil values.
@@ -93,9 +93,9 @@ namespace Ogre
 
     public:
         D3D11RenderPassDescriptor( D3D11Device &device, D3D11RenderSystem *renderSystem );
-        virtual ~D3D11RenderPassDescriptor();
+        ~D3D11RenderPassDescriptor() override;
 
-        virtual void entriesModified( uint32 entryTypes );
+        void entriesModified( uint32 entryTypes ) override;
 
         uint32 willSwitchTo( D3D11RenderPassDescriptor *newDesc, bool warnIfRtvWasFlushed ) const;
 
@@ -103,13 +103,13 @@ namespace Ogre
                                  uint32 uavStartingSlot, const DescriptorSetUav *descSetUav );
         void performStoreActions( uint32 entriesToFlush );
 
-        void clearFrameBuffer(void);
+        void clearFrameBuffer();
 
-        virtual void getCustomAttribute( IdString name, void *pData, uint32 extraParam );
+        void getCustomAttribute( IdString name, void *pData, uint32 extraParam ) override;
 
         // RenderSystem::Listener overload
-        virtual void eventOccurred( const String &eventName,
-                                    const NameValuePairList *parameters );
+        void eventOccurred( const String &eventName,
+                                    const NameValuePairList *parameters ) override;
     };
 
     /** @} */

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -87,17 +87,17 @@ namespace v1
         {
         }
 
-        bool hasKeyIndex(void) const
+        bool hasKeyIndex() const
         {
             return mKeyIndex != INVALID_KEY_INDEX;
         }
 
-        Real getTimePos(void) const
+        Real getTimePos() const
         {
             return mTimePos;
         }
 
-        uint getKeyIndex(void) const
+        uint getKeyIndex() const
         {
             return mKeyIndex;
         }
@@ -146,10 +146,10 @@ namespace v1
         virtual ~AnimationTrack();
 
         /** Get the handle associated with this track. */
-        unsigned short getHandle(void) const { return mHandle; }
+        unsigned short getHandle() const { return mHandle; }
 
         /** Returns the number of keyframes in this animation. */
-        virtual unsigned short getNumKeyFrames(void) const;
+        virtual unsigned short getNumKeyFrames() const;
 
         /** Returns the KeyFrame at the specified index. */
         virtual KeyFrame* getKeyFrame(unsigned short index) const;
@@ -191,7 +191,7 @@ namespace v1
         virtual void removeKeyFrame(unsigned short index);
 
         /** Removes all the KeyFrames from this track. */
-        virtual void removeAllKeyFrames(void);
+        virtual void removeAllKeyFrames();
 
 
         /** Gets a KeyFrame object which contains the interpolated transforms at the time index specified.
@@ -216,16 +216,16 @@ namespace v1
 
         /** Internal method used to tell the track that keyframe data has been 
             changed, which may cause it to rebuild some internal data. */
-        virtual void _keyFrameDataChanged(void) const {}
+        virtual void _keyFrameDataChanged() const {}
 
         /** Method to determine if this track has any KeyFrames which are
         doing anything useful - can be used to determine if this track
         can be optimised out.
         */
-        virtual bool hasNonZeroKeyFrames(void) const { return true; }
+        virtual bool hasNonZeroKeyFrames() const { return true; }
 
         /** Optimise the current track by removing any duplicate keyframes. */
-        virtual void optimise(void) {}
+        virtual void optimise() {}
 
         /** Internal method to collect keyframe times, in unique, ordered format. */
         virtual void _collectKeyFrameTimes(vector<Real>::type& keyFrameTimes);
@@ -284,10 +284,10 @@ namespace v1
         virtual NumericKeyFrame* createNumericKeyFrame(Real timePos);
 
         /// @copydoc AnimationTrack::getInterpolatedKeyFrame
-        virtual void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const;
+        void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const override;
 
         /// @copydoc AnimationTrack::apply
-        virtual void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f);
+        void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f) override;
 
         /** Applies an animation track to a given animable value.
         @param anim The AnimableValue to which to apply the animation
@@ -301,7 +301,7 @@ namespace v1
             Real weight = 1.0, Real scale = 1.0f);
 
         /** Returns a pointer to the associated animable object (if any). */
-        virtual const AnimableValuePtr& getAssociatedAnimable(void) const;
+        virtual const AnimableValuePtr& getAssociatedAnimable() const;
 
         /** Sets the associated animable object which will be automatically 
             affected by calls to 'apply'. */
@@ -319,7 +319,7 @@ namespace v1
         AnimableValuePtr mTargetAnim;
 
         /// @copydoc AnimationTrack::createKeyFrameImpl
-        KeyFrame* createKeyFrameImpl(Real time);
+        KeyFrame* createKeyFrameImpl(Real time) override;
 
 
     };
@@ -366,10 +366,10 @@ namespace v1
 		@remarks 
 			This is called everyframe before the animation is applied. @See setInitialState
 		*/
-		void resetNodeToInitialState(void);
+		void resetNodeToInitialState();
 
 		/** Returns a pointer to the associated OldNode object (if any). */
-		Node* getAssociatedNode(void) const;
+		Node* getAssociatedNode() const;
 
 		/** Sets the associated OldNode object which will be automatically affected by calls to 'apply'. */
 		void setAssociatedNode(Node* node);
@@ -384,13 +384,13 @@ namespace v1
 		virtual bool getUseShortestRotationPath() const;
 
 		/// @copydoc AnimationTrack::getInterpolatedKeyFrame
-		virtual void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const;
+        void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const override;
 
 		/// @copydoc AnimationTrack::apply
-		virtual void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f);
+        void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f) override;
 
 		/// @copydoc AnimationTrack::_keyFrameDataChanged
-		void _keyFrameDataChanged(void) const;
+        void _keyFrameDataChanged() const override;
 
 		/** Returns the KeyFrame at the specified index. */
 		virtual TransformKeyFrame* getNodeKeyFrame(unsigned short index) const;
@@ -400,21 +400,21 @@ namespace v1
 			doing anything useful - can be used to determine if this track
 			can be optimised out.
 		*/
-		virtual bool hasNonZeroKeyFrames(void) const;
+        bool hasNonZeroKeyFrames() const override;
 
 		/** Optimise the current track by removing any duplicate keyframes. */
-		virtual void optimise(void);
+        void optimise() override;
 
 		/** Clone this track (internal use only) */
 		NodeAnimationTrack* _clone(Animation* newParent) const;
 
-		void _applyBaseKeyFrame(const KeyFrame* base);
+        void _applyBaseKeyFrame(const KeyFrame* base) override;
 
 	protected:
 		/// Specialised keyframe creation
-		KeyFrame* createKeyFrameImpl(Real time);
+        KeyFrame* createKeyFrameImpl(Real time) override;
 		// Flag indicating we need to rebuild the splines next time
-		virtual void buildInterpolationSplines(void) const;
+		virtual void buildInterpolationSplines() const;
 
 		// Struct for store splines, allocate on demand for better memory footprint
 		struct Splines
@@ -464,7 +464,7 @@ namespace v1
         */
         virtual TransformKeyFrame* createNodeKeyFrame(Real timePos);
         /** Returns a pointer to the associated OldNode object (if any). */
-		OldNode* getAssociatedNode(void) const;
+		OldNode* getAssociatedNode() const;
 
         /** Sets the associated OldNode object which will be automatically affected by calls to 'apply'. */
 		void setAssociatedNode(OldNode* node);
@@ -480,13 +480,13 @@ namespace v1
         virtual bool getUseShortestRotationPath() const;
 
         /// @copydoc AnimationTrack::getInterpolatedKeyFrame
-        virtual void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const;
+        void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const override;
 
         /// @copydoc AnimationTrack::apply
-        virtual void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f);
+        void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f) override;
 
         /// @copydoc AnimationTrack::_keyFrameDataChanged
-        void _keyFrameDataChanged(void) const;
+        void _keyFrameDataChanged() const override;
 
         /** Returns the KeyFrame at the specified index. */
         virtual TransformKeyFrame* getNodeKeyFrame(unsigned short index) const;
@@ -496,21 +496,21 @@ namespace v1
             doing anything useful - can be used to determine if this track
             can be optimised out.
         */
-        virtual bool hasNonZeroKeyFrames(void) const;
+        bool hasNonZeroKeyFrames() const override;
 
         /** Optimise the current track by removing any duplicate keyframes. */
-        virtual void optimise(void);
+        void optimise() override;
 
         /** Clone this track (internal use only) */
 		OldNodeAnimationTrack* _clone(Animation* newParent) const;
         
-        void _applyBaseKeyFrame(const KeyFrame* base);
+        void _applyBaseKeyFrame(const KeyFrame* base) override;
         
     protected:
         /// Specialised keyframe creation
-        KeyFrame* createKeyFrameImpl(Real time);
+        KeyFrame* createKeyFrameImpl(Real time) override;
         // Flag indicating we need to rebuild the splines next time
-        virtual void buildInterpolationSplines(void) const;
+        virtual void buildInterpolationSplines() const;
 
         // Struct for store splines, allocate on demand for better memory footprint
         struct Splines
@@ -618,7 +618,7 @@ namespace v1
             VertexData* targetData, TargetMode target = TM_SOFTWARE);
 
         /** Get the type of vertex animation we're performing. */
-        VertexAnimationType getAnimationType(void) const { return mAnimationType; }
+        VertexAnimationType getAnimationType() const { return mAnimationType; }
         
         /** Whether the vertex animation (if present) includes normals */
         bool getVertexAnimationIncludesNormals() const;
@@ -638,10 +638,10 @@ namespace v1
 
         /** @copydoc AnimationTrack::getInterpolatedKeyFrame
         */
-        virtual void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const;
+        void getInterpolatedKeyFrame(const TimeIndex& timeIndex, KeyFrame* kf) const override;
 
         /// @copydoc AnimationTrack::apply
-        virtual void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f);
+        void apply(const TimeIndex& timeIndex, Real weight = 1.0, Real scale = 1.0f) override;
 
         /** As the 'apply' method but applies to specified VertexData instead of 
             associated data. */
@@ -659,26 +659,26 @@ namespace v1
         /** Sets the associated VertexData which this track will update. */
         void setAssociatedVertexData(VertexData* data) { mTargetVertexData = data; }
         /** Gets the associated VertexData which this track will update. */
-        VertexData* getAssociatedVertexData(void) const { return mTargetVertexData; }
+        VertexData* getAssociatedVertexData() const { return mTargetVertexData; }
 
         /// Set the target mode
         void setTargetMode(TargetMode m) { mTargetMode = m; }
         /// Get the target mode
-        TargetMode getTargetMode(void) const { return mTargetMode; }
+        TargetMode getTargetMode() const { return mTargetMode; }
 
         /** Method to determine if this track has any KeyFrames which are
         doing anything useful - can be used to determine if this track
         can be optimised out.
         */
-        virtual bool hasNonZeroKeyFrames(void) const;
+        bool hasNonZeroKeyFrames() const override;
 
         /** Optimise the current track by removing any duplicate keyframes. */
-        virtual void optimise(void);
+        void optimise() override;
 
         /** Clone this track (internal use only) */
         VertexAnimationTrack* _clone(Animation* newParent) const;
         
-        void _applyBaseKeyFrame(const KeyFrame* base);
+        void _applyBaseKeyFrame(const KeyFrame* base) override;
 
     protected:
         /// Animation type
@@ -689,7 +689,7 @@ namespace v1
         TargetMode mTargetMode;
 
         /// @copydoc AnimationTrack::createKeyFrameImpl
-        KeyFrame* createKeyFrameImpl(Real time);
+        KeyFrame* createKeyFrameImpl(Real time) override;
 
         /// Utility method for applying pose animation
         void applyPoseToVertexData(const Pose* pose, VertexData* data, Real influence);

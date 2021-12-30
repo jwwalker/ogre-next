@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -204,7 +204,7 @@ namespace Ogre
                                                TextureTypes::Type2D, this, window );
     }
     //-----------------------------------------------------------------------------------
-    TextureGpu* D3D11TextureGpuManager::createWindowDepthBuffer(void)
+    TextureGpu* D3D11TextureGpuManager::createWindowDepthBuffer()
     {
         return OGRE_NEW D3D11TextureGpuRenderTarget( GpuPageOutStrategy::Discard, mVaoManager,
                                                      "RenderWindow DepthBuffer",

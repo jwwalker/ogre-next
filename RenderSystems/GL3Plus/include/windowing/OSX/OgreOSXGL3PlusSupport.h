@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -43,10 +43,10 @@ public:
     virtual ~OSXGL3PlusSupport();
 
     /// @copydoc GL3PlusSupport::addConfig
-    void addConfig( void ) override;
+    void addConfig() override;
 
     /// @copydoc GL3PlusSupport::validateConfig
-    String validateConfig( void ) override;
+    String validateConfig() override;
 
     /// @copydoc GL3PlusSupport::createWindow
     Window* createWindow( bool autoCreateWindow, GL3PlusRenderSystem* renderSystem, const String& windowTitle ) override;

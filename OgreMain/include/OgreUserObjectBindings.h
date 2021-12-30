@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -68,7 +68,7 @@ namespace Ogre {
 
         /** Retrieves the custom key less user object associated with this class.
         */
-        const Any& getUserAny(void) const;
+        const Any& getUserAny() const;
 
         /** Sets any kind of user object on this class instance.
         @remarks

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -128,7 +128,7 @@ namespace Ogre
         */
         void addQuadTextureSource( size_t texUnitIdx, const String &textureName );
 
-        const TextureSources& getTextureSources(void) const     { return mTextureSources; }
+        const TextureSources& getTextureSources() const     { return mTextureSources; }
     };
 
     /** @} */

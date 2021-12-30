@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -46,8 +46,8 @@ namespace Ogre
     class _OgreNULLExport NULLTextureGpu : public TextureGpu
     {
     protected:
-        virtual void createInternalResourcesImpl(void);
-        virtual void destroyInternalResourcesImpl(void);
+        virtual void createInternalResourcesImpl();
+        virtual void destroyInternalResourcesImpl();
 
     public:
         NULLTextureGpu( GpuPageOutStrategy::GpuPageOutStrategy pageOutStrategy,
@@ -57,13 +57,13 @@ namespace Ogre
         virtual ~NULLTextureGpu();
 
         virtual void getSubsampleLocations( vector<Vector2>::type locations );
-        virtual void notifyDataIsReady(void);
+        virtual void notifyDataIsReady();
 
         virtual void _autogenerateMipmaps(
             CopyEncTransitionMode::CopyEncTransitionMode transitionMode = CopyEncTransitionMode::Auto );
-        virtual void _setToDisplayDummyTexture( void );
+        virtual void _setToDisplayDummyTexture();
 
-        virtual bool _isDataReadyImpl(void) const;
+        virtual bool _isDataReadyImpl() const;
     };
 
     class _OgreNULLExport NULLTextureGpuRenderTarget : public NULLTextureGpu
@@ -81,9 +81,9 @@ namespace Ogre
 
         virtual void _setDepthBufferDefaults( uint16 depthBufferPoolId, bool preferDepthTexture,
                                               PixelFormatGpu desiredDepthBufferFormat );
-        virtual uint16 getDepthBufferPoolId(void) const;
-        virtual bool getPreferDepthTexture(void) const;
-        virtual PixelFormatGpu getDesiredDepthBufferFormat(void) const;
+        virtual uint16 getDepthBufferPoolId() const;
+        virtual bool getPreferDepthTexture() const;
+        virtual PixelFormatGpu getDesiredDepthBufferFormat() const;
     };
 
     /** @} */

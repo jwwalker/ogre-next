@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -57,14 +57,14 @@ namespace Ogre
     {
         CompositorPassDepthCopyDef const *mDefinition;
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         CompositorPassDepthCopy( const CompositorPassDepthCopyDef *definition,
                                  const RenderTargetViewDef *rtv,
                                  CompositorNode *parentNode );
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
     };
 
     /** @} */

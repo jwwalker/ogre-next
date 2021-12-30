@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -106,12 +106,12 @@ namespace Ogre
         static CommandBufferExecuteFunc execute_invalidCommand;
 
         /// Executes all the commands in the command buffer. Clears the cmd buffer afterwards
-        void execute(void);
+        void execute();
 
         /// Creates/Records a command already casted to the typename.
         /// May invalidate returned pointers from previous calls.
         template <typename T>
-        T* addCommand(void)
+        T* addCommand()
         {
             assert( sizeof(T) <= COMMAND_FIXED_SIZE );
             mCommandBuffer.resize( mCommandBuffer.size() + COMMAND_FIXED_SIZE );
@@ -123,7 +123,7 @@ namespace Ogre
         }
 
         /// Returns a pointer to the last created command
-        CbBase* getLastCommand(void);
+        CbBase* getLastCommand();
 
         /// Returns the offset of the given command, in case you want to retrieve
         /// the command later (addCommand may invalidate the pointer.

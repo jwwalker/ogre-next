@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -84,7 +84,7 @@ namespace Ogre {
     {
     }
     //-----------------------------------------------------------------------
-    const Plane& MovablePlane::_getDerivedPlane(void) const
+    const Plane& MovablePlane::_getDerivedPlane() const
     {
         if (mParentNode)
         {
@@ -113,7 +113,7 @@ namespace Ogre {
         return mDerivedPlane;
     }
     //-----------------------------------------------------------------------
-    const String& MovablePlane::getMovableType(void) const
+    const String& MovablePlane::getMovableType() const
     {
         return msMovableType;
     }

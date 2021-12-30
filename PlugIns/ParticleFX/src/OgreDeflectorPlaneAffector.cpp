@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -108,17 +108,17 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    Vector3 DeflectorPlaneAffector::getPlanePoint(void) const
+    Vector3 DeflectorPlaneAffector::getPlanePoint() const
     {
         return mPlanePoint;
     }
     //-----------------------------------------------------------------------
-    Vector3 DeflectorPlaneAffector::getPlaneNormal(void) const
+    Vector3 DeflectorPlaneAffector::getPlaneNormal() const
     {
         return mPlaneNormal;
     }
     //-----------------------------------------------------------------------
-    Real DeflectorPlaneAffector::getBounce(void) const
+    Real DeflectorPlaneAffector::getBounce() const
     {
         return mBounce;
     }

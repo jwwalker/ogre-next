@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -135,7 +135,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void NULLBufferInterface::advanceFrame(void)
+    void NULLBufferInterface::advanceFrame()
     {
         advanceFrame( true );
     }
@@ -157,7 +157,7 @@ namespace Ogre
         return dynamicCurrentFrame;
     }
     //-----------------------------------------------------------------------------------
-    void NULLBufferInterface::regressFrame(void)
+    void NULLBufferInterface::regressFrame()
     {
         NULLVaoManager *vaoManager = static_cast<NULLVaoManager*>( mBuffer->mVaoManager );
         size_t dynamicCurrentFrame = mBuffer->mFinalBufferStart - mBuffer->mInternalBufferStart;

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -69,21 +69,21 @@ namespace Ogre
         /// Compute
         vector<HlmsComputeJob *>::type mJobs;
 
-        void setupComputeShaders( void );
-        void destroyComputeShaders( void );
+        void setupComputeShaders();
+        void destroyComputeShaders();
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         CompositorPassIblSpecular( const CompositorPassIblSpecularDef *definition,
                                    const RenderTargetViewDef *rtv, CompositorNode *parentNode );
-        virtual ~CompositorPassIblSpecular();
+        ~CompositorPassIblSpecular() override;
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
 
-        virtual bool notifyRecreated( const TextureGpu *channel );
+        bool notifyRecreated( const TextureGpu *channel ) override;
 
-        virtual void resetNumPassesLeft(void);
+        void resetNumPassesLeft() override;
 
     private:
         CompositorPassIblSpecularDef const *mDefinition;

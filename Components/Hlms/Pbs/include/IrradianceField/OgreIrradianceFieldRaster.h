@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -89,8 +89,8 @@ namespace Ogre
         IrradianceFieldRaster( IrradianceField *creator );
         virtual ~IrradianceFieldRaster();
 
-        void createWorkspace( void );
-        void destroyWorkspace( void );
+        void createWorkspace();
+        void destroyWorkspace();
 
         void renderProbes( uint32 probesPerFrame );
     };

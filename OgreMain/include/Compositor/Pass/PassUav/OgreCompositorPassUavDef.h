@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -131,8 +131,8 @@ namespace Ogre
                            ResourceAccess::ResourceAccess access, size_t offset=0,
                            size_t sizeBytes=0 );
 
-        const TextureSources& getTextureSources(void) const     { return mTextureSources; }
-        const BufferSourceVec& getBufferSources(void) const     { return mBufferSources; }
+        const TextureSources& getTextureSources() const     { return mTextureSources; }
+        const BufferSourceVec& getBufferSources() const     { return mBufferSources; }
     };
 
     /** @} */

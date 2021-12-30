@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -54,7 +54,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void ConfigFile::clear(void)
+    void ConfigFile::clear()
     {
         for (SettingsBySection::iterator seci = mSettings.begin(); 
             seci != mSettings.end(); ++seci)
@@ -78,11 +78,6 @@ namespace Ogre {
     void ConfigFile::loadDirect(const String& filename, const String& separators, 
         bool trimWhitespace)
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_NACL
-        OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, "loadDirect is not supported on NaCl - tried to open: " + filename,
-            "ConfigFile::loadDirect");
-#endif
-
         /* Open the configuration file */
         std::ifstream fp;
         // Always open in binary mode
@@ -224,7 +219,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    ConfigFile::SectionIterator ConfigFile::getSectionIterator(void)
+    ConfigFile::SectionIterator ConfigFile::getSectionIterator()
     {
         return SectionIterator(mSettings.begin(), mSettings.end());
     }

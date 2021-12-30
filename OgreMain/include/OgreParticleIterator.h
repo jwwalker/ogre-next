@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -58,10 +58,10 @@ namespace Ogre {
 
     public:
         /// Returns true when at the end of the particle list
-        bool end(void);
+        bool end();
 
         /** Returns a pointer to the next particle, and moves the iterator on by 1 element. */
-        Particle* getNext(void);
+        Particle* getNext();
     };
     /** @} */
     /** @} */

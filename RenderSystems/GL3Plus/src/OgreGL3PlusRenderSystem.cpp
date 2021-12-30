@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org
 
@@ -32,9 +32,6 @@ Copyright (c) 2000-2014 Torus Knot Software Ltd
 #include "OgreStringConverter.h"
 #include "OgreLight.h"
 #include "OgreCamera.h"
-#include "OgreGL3PlusHardwareCounterBuffer.h"
-#include "OgreGL3PlusHardwareUniformBuffer.h"
-#include "OgreGL3PlusHardwareShaderStorageBuffer.h"
 #include "OgreGL3PlusHardwareVertexBuffer.h"
 #include "OgreGL3PlusHardwareIndexBuffer.h"
 #include "OgreGL3PlusDefaultHardwareBufferManager.h"
@@ -48,8 +45,6 @@ Copyright (c) 2000-2014 Torus Knot Software Ltd
 #include "OgreGL3PlusContext.h"
 #include "OgreGLSLShaderFactory.h"
 #include "OgreGL3PlusHardwareBufferManager.h"
-#include "OgreGLSLSeparableProgramManager.h"
-#include "OgreGLSLSeparableProgram.h"
 #include "OgreGLSLMonolithicProgramManager.h"
 #include "OgreGL3PlusVertexArrayObject.h"
 #include "OgreGL3PlusTextureGpuManager.h"
@@ -229,24 +224,24 @@ namespace Ogre {
             OGRE_DELETE mGLSupport;
     }
 
-    const String& GL3PlusRenderSystem::getName(void) const
+    const String& GL3PlusRenderSystem::getName() const
     {
         static String strName("OpenGL 3+ Rendering Subsystem");
         return strName;
     }
 
-    const String& GL3PlusRenderSystem::getFriendlyName(void) const
+    const String& GL3PlusRenderSystem::getFriendlyName() const
     {
         static String strName("OpenGL 3+");
         return strName;
     }
 
-    void GL3PlusRenderSystem::initConfigOptions(void)
+    void GL3PlusRenderSystem::initConfigOptions()
     {
         mGLSupport->addConfig();
     }
 
-    ConfigOptionMap& GL3PlusRenderSystem::getConfigOptions(void)
+    ConfigOptionMap& GL3PlusRenderSystem::getConfigOptions()
     {
         return mGLSupport->getConfigOptions();
     }
@@ -262,12 +257,12 @@ namespace Ogre {
         return mGLSupport->getPriorityConfigOption( idx );
     }
     //-----------------------------------------------------------------------
-    size_t GL3PlusRenderSystem::getNumPriorityConfigOptions( void ) const
+    size_t GL3PlusRenderSystem::getNumPriorityConfigOptions() const
     {
         return mGLSupport->getNumPriorityConfigOptions();
     }
 
-    String GL3PlusRenderSystem::validateConfigOptions(void)
+    String GL3PlusRenderSystem::validateConfigOptions()
     {
         // XXX Return an error string if something is invalid
         return mGLSupport->validateConfig();
@@ -699,13 +694,13 @@ namespace Ogre {
         mGLInitialised = true;
     }
 
-    void GL3PlusRenderSystem::reinitialise(void)
+    void GL3PlusRenderSystem::reinitialise()
     {
         this->shutdown();
         this->_initialise(true);
     }
 
-    void GL3PlusRenderSystem::shutdown(void)
+    void GL3PlusRenderSystem::shutdown()
     {
         RenderSystem::shutdown();
 
@@ -918,7 +913,7 @@ namespace Ogre {
             _switchContext( newContext );
     }
     //-----------------------------------------------------------------------------------
-    RenderPassDescriptor* GL3PlusRenderSystem::createRenderPassDescriptor(void)
+    RenderPassDescriptor* GL3PlusRenderSystem::createRenderPassDescriptor()
     {
         RenderPassDescriptor *retVal = OGRE_NEW GL3PlusRenderPassDescriptor( this );
         mRenderPassDescs.insert( retVal );
@@ -1031,7 +1026,7 @@ namespace Ogre {
         }*/
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusRenderSystem::endRenderPassDescriptor(void)
+    void GL3PlusRenderSystem::endRenderPassDescriptor()
     {
         if( mCurrentRenderPassDescriptor )
         {
@@ -1065,7 +1060,7 @@ namespace Ogre {
         return BLANKSTRING;
     }
 
-    VertexElementType GL3PlusRenderSystem::getColourVertexElementType(void) const
+    VertexElementType GL3PlusRenderSystem::getColourVertexElementType() const
     {
         return VET_COLOUR_ABGR;
     }
@@ -1402,7 +1397,7 @@ namespace Ogre {
         _setTexture(unit, tex, false);
     }
 
-    void GL3PlusRenderSystem::flushUAVs(void)
+    void GL3PlusRenderSystem::flushUAVs()
     {
         if( mUavRenderingDirty )
         {
@@ -2325,19 +2320,7 @@ namespace Ogre {
             mFragmentProgramBound = true;
         }
 
-        GLSLSeparableProgramManager* separableProgramMgr =
-                GLSLSeparableProgramManager::getSingletonPtr();
-
-        if( separableProgramMgr )
-        {
-            GLSLSeparableProgram* separableProgram = separableProgramMgr->getCurrentSeparableProgram();
-            if (separableProgram)
-                separableProgram->activate();
-        }
-        else
-        {
-            GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-        }
+        GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
     }
 
     void GL3PlusRenderSystem::_setComputePso( const HlmsComputePso *pso )
@@ -2369,19 +2352,7 @@ namespace Ogre {
         mActiveComputeGpuProgramParameters = pso->computeParams;
         mComputeProgramBound = true;
 
-        GLSLSeparableProgramManager* separableProgramMgr =
-                GLSLSeparableProgramManager::getSingletonPtr();
-
-        if( separableProgramMgr )
-        {
-            GLSLSeparableProgram* separableProgram = separableProgramMgr->getCurrentSeparableProgram();
-            if (separableProgram)
-                separableProgram->activate();
-        }
-        else
-        {
-            GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-        }
+        GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
     }
 
     void GL3PlusRenderSystem::_setIndirectBuffer( IndirectBufferPacked *indirectBuffer )
@@ -2419,11 +2390,11 @@ namespace Ogre {
         newPso->rsData = 0;
     }
 
-    void GL3PlusRenderSystem::_beginFrame(void)
+    void GL3PlusRenderSystem::_beginFrame()
     {
     }
 
-    void GL3PlusRenderSystem::_endFrame(void)
+    void GL3PlusRenderSystem::_endFrame()
     {
         OGRE_CHECK_GL_ERROR(glDisable(GL_DEPTH_CLAMP));
 
@@ -2501,25 +2472,25 @@ namespace Ogre {
         }
     }
 
-    Real GL3PlusRenderSystem::getRSDepthRange(void) const
+    Real GL3PlusRenderSystem::getRSDepthRange() const
     {
         return mReverseDepth ? 1.0f : 2.0f;
     }
 
-    HardwareOcclusionQuery* GL3PlusRenderSystem::createHardwareOcclusionQuery(void)
+    HardwareOcclusionQuery* GL3PlusRenderSystem::createHardwareOcclusionQuery()
     {
         GL3PlusHardwareOcclusionQuery* ret = new GL3PlusHardwareOcclusionQuery();
         mHwOcclusionQueries.push_back(ret);
         return ret;
     }
 
-    Real GL3PlusRenderSystem::getMinimumDepthInputValue(void)
+    Real GL3PlusRenderSystem::getMinimumDepthInputValue()
     {
         // Range [-1.0f, 1.0f] or range [0.0f; 1.0f]
         return mReverseDepth ? 0.0f : -1.0f;
     }
 
-    Real GL3PlusRenderSystem::getMaximumDepthInputValue(void)
+    Real GL3PlusRenderSystem::getMaximumDepthInputValue()
     {
         // Range [-1.0f, 1.0f]
         return 1.0f;
@@ -2560,7 +2531,7 @@ namespace Ogre {
         }
     }
 
-    GLint GL3PlusRenderSystem::getCombinedMinMipFilter(void) const
+    GLint GL3PlusRenderSystem::getCombinedMinMipFilter() const
     {
         switch(mMinFilter)
         {
@@ -2626,41 +2597,19 @@ namespace Ogre {
 
         // Bind VAO (set of per-vertex attributes: position, normal, etc.).
         bool updateVAO = true;
-        if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
+
+        GLSLMonolithicProgram *monolithicProgram =
+            GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+        if( monolithicProgram )
         {
-            GLSLSeparableProgram* separableProgram =
-                GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-            if (separableProgram)
-            {
-                if (!op.renderToVertexBuffer)
-                {
-                    separableProgram->activate();
-                }
+            updateVAO = !monolithicProgram->getVertexArrayObject()->isInitialised();
 
-                updateVAO = !separableProgram->getVertexArrayObject()->isInitialised();
-
-                separableProgram->getVertexArrayObject()->bind();
-            }
-            else
-            {
-                Ogre::LogManager::getSingleton().logMessage(
-                    "ERROR: Failed to create separable program.", LML_CRITICAL);
-            }
+            monolithicProgram->getVertexArrayObject()->bind();
         }
         else
         {
-            GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-            if (monolithicProgram)
-            {
-                updateVAO = !monolithicProgram->getVertexArrayObject()->isInitialised();
-
-                monolithicProgram->getVertexArrayObject()->bind();
-            }
-            else
-            {
-                Ogre::LogManager::getSingleton().logMessage(
-                    "ERROR: Failed to create monolithic program.", LML_CRITICAL);
-            }
+            Ogre::LogManager::getSingleton().logMessage( "ERROR: Failed to create monolithic program.",
+                                                         LML_CRITICAL );
         }
 
         // Bind the appropriate VBOs to the active attributes of the VAO.
@@ -2847,22 +2796,11 @@ namespace Ogre {
         // Unbind VAO (if updated).
         if (updateVAO)
         {
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
+            GLSLMonolithicProgram *monolithicProgram2 =
+                GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+            if( monolithicProgram2 )
             {
-                GLSLSeparableProgram* separableProgram =
-                    GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-                if (separableProgram)
-                {
-                    separableProgram->getVertexArrayObject()->setInitialised(true);
-                }
-            }
-            else
-            {
-                GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-                if (monolithicProgram)
-                {
-                    monolithicProgram->getVertexArrayObject()->setInitialised(true);
-                }
+                monolithicProgram2->getVertexArrayObject()->setInitialised( true );
             }
 
             // Unbind the vertex array object.
@@ -3018,7 +2956,7 @@ namespace Ogre {
         }
     }
 
-    void GL3PlusRenderSystem::_startLegacyV1Rendering(void)
+    void GL3PlusRenderSystem::_startLegacyV1Rendering()
     {
         glBindVertexArray( mGlobalVao );
     }
@@ -3502,38 +3440,6 @@ namespace Ogre {
         {
         case GPT_VERTEX_PROGRAM:
             mActiveVertexGpuProgramParameters = params;
-            mPso->vertexShader->bindSharedParameters(params, mask);
-            break;
-        case GPT_FRAGMENT_PROGRAM:
-            mActiveFragmentGpuProgramParameters = params;
-            mPso->pixelShader->bindSharedParameters(params, mask);
-            break;
-        case GPT_GEOMETRY_PROGRAM:
-            mActiveGeometryGpuProgramParameters = params;
-            mPso->geometryShader->bindSharedParameters(params, mask);
-            break;
-        case GPT_HULL_PROGRAM:
-            mActiveTessellationHullGpuProgramParameters = params;
-            mPso->hullShader->bindSharedParameters(params, mask);
-            break;
-        case GPT_DOMAIN_PROGRAM:
-            mActiveTessellationDomainGpuProgramParameters = params;
-            mPso->domainShader->bindSharedParameters(params, mask);
-            break;
-        case GPT_COMPUTE_PROGRAM:
-            mActiveComputeGpuProgramParameters = params;
-            mCurrentComputeShader->bindSharedParameters(params, mask);
-            break;
-        default:
-            break;
-        }
-        //              }
-        //        else
-        //        {
-        switch (gptype)
-        {
-        case GPT_VERTEX_PROGRAM:
-            mActiveVertexGpuProgramParameters = params;
             mPso->vertexShader->bindParameters(params, mask);
             break;
         case GPT_FRAGMENT_PROGRAM:
@@ -3556,14 +3462,7 @@ namespace Ogre {
             mActiveComputeGpuProgramParameters = params;
             mCurrentComputeShader->bindParameters(params, mask);
             break;
-        default:
-            break;
         }
-        //        }
-
-        //FIXME This needs to be moved somewhere texture specific.
-        // Update image bindings for image load/store
-        // static_cast<GL3PlusTextureManager*>(mTextureManager)->bindImages();
     }
 
     void GL3PlusRenderSystem::bindGpuProgramPassIterationParameters(GpuProgramType gptype)
@@ -3664,7 +3563,7 @@ namespace Ogre {
     }
 
 
-    void GL3PlusRenderSystem::endProfileEvent( void )
+    void GL3PlusRenderSystem::endProfileEvent()
     {
         markProfileEvent("End Event");
         if( mHasGL43 || mGLSupport->checkExtension("ARB_debug_group") )
@@ -3699,7 +3598,7 @@ namespace Ogre {
 #endif
     }
 
-    void GL3PlusRenderSystem::debugAnnotationPop( void )
+    void GL3PlusRenderSystem::debugAnnotationPop()
     {
 #if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
         if( mHasGL43 || mGLSupport->checkExtension("GL_KHR_debug") )
@@ -3707,14 +3606,14 @@ namespace Ogre {
 #endif
     }
 
-    void GL3PlusRenderSystem::initGPUProfiling(void)
+    void GL3PlusRenderSystem::initGPUProfiling()
     {
 #if OGRE_PROFILING == OGRE_PROFILING_REMOTERY
         _rmt_BindOpenGL();
 #endif
     }
 
-    void GL3PlusRenderSystem::deinitGPUProfiling(void)
+    void GL3PlusRenderSystem::deinitGPUProfiling()
     {
 #if OGRE_PROFILING == OGRE_PROFILING_REMOTERY
         _rmt_UnbindOpenGL();
@@ -3793,27 +3692,14 @@ namespace Ogre {
             GLuint attrib = 0;
             unsigned short elemIndex = elem.getIndex();
 
-            if (Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
+            GLSLMonolithicProgram *monolithicProgram =
+                GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
+            if( !monolithicProgram || !monolithicProgram->isAttributeValid( sem, elemIndex ) )
             {
-                GLSLSeparableProgram* separableProgram =
-                    GLSLSeparableProgramManager::getSingleton().getCurrentSeparableProgram();
-                if (!separableProgram || !separableProgram->isAttributeValid(sem, elemIndex))
-                {
-                    return;
-                }
-
-                attrib = (GLuint)separableProgram->getAttributeIndex(sem, elemIndex);
+                return;
             }
-            else
-            {
-                GLSLMonolithicProgram* monolithicProgram = GLSLMonolithicProgramManager::getSingleton().getActiveMonolithicProgram();
-                if (!monolithicProgram || !monolithicProgram->isAttributeValid(sem, elemIndex))
-                {
-                    return;
-                }
 
-                attrib = (GLuint)monolithicProgram->getAttributeIndex(sem, elemIndex);
-            }
+            attrib = (GLuint)monolithicProgram->getAttributeIndex( sem, elemIndex );
 
             if (mPso->vertexShader)
             {
@@ -3893,18 +3779,18 @@ namespace Ogre {
         return mGLSupport->checkExtension( ext );
     }
 
-    const PixelFormatToShaderType* GL3PlusRenderSystem::getPixelFormatToShaderType(void) const
+    const PixelFormatToShaderType* GL3PlusRenderSystem::getPixelFormatToShaderType() const
     {
         return &mPixelFormatToShaderType;
     }
     //---------------------------------------------------------------------
-    void GL3PlusRenderSystem::_clearStateAndFlushCommandBuffer(void)
+    void GL3PlusRenderSystem::_clearStateAndFlushCommandBuffer()
     {
         OgreProfileExhaustive( "GL3PlusRenderSystem::_clearStateAndFlushCommandBuffer" );
         OCGE( glFlush() );
     }
     //---------------------------------------------------------------------
-    void GL3PlusRenderSystem::flushCommands(void)
+    void GL3PlusRenderSystem::flushCommands()
     {
         OgreProfileExhaustive( "GL3PlusRenderSystem::flushCommands" );
         OCGE( glFlush() );

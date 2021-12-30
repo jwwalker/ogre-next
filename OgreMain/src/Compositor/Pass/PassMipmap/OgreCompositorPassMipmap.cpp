@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -93,7 +93,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     CompositorPassMipmap::~CompositorPassMipmap() { destroyComputeShaders(); }
     //-----------------------------------------------------------------------------------
-    void CompositorPassMipmap::destroyComputeShaders( void )
+    void CompositorPassMipmap::destroyComputeShaders()
     {
         RenderSystem *renderSystem = mParentNode->getRenderSystem();
 
@@ -124,7 +124,7 @@ namespace Ogre
         mTmpTextures.clear();
     }
     //-----------------------------------------------------------------------------------
-    void CompositorPassMipmap::setupComputeShaders( void )
+    void CompositorPassMipmap::setupComputeShaders()
     {
         destroyComputeShaders();
 

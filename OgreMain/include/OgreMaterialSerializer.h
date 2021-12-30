@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -173,7 +173,7 @@ namespace Ogre {
         void writeGeometryProgramRef(const Pass* pPass);
         void writeFragmentProgramRef(const Pass* pPass);
         void writeGpuProgramRef(const String& attrib, const GpuProgramPtr& program, const GpuProgramParametersSharedPtr& params);
-        void writeGpuPrograms(void);
+        void writeGpuPrograms();
         void writeGPUProgramParameters(const GpuProgramParametersSharedPtr& params, GpuProgramParameters* defaultParams,
                                        const unsigned short level = 4, const bool useMainBuffer = true);
         void writeNamedGpuProgramParameters(const GpuProgramParametersSharedPtr& params, GpuProgramParameters* defaultParams,

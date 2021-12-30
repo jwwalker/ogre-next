@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -56,7 +56,7 @@ namespace Ogre
 {
     uint32 toVkDescriptorType( DescBindingTypes::DescBindingTypes type );
 
-    class _OgreVulkanExport VulkanRootLayout : protected RootLayout, public ResourceAlloc
+    class _OgreVulkanExport VulkanRootLayout final : protected RootLayout, public ResourceAlloc
     {
         /// One handle per binding set (up to OGRE_VULKAN_MAX_NUM_BOUND_DESCRIPTOR_SETS)
         /// Doesn't have gaps (e.g. if mDescBindingRanges[3] is not empty, then mSets[3] must exist)
@@ -188,7 +188,7 @@ namespace Ogre
         @return
             VkPipelineLayout handle for building the PSO.
         */
-        VkPipelineLayout createVulkanHandles( void );
+        VkPipelineLayout createVulkanHandles();
 
         /** Takes an emulated D3D11/Metal-style table and binds it according to this layout's rules
 

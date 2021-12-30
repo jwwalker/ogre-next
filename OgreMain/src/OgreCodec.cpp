@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -37,7 +37,7 @@ namespace Ogre {
     Codec::~Codec() {
     }
 
-    StringVector Codec::getExtensions(void)
+    StringVector Codec::getExtensions()
     {
         StringVector result;
         result.reserve(msMapCodecs.size());

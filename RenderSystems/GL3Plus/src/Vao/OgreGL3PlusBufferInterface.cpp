@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -146,7 +146,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusBufferInterface::advanceFrame(void)
+    void GL3PlusBufferInterface::advanceFrame()
     {
         advanceFrame( true );
     }
@@ -168,7 +168,7 @@ namespace Ogre
         return dynamicCurrentFrame;
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusBufferInterface::regressFrame(void)
+    void GL3PlusBufferInterface::regressFrame()
     {
         GL3PlusVaoManager *vaoManager = static_cast<GL3PlusVaoManager*>( mBuffer->mVaoManager );
         size_t dynamicCurrentFrame = mBuffer->mFinalBufferStart - mBuffer->mInternalBufferStart;

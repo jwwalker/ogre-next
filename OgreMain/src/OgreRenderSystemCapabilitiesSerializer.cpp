@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -120,7 +120,6 @@ namespace Ogre
         file << "\t" << "gl1_5_nohwocclusion " << StringConverter::toString(caps->hasCapability(RSC_GL1_5_NOHWOCCLUSION)) << endl;
         file << "\t" << "perstageconstant " << StringConverter::toString(caps->hasCapability(RSC_PERSTAGECONSTANT)) << endl;
         file << "\t" << "vao " << StringConverter::toString(caps->hasCapability(RSC_VAO)) << endl;
-        file << "\t" << "separate_shader_objects " << StringConverter::toString(caps->hasCapability(RSC_SEPARATE_SHADER_OBJECTS)) << endl;
         file << endl;
 
         RenderSystemCapabilities::ShaderProfiles profiles = caps->getSupportedShaderProfiles();
@@ -524,8 +523,6 @@ namespace Ogre
         addCapabilitiesMapping("gl1_5_nohwocclusion", RSC_GL1_5_NOHWOCCLUSION);
         addCapabilitiesMapping("perstageconstant", RSC_PERSTAGECONSTANT);
         addCapabilitiesMapping("vao", RSC_VAO);
-        addCapabilitiesMapping("separate_shader_objects", RSC_SEPARATE_SHADER_OBJECTS);
-
     }
 
     void RenderSystemCapabilitiesSerializer::parseCapabilitiesLines(CapabilitiesLinesList& lines)

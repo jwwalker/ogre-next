@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -96,14 +96,14 @@ namespace Ogre {
     }
 
 
-    GLSLMonolithicProgram::~GLSLMonolithicProgram(void)
+    GLSLMonolithicProgram::~GLSLMonolithicProgram()
     {
         OGRE_CHECK_GL_ERROR(glDeleteProgram(mGLProgramHandle));
         mGLProgramHandle = 0;
     }
 
 
-    void GLSLMonolithicProgram::_useProgram(void)
+    void GLSLMonolithicProgram::_useProgram()
     {
         if (mLinked)
         {
@@ -112,7 +112,7 @@ namespace Ogre {
     }
 
 
-    void GLSLMonolithicProgram::activate(void)
+    void GLSLMonolithicProgram::activate()
     {
         OgreProfileExhaustiveAggr( "GLSLMonolithicProgram::activate" );
 
@@ -255,7 +255,7 @@ namespace Ogre {
     }
 
 
-    void GLSLMonolithicProgram::buildGLUniformReferences(void)
+    void GLSLMonolithicProgram::buildGLUniformReferences()
     {
         OgreProfileExhaustive( "GLSLMonolithicProgram::buildGLUniformReferences" );
 
@@ -295,7 +295,7 @@ namespace Ogre {
             // Do we know how many shared params there are yet? Or if there are any blocks defined?
             GLSLMonolithicProgramManager::getSingleton().extractUniformsFromProgram(
                 mGLProgramHandle, vertParams, geomParams, fragParams, hullParams, domainParams, computeParams,
-                mGLUniformReferences, mGLAtomicCounterReferences, mGLUniformBufferReferences, mSharedParamsBufferMap, mGLCounterBufferReferences);
+                mGLUniformReferences);
 
             mUniformRefsBuilt = true;
         }
@@ -507,34 +507,6 @@ namespace Ogre {
 
         } // End for
     }
-
-    void GLSLMonolithicProgram::updateUniformBlocks(GpuProgramParametersSharedPtr params,
-                                                    uint16 mask, GpuProgramType fromProgType)
-    {
-        // Iterate through the list of uniform buffers and update them as needed
-        GLUniformBufferIterator currentBuffer = mGLUniformBufferReferences.begin();
-        GLUniformBufferIterator endBuffer = mGLUniformBufferReferences.end();
-
-        const GpuProgramParameters::GpuSharedParamUsageList& sharedParams = params->getSharedParameters();
-
-        GpuProgramParameters::GpuSharedParamUsageList::const_iterator it, end = sharedParams.end();
-        for (it = sharedParams.begin(); it != end; ++it)
-        {
-            for (;currentBuffer != endBuffer; ++currentBuffer)
-            {
-                v1::GL3PlusHardwareUniformBuffer* hwGlBuffer = static_cast<v1::GL3PlusHardwareUniformBuffer*>(currentBuffer->get());
-                GpuSharedParametersPtr paramsPtr = it->getSharedParams();
-
-                // Block name is stored in mSharedParams->mName of GpuSharedParamUsageList items
-                GLint UniformTransform;
-                OGRE_CHECK_GL_ERROR(UniformTransform = glGetUniformBlockIndex(mGLProgramHandle, it->getName().c_str()));
-                OGRE_CHECK_GL_ERROR(glUniformBlockBinding(mGLProgramHandle, UniformTransform, hwGlBuffer->getGLBufferBinding()));
-
-                hwGlBuffer->writeData(0, hwGlBuffer->getSizeInBytes(), &paramsPtr->getFloatConstantList().front());
-            }
-        }
-    }
-
 
     void GLSLMonolithicProgram::updatePassIterationUniforms(GpuProgramParametersSharedPtr params)
     {

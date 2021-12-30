@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -58,7 +58,7 @@ namespace Ogre {
         void _affectParticles(ParticleSystem* pSystem, Real timeElapsed);
 
         void setImageAdjust(String name);
-        String getImageAdjust(void) const;
+        String getImageAdjust() const;
         
         
         static CmdImageAdjust   msImageCmd;
@@ -69,7 +69,7 @@ namespace Ogre {
         String                  mColourImageName;
 
         /** Internal method to load the image */
-        void _loadImage(void);
+        void _loadImage();
     };
 
 

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -38,14 +38,14 @@ namespace Ogre
     class _OgreNULLExport NULLAsyncTicket : public AsyncTicket
     {
     protected:
-        virtual const void* mapImpl(void);
+        virtual const void* mapImpl();
 
     public:
         NULLAsyncTicket( BufferPacked *creator, StagingBuffer *stagingBuffer,
                             size_t elementStart, size_t elementCount );
         virtual ~NULLAsyncTicket();
 
-        virtual bool queryIsTransferDone(void);
+        virtual bool queryIsTransferDone();
     };
 }
 

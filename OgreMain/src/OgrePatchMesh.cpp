@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -83,7 +83,7 @@ namespace v1 {
         sm->indexData[VpNormal]->indexCount = mSurface.getCurrentIndexCount();
     }
     //-----------------------------------------------------------------------
-    void PatchMesh::loadImpl(void)
+    void PatchMesh::loadImpl()
     {
         SubMesh* sm = this->createSubMesh();
         sm->vertexData[VpNormal] = OGRE_NEW VertexData(getHardwareBufferManager());

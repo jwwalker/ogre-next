@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -37,11 +37,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     template<> v1::HardwareBufferManager* Singleton<v1::HardwareBufferManager>::msSingleton = 0;
 namespace v1 {
-    HardwareBufferManager* HardwareBufferManager::getSingletonPtr(void)
+    HardwareBufferManager* HardwareBufferManager::getSingletonPtr()
     {
         return msSingleton;
     }
-    HardwareBufferManager& HardwareBufferManager::getSingleton(void)
+    HardwareBufferManager& HardwareBufferManager::getSingleton()
     {  
         assert( msSingleton );  return ( *msSingleton );  
     }
@@ -73,8 +73,6 @@ namespace v1 {
         // unnecessary work, and we'll destroy everything here.
         mVertexBuffers.clear();
         mIndexBuffers.clear();
-        mUniformBuffers.clear();
-        mCounterBuffers.clear();
 
         // Destroy everything
         destroyAllDeclarations();
@@ -84,7 +82,7 @@ namespace v1 {
         // No need to destroy temp buffers - they will be destroyed automatically.
     }
     //-----------------------------------------------------------------------
-    VertexDeclaration* HardwareBufferManagerBase::createVertexDeclaration(void)
+    VertexDeclaration* HardwareBufferManagerBase::createVertexDeclaration()
     {
         VertexDeclaration* decl = createVertexDeclarationImpl();
         OGRE_LOCK_MUTEX(mVertexDeclarationsMutex);
@@ -100,7 +98,7 @@ namespace v1 {
         destroyVertexDeclarationImpl(decl);
     }
     //-----------------------------------------------------------------------
-    VertexBufferBinding* HardwareBufferManagerBase::createVertexBufferBinding(void)
+    VertexBufferBinding* HardwareBufferManagerBase::createVertexBufferBinding()
     {
         VertexBufferBinding* ret = createVertexBufferBindingImpl();
         OGRE_LOCK_MUTEX(mVertexBufferBindingsMutex);
@@ -116,7 +114,7 @@ namespace v1 {
         destroyVertexBufferBindingImpl(binding);
     }
     //-----------------------------------------------------------------------
-    VertexDeclaration* HardwareBufferManagerBase::createVertexDeclarationImpl(void)
+    VertexDeclaration* HardwareBufferManagerBase::createVertexDeclarationImpl()
     {
         return OGRE_NEW VertexDeclaration( this );
     }
@@ -126,7 +124,7 @@ namespace v1 {
         OGRE_DELETE decl;
     }
     //-----------------------------------------------------------------------
-    VertexBufferBinding* HardwareBufferManagerBase::createVertexBufferBindingImpl(void)
+    VertexBufferBinding* HardwareBufferManagerBase::createVertexBufferBindingImpl()
     {
         return OGRE_NEW VertexBufferBinding();
     }
@@ -136,7 +134,7 @@ namespace v1 {
         OGRE_DELETE binding;
     }
     //-----------------------------------------------------------------------
-    void HardwareBufferManagerBase::destroyAllDeclarations(void)
+    void HardwareBufferManagerBase::destroyAllDeclarations()
     {
         OGRE_LOCK_MUTEX(mVertexDeclarationsMutex);
         VertexDeclarationList::iterator decl;
@@ -147,7 +145,7 @@ namespace v1 {
         mVertexDeclarations.clear();
     }
     //-----------------------------------------------------------------------
-    void HardwareBufferManagerBase::destroyAllBindings(void)
+    void HardwareBufferManagerBase::destroyAllBindings()
     {
         OGRE_LOCK_MUTEX(mVertexBufferBindingsMutex);
         VertexBufferBindingList::iterator bind;
@@ -251,7 +249,7 @@ namespace v1 {
         }
     }
     //-----------------------------------------------------------------------
-    void HardwareBufferManagerBase::_freeUnusedBufferCopies(void)
+    void HardwareBufferManagerBase::_freeUnusedBufferCopies()
     {
         OGRE_LOCK_MUTEX(mTempBuffersMutex);
         size_t numFreed = 0;
@@ -420,14 +418,6 @@ namespace v1 {
         }
     }
     //-----------------------------------------------------------------------
-    void HardwareBufferManagerBase::_notifyUniformBufferDestroyed(HardwareUniformBuffer* buf)
-    {
-    }
-    //-----------------------------------------------------------------------
-    void HardwareBufferManagerBase::_notifyCounterBufferDestroyed(HardwareCounterBuffer* buf)
-    {
-    }
-    //-----------------------------------------------------------------------
     HardwareVertexBufferSharedPtr 
     HardwareBufferManagerBase::makeBufferCopy(
         const HardwareVertexBufferSharedPtr& source,
@@ -441,7 +431,7 @@ namespace v1 {
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
-    TempBlendedBufferInfo::~TempBlendedBufferInfo(void)
+    TempBlendedBufferInfo::~TempBlendedBufferInfo()
     {
         // check that temp buffers have been released
         if (!destPositionBuffer.isNull())

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -76,10 +76,10 @@ namespace Ogre
 
         HlmsManager *mHlmsManager;
 
-        void notifyPassSceneAfterShadowMapsListeners(void);
-        void notifyPassSceneAfterFrustumCullingListeners(void);
+        void notifyPassSceneAfterShadowMapsListeners();
+        void notifyPassSceneAfterFrustumCullingListeners();
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         /** Constructor
@@ -93,9 +93,9 @@ namespace Ogre
         */
         CompositorPassScene( const CompositorPassSceneDef *definition, Camera *defaultCamera,
                              const RenderTargetViewDef *rtv, CompositorNode *parentNode );
-        ~CompositorPassScene();
+        ~CompositorPassScene() override;
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
 
         CompositorShadowNode* getShadowNode() const             { return mShadowNode; }
         Camera* getCamera() const                               { return mCamera; }
@@ -104,9 +104,9 @@ namespace Ogre
         void _setCustomCullCamera( Camera *camera )             { mCullCamera = camera; }
         void _setUpdateShadowNode( bool update )                { mUpdateShadowNode = update; }
 
-        bool getUpdateShadowNode(void) const                    { return mUpdateShadowNode; }
+        bool getUpdateShadowNode() const                    { return mUpdateShadowNode; }
 
-        virtual void notifyCleared(void);
+        void notifyCleared() override;
 
         const CompositorPassSceneDef* getDefinition() const     { return mDefinition; }
     };

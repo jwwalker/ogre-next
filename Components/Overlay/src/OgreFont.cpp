@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-This source file is a part of OGRE
+This source file is a part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 
 For the latest info, see http://www.ogre3d.org/
@@ -107,7 +107,7 @@ namespace Ogre
         mType = ftype;
     }
     //---------------------------------------------------------------------
-    FontType Font::getType(void) const
+    FontType Font::getType() const
     {
         return mType;
     }
@@ -132,22 +132,22 @@ namespace Ogre
         mTtfResolution = ttfResolution;
     }
     //---------------------------------------------------------------------
-    const String& Font::getSource(void) const
+    const String& Font::getSource() const
     {
         return mSource;
     }
     //---------------------------------------------------------------------
-    uint Font::getCharacterSpacer(void) const
+    uint Font::getCharacterSpacer() const
     {
         return mCharacterSpacer;
     }
     //---------------------------------------------------------------------
-    Real Font::getTrueTypeSize(void) const
+    Real Font::getTrueTypeSize() const
     {
         return mTtfSize;
     }
     //---------------------------------------------------------------------
-    uint Font::getTrueTypeResolution(void) const
+    uint Font::getTrueTypeResolution() const
     {
         return mTtfResolution;
     }
@@ -261,7 +261,7 @@ namespace Ogre
         }
     }
     //---------------------------------------------------------------------
-    void Font::createTextureFromFont(void)
+    void Font::createTextureFromFont()
     {
         RenderSystem *renderSystem = Root::getSingleton().getRenderSystem();
         TextureGpuManager *textureManager = renderSystem->getTextureGpuManager();

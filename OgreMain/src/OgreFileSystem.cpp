@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -39,7 +39,6 @@ THE SOFTWARE.
     OGRE_PLATFORM == OGRE_PLATFORM_APPLE || \
     OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || \
     OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || \
-    OGRE_PLATFORM == OGRE_PLATFORM_NACL || \
     OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || \
     OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
 #   include "OgreSearchOps.h"
@@ -71,7 +70,7 @@ namespace Ogre {
         mReadOnly = readOnly;
     }
     //-----------------------------------------------------------------------
-    bool FileSystemArchive::isCaseSensitive(void) const
+    bool FileSystemArchive::isCaseSensitive() const
     {
         #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
             return false;
@@ -520,7 +519,7 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------
-    const String& FileSystemArchiveFactory::getType(void) const
+    const String& FileSystemArchiveFactory::getType() const
     {
         static String name = "FileSystem";
         return name;

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -126,7 +126,7 @@ namespace Ogre {
         /// Overridden from ResourceManager
         Resource* createImpl(const String& name, ResourceHandle handle, 
             const String& group, bool isManual, ManualResourceLoader* loader,
-            const NameValuePairList* params);
+            const NameValuePairList* params) override;
 
         /// Scheme name -> index. Never shrinks! Should be pretty static anyway
         typedef map<String, unsigned short>::type SchemeMap;
@@ -166,11 +166,11 @@ namespace Ogre {
 
         /** Initialises the material manager, which also triggers it to 
          * parse all available .program and .material scripts. */
-        void initialise(void);
+        void initialise();
         
         /** @see ScriptLoader::parseScript
         */
-        void parseScript(DataStreamPtr& stream, const String& groupName);
+        void parseScript(DataStreamPtr& stream, const String& groupName) override;
 
         /** Returns a pointer to the default Material settings.
             @remarks
@@ -202,7 +202,7 @@ namespace Ogre {
                 <li>Bilinear texture filtering</li>
                 </ul>
         */
-        virtual MaterialPtr getDefaultSettings(void) const { return mDefaultSettings; }
+        virtual MaterialPtr getDefaultSettings() const { return mDefaultSettings; }
 
         /** Internal method - returns index for a given material scheme name.
         @see Technique::setSchemeName
@@ -215,12 +215,12 @@ namespace Ogre {
         /** Internal method - returns the active scheme index.
         @see Technique::setSchemeName
         */
-        virtual unsigned short _getActiveSchemeIndex(void) const;
+        virtual unsigned short _getActiveSchemeIndex() const;
 
         /** Returns the name of the active material scheme. 
         @see Technique::setSchemeName
         */
-        virtual const String& getActiveScheme(void) const;
+        virtual const String& getActiveScheme() const;
         
         /** Sets the name of the active material scheme. 
         @see Technique::setSchemeName
@@ -265,7 +265,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MaterialManager& getSingleton(void);
+        static MaterialManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -281,7 +281,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MaterialManager* getSingletonPtr(void);
+        static MaterialManager* getSingletonPtr();
 
     };
     /** @} */

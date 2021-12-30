@@ -21,7 +21,7 @@ namespace Ogre
     {
         MovableObject const *mTrackedObject;
 
-        void createBuffers(void);
+        void createBuffers();
 
     public:
         WireAabb( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager* manager );
@@ -42,37 +42,38 @@ namespace Ogre
         */
         void setToAabb( const Aabb &aabb );
 
-        const MovableObject* getTrackedObject(void) const       { return mTrackedObject; }
+        const MovableObject* getTrackedObject() const       { return mTrackedObject; }
 
         /// Called by the SceneManager every frame to
         /// update our data based on tracked target
-        void _updateTracking(void);
+        void _updateTracking();
 
         //Overrides from MovableObject
-        virtual const String& getMovableType(void) const;
+        const String& getMovableType() const override;
 
         //Overrides from Renderable
-        virtual const LightList& getLights(void) const;
-        virtual void getRenderOperation( v1::RenderOperation& op, bool casterPass );
-        virtual void getWorldTransforms( Matrix4* xform ) const;
-        virtual bool getCastsShadows(void) const;
+        const LightList& getLights() const override;
+        void getRenderOperation( v1::RenderOperation& op, bool casterPass ) override;
+        void getWorldTransforms( Matrix4* xform ) const override;
+        bool getCastsShadows() const override;
     };
 
     /** Factory object for creating WireAabb instances */
-    class _OgreExport WireAabbFactory : public MovableObjectFactory
+    class _OgreExport WireAabbFactory final : public MovableObjectFactory
     {
     protected:
-        virtual MovableObject* createInstanceImpl( IdType id, ObjectMemoryManager *objectMemoryManager,
-                                                   SceneManager *manager,
-                                                   const NameValuePairList* params = 0 );
+        MovableObject *createInstanceImpl( IdType id, ObjectMemoryManager *objectMemoryManager,
+                                           SceneManager *manager,
+                                           const NameValuePairList *params = 0 ) override;
+
     public:
         WireAabbFactory() {}
-        virtual ~WireAabbFactory() {}
+        ~WireAabbFactory() override {}
 
         static String FACTORY_TYPE_NAME;
 
-        const String& getType(void) const;
-        void destroyInstance( MovableObject* obj);
+        const String &getType() const override;
+        void destroyInstance( MovableObject *obj ) override;
     };
 }
 

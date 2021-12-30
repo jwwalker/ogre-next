@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -70,7 +70,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void D3D11ReadOnlyBufferPacked::notifyDeviceRestored( D3D11Device *device, unsigned pass ) {}
     //-----------------------------------------------------------------------------------
-    bool D3D11ReadOnlyBufferPacked::isD3D11Structured( void ) const
+    bool D3D11ReadOnlyBufferPacked::isD3D11Structured() const
     {
         return mInternalFormat == DXGI_FORMAT_UNKNOWN;
     }

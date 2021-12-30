@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -59,26 +59,26 @@ namespace Ogre {
     {
     protected:
         /// @copydoc LodStrategy::getValueImpl
-        virtual Real getValueImpl(const MovableObject *movableObject, const Camera *camera) const;
+        Real getValueImpl(const MovableObject *movableObject, const Camera *camera) const override;
 
     public:
         /** Default constructor. */
         DistanceLodStrategyBase(const String& name);
 
         /// @copydoc LodStrategy::getBaseValue
-        virtual Real getBaseValue() const;
+        Real getBaseValue() const override;
 
         /// @copydoc LodStrategy::transformBias
-        virtual Real transformBias(Real factor) const;
+        Real transformBias(Real factor) const override;
 
         /// @copydoc LodStrategy::transformUserValue
-        virtual Real transformUserValue(Real userValue) const;
+        Real transformUserValue(Real userValue) const override;
 
         /** Get the squared depth from camera to the LOD object */
         virtual Real getSquaredDepth(const MovableObject *movableObject, const Ogre::Camera *camera) const = 0;
 
-        virtual void lodUpdateImpl( const size_t numNodes, ObjectData t,
-                                    const Camera *camera, Real bias ) const;
+        void lodUpdateImpl( const size_t numNodes, ObjectData t, const Camera *camera,
+                            Real bias ) const override;
 
         /** Sets the reference view upon which the distances were based.
         @note
@@ -129,7 +129,8 @@ namespace Ogre {
         DistanceLodSphereStrategy();
 
         /// @copydoc DistanceLodStrategy::getSquaredDepth
-        Real getSquaredDepth(const MovableObject *movableObject, const Ogre::Camera *camera) const;
+        Real getSquaredDepth( const MovableObject *movableObject,
+                              const Ogre::Camera *camera ) const override;
 
         /** Override standard Singleton retrieval.
         @remarks
@@ -146,7 +147,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DistanceLodSphereStrategy& getSingleton(void);
+        static DistanceLodSphereStrategy& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -162,7 +163,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DistanceLodSphereStrategy* getSingletonPtr(void);
+        static DistanceLodSphereStrategy* getSingletonPtr();
     };
     /** @} */
     /** @} */
@@ -191,7 +192,8 @@ namespace Ogre {
         DistanceLodBoxStrategy();
 
         /// @copydoc DistanceLodStrategy::getSquaredDepth
-        Real getSquaredDepth(const MovableObject *movableObject, const Ogre::Camera *camera) const;
+        Real getSquaredDepth( const MovableObject *movableObject,
+                              const Ogre::Camera *camera ) const override;
 
         /** Override standard Singleton retrieval.
         @remarks
@@ -208,7 +210,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DistanceLodBoxStrategy& getSingleton(void);
+        static DistanceLodBoxStrategy& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -224,7 +226,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DistanceLodBoxStrategy* getSingletonPtr(void);
+        static DistanceLodBoxStrategy* getSingletonPtr();
     };
 
     /** @} */

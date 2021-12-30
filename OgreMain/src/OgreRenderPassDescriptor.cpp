@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -142,7 +142,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void RenderPassDescriptor::checkRequiresTextureFlipping(void)
+    void RenderPassDescriptor::checkRequiresTextureFlipping()
     {
         mRequiresTextureFlipping = false;
 
@@ -166,7 +166,7 @@ namespace Ogre
             mRequiresTextureFlipping = mColour[0].resolveTexture->requiresTextureFlipping();
     }
     //-----------------------------------------------------------------------------------
-    void RenderPassDescriptor::colourEntriesModified(void)
+    void RenderPassDescriptor::colourEntriesModified()
     {
         mNumColourEntries = 0;
 
@@ -376,7 +376,7 @@ namespace Ogre
         return false;
     }
     //-----------------------------------------------------------------------------------
-    bool RenderPassDescriptor::hasStencilFormat(void) const
+    bool RenderPassDescriptor::hasStencilFormat() const
     {
         return mStencil.texture || (mDepth.texture &&
                                     PixelFormatGpuUtils::isStencil( mDepth.texture->getPixelFormat() ));

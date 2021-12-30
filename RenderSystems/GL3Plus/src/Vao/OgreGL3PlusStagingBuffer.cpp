@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -144,7 +144,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusStagingBuffer::waitIfNeeded(void)
+    void GL3PlusStagingBuffer::waitIfNeeded()
     {
         assert( mUploadOnly );
 
@@ -300,7 +300,7 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    void GL3PlusStagingBuffer::cleanUnfencedHazards(void)
+    void GL3PlusStagingBuffer::cleanUnfencedHazards()
     {
         if( !mUnfencedHazards.empty() )
             addFence( mUnfencedHazards.front().start, mUnfencedHazards.back().end, true );

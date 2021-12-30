@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -68,7 +68,7 @@ namespace Ogre
         inline static ArrayMaskR getMask( bool x, bool y, bool z, bool w );
         inline static ArrayMaskR getMask( bool booleans[ARRAY_PACKED_REALS] );
 
-        inline static ArrayMaskR getAllSetMask(void);
+        inline static ArrayMaskR getAllSetMask();
 
         /// Returns true if alls bit in mask0[i] and mask1[i] are set.
         inline static bool allBitsSet( bool mask0[4], bool mask1[4] );

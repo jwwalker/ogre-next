@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -44,7 +44,7 @@ namespace Ogre
     /** \addtogroup Resources
     *  @{
     */
-    class _OgreD3D11Export D3D11TextureGpuManager : public TextureGpuManager
+    class _OgreD3D11Export D3D11TextureGpuManager final : public TextureGpuManager
     {
     protected:
         /// 4x4 texture for when we have nothing to display.
@@ -53,22 +53,22 @@ namespace Ogre
 
         D3D11Device &mDevice;
 
-        virtual TextureGpu* createTextureImpl( GpuPageOutStrategy::GpuPageOutStrategy pageOutStrategy,
-                                               IdString name, uint32 textureFlags,
-                                               TextureTypes::TextureTypes initialType );
-        virtual StagingTexture* createStagingTextureImpl( uint32 width, uint32 height, uint32 depth,
-                                                          uint32 slices, PixelFormatGpu pixelFormat );
-        virtual void destroyStagingTextureImpl( StagingTexture *stagingTexture );
+        TextureGpu *createTextureImpl( GpuPageOutStrategy::GpuPageOutStrategy pageOutStrategy,
+                                       IdString name, uint32 textureFlags,
+                                       TextureTypes::TextureTypes initialType ) override;
+        StagingTexture *createStagingTextureImpl( uint32 width, uint32 height, uint32 depth,
+                                                  uint32 slices, PixelFormatGpu pixelFormat ) override;
+        void destroyStagingTextureImpl( StagingTexture *stagingTexture ) override;
 
-        virtual AsyncTextureTicket* createAsyncTextureTicketImpl (uint32 width, uint32 height,
-                                                                  uint32 depthOrSlices,
-                                                                  TextureTypes::TextureTypes textureType,
-                                                                  PixelFormatGpu pixelFormatFamily );
+        AsyncTextureTicket *createAsyncTextureTicketImpl( uint32 width, uint32 height,
+                                                          uint32 depthOrSlices,
+                                                          TextureTypes::TextureTypes textureType,
+                                                          PixelFormatGpu pixelFormatFamily ) override;
 
     public:
         D3D11TextureGpuManager( VaoManager *vaoManager, RenderSystem *renderSystem,
                                 D3D11Device &device );
-        virtual ~D3D11TextureGpuManager();
+        ~D3D11TextureGpuManager() override;
 
         void _createD3DResources();
         void _destroyD3DResources();
@@ -78,12 +78,12 @@ namespace Ogre
             If caller doesnt' delete it, it will leak.
         */
         TextureGpu* createTextureGpuWindow( bool fromFlipModeSwapchain, Window *window );
-        TextureGpu* createWindowDepthBuffer(void);
+        TextureGpu* createWindowDepthBuffer();
 
         ID3D11Resource* getBlankTextureD3dName( TextureTypes::TextureTypes textureType ) const;
         ID3D11ShaderResourceView* getBlankTextureSrv( TextureTypes::TextureTypes textureType ) const;
 
-        D3D11Device& getDevice(void)        { return mDevice; }
+        D3D11Device& getDevice()        { return mDevice; }
     };
 
     /** @} */

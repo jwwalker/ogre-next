@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -112,7 +112,7 @@ public:
       * Lets you know when query is done, or still be processed by the Hardware
       * @return true if query isn't finished.
       */
-     virtual bool isStillOutstanding(void) = 0; 
+     virtual bool isStillOutstanding() = 0;
 
 
     //----------------------------------------------------------------------

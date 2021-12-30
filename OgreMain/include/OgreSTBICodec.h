@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -70,9 +70,9 @@ namespace Ogre {
         String magicNumberToFileExt(const char *magicNumberPtr, size_t maxbytes) const;
 
         /// Static method to startup FreeImage and register the FreeImage codecs
-        static void startup(void);
+        static void startup();
         /// Static method to shutdown FreeImage and unregister the FreeImage codecs
-        static void shutdown(void);
+        static void shutdown();
     };
     /** @} */
     /** @} */

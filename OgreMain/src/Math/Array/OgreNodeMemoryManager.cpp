@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -172,7 +172,7 @@ namespace Ogre
         inOutTransform = tmp;
     }
     //-----------------------------------------------------------------------------------
-    void NodeMemoryManager::defragment(void)
+    void NodeMemoryManager::defragment()
     {
         ArrayMemoryManagerVec::iterator itor = mMemoryManagers.begin();
         ArrayMemoryManagerVec::iterator end  = mMemoryManagers.end();
@@ -184,7 +184,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void NodeMemoryManager::shrinkToFit(void)
+    void NodeMemoryManager::shrinkToFit()
     {
         ArrayMemoryManagerVec::iterator itor = mMemoryManagers.begin();
         ArrayMemoryManagerVec::iterator end  = mMemoryManagers.end();

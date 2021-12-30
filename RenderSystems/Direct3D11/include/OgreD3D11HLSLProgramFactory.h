@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -34,20 +34,20 @@ THE SOFTWARE.
 namespace Ogre
 {
     /** Factory class for D3D11 HLSL programs. */
-    class _OgreD3D11Export D3D11HLSLProgramFactory : public HighLevelGpuProgramFactory
+    class _OgreD3D11Export D3D11HLSLProgramFactory final : public HighLevelGpuProgramFactory
     {
     protected:
         static String sLanguageName;
         D3D11Device & mDevice;
     public:
         D3D11HLSLProgramFactory(D3D11Device & device);
-        ~D3D11HLSLProgramFactory();
+        ~D3D11HLSLProgramFactory() override;
         /// Get the name of the language this factory creates programs for
-        const String& getLanguage(void) const;
+        const String& getLanguage() const override;
         HighLevelGpuProgram* create(ResourceManager* creator, 
             const String& name, ResourceHandle handle,
-            const String& group, bool isManual, ManualResourceLoader* loader);
-        void destroy(HighLevelGpuProgram* prog);
+            const String& group, bool isManual, ManualResourceLoader* loader) override;
+        void destroy(HighLevelGpuProgram* prog) override;
 
     };
 }

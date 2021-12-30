@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -132,7 +132,7 @@ namespace Ogre {
         virtual size_t calcSubMeshLodSize( const VertexArrayObject *vao, bool skipVertexBuffer );
         virtual size_t calcGeometrySize(const VertexBufferPackedVec &vertexData );
         virtual size_t calcVertexDeclSize(const VertexBufferPackedVec &vertexData);
-        size_t calcHashForCachesSize( void );
+        size_t calcHashForCachesSize();
         virtual size_t calcSkeletonLinkSize(const String& skelName);
         virtual size_t calcSubMeshLodOperationSize(const VertexArrayObject *vao);
         virtual size_t calcSubMeshNameTableSize(const Mesh* pMesh);
@@ -146,7 +146,7 @@ namespace Ogre {
         virtual size_t calcAnimationTrackSize(const VertexAnimationTrack* track);
         virtual size_t calcMorphKeyframeSize(const VertexMorphKeyFrame* kf, size_t vertexCount);
         virtual size_t calcPoseKeyframeSize(const VertexPoseKeyFrame* kf);
-        virtual size_t calcPoseKeyframePoseRefSize(void);
+        virtual size_t calcPoseKeyframePoseRefSize();
         virtual size_t calcPoseVertexSize(const Pose* pose);*/
         virtual size_t calcLodLevelSize(const Mesh* pMesh);
         virtual size_t calcBoundsInfoSize(const Mesh* pMesh);
@@ -219,20 +219,20 @@ namespace Ogre {
     {
     public:
         MeshSerializerImpl_v2_1_R1( VaoManager *vaoManager );
-        virtual ~MeshSerializerImpl_v2_1_R1();
+        ~MeshSerializerImpl_v2_1_R1() override;
 
     protected:
-        virtual void readSubMesh(DataStreamPtr& stream, Mesh* pMesh, MeshSerializerListener *listener, uint8 numVaoPasses);
+        void readSubMesh(DataStreamPtr& stream, Mesh* pMesh, MeshSerializerListener *listener, uint8 numVaoPasses) override;
     };
 
     class _OgrePrivate MeshSerializerImpl_v2_1_R0 : public MeshSerializerImpl_v2_1_R1
     {
     public:
         MeshSerializerImpl_v2_1_R0( VaoManager *vaoManager );
-        virtual ~MeshSerializerImpl_v2_1_R0();
+        ~MeshSerializerImpl_v2_1_R0() override;
 
     protected:
-        virtual void readMesh(DataStreamPtr& stream, Mesh* pMesh, MeshSerializerListener *listener);
+        void readMesh(DataStreamPtr& stream, Mesh* pMesh, MeshSerializerListener *listener) override;
     };
 
     /** @} */

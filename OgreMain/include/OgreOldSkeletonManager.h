@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -49,7 +49,7 @@ namespace v1 {
             the creation of resources (in this case skeleton data),
             working within a fixed memory budget.
     */
-    class _OgreExport OldSkeletonManager: public ResourceManager, public Singleton<OldSkeletonManager>
+    class _OgreExport OldSkeletonManager final : public ResourceManager, public Singleton<OldSkeletonManager>
     {
     public:
         /// Constructor
@@ -81,7 +81,7 @@ namespace v1 {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static OldSkeletonManager& getSingleton(void);
+        static OldSkeletonManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -97,13 +97,13 @@ namespace v1 {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static OldSkeletonManager* getSingletonPtr(void);
+        static OldSkeletonManager* getSingletonPtr();
     protected:
 
         /// @copydoc ResourceManager::createImpl
         Resource* createImpl(const String& name, ResourceHandle handle, 
             const String& group, bool isManual, ManualResourceLoader* loader, 
-            const NameValuePairList* createParams);
+            const NameValuePairList* createParams) override;
 
     };
 

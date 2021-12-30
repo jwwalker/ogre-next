@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -64,7 +64,7 @@ namespace Ogre
         mStagingBuffer = 0;
     }
     //-----------------------------------------------------------------------------------
-    const void* AsyncTicket::map(void)
+    const void* AsyncTicket::map()
     {
         assert( !mHasBeenMapped );
 
@@ -74,7 +74,7 @@ namespace Ogre
         return mapImpl();
     }
     //-----------------------------------------------------------------------------------
-    void AsyncTicket::unmap(void)
+    void AsyncTicket::unmap()
     {
         mStagingBuffer->unmap( 0, 0 );
     }

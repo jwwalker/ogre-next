@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -35,7 +35,7 @@ namespace Ogre
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 
-    class D3D11WindowHwnd : public D3D11WindowSwapChainBased
+    class D3D11WindowHwnd final : public D3D11WindowSwapChainBased
     {
     protected:
         HWND    mHwnd;                          // Win32 window handle
@@ -47,20 +47,23 @@ namespace Ogre
         static bool mClassRegistered;
 
     protected:
-        virtual PixelFormatGpu _getRenderFormat() { return mHwGamma ? PFG_RGBA8_UNORM_SRGB : PFG_RGBA8_UNORM; } // DXGI 1.0 compatible
+        PixelFormatGpu _getRenderFormat() override
+        {
+            return mHwGamma ? PFG_RGBA8_UNORM_SRGB : PFG_RGBA8_UNORM;
+        }  // DXGI 1.0 compatible
 
         DWORD getWindowStyle( bool fullScreen ) const;
 
         static BOOL CALLBACK createMonitorsInfoEnumProc( HMONITOR hMonitor, HDC hdcMonitor,
                                                          LPRECT lprcMonitor, LPARAM dwData );
 
-        void updateWindowRect(void);
+        void updateWindowRect();
         void adjustWindow( uint32 clientWidth, uint32 clientHeight,
                            uint32 *outDrawableWidth, uint32 *outDrawableHeight );
 
         template <typename T>
         void setCommonSwapChain( T &sd );
-        virtual HRESULT _createSwapChainImpl();
+        HRESULT _createSwapChainImpl() override;
 
 
         void create( bool fullscreenMode, const NameValuePairList *miscParams );
@@ -70,22 +73,22 @@ namespace Ogre
                          bool fullscreenMode, PixelFormatGpu depthStencilFormat,
                          const NameValuePairList *miscParams,
                          D3D11Device &device, D3D11RenderSystem *renderSystem );
-        virtual ~D3D11WindowHwnd();
+        ~D3D11WindowHwnd() override;
 
-        virtual void _initialize( TextureGpuManager *textureGpuManager );
-        virtual void destroy(void);
+        void _initialize( TextureGpuManager *textureGpuManager ) override;
+        void destroy() override;
 
-        virtual void reposition( int32 left, int32 top );
-        virtual void requestResolution( uint32 width, uint32 height );
-        virtual void requestFullscreenSwitch( bool goFullscreen, bool borderless, uint32 monitorIdx,
-                                              uint32 width, uint32 height,
-                                              uint32 frequencyNumerator, uint32 frequencyDenominator );
-        virtual void windowMovedOrResized(void);
+        void reposition( int32 left, int32 top ) override;
+        void requestResolution( uint32 width, uint32 height ) override;
+        void requestFullscreenSwitch( bool goFullscreen, bool borderless, uint32 monitorIdx,
+                                      uint32 width, uint32 height, uint32 frequencyNumerator,
+                                      uint32 frequencyDenominator ) override;
+        void windowMovedOrResized() override;
 
-        virtual bool isVisible(void) const;
-        virtual void setHidden( bool hidden );
+        bool isVisible() const override;
+        void setHidden( bool hidden ) override;
 
-        virtual void getCustomAttribute( IdString name, void* pData );
+        void getCustomAttribute( IdString name, void* pData ) override;
     };
 #endif
 }

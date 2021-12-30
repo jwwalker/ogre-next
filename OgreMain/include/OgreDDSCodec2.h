@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -73,25 +73,25 @@ namespace Ogre
         static DDSCodec2* msInstance;
     public:
         DDSCodec2();
-        virtual ~DDSCodec2() { }
+        ~DDSCodec2() override { }
 
         /// @copydoc Codec::encode
-        DataStreamPtr encode( MemoryDataStreamPtr &input, CodecDataPtr &pData ) const;
+        DataStreamPtr encode( MemoryDataStreamPtr &input, CodecDataPtr &pData ) const override;
         /// @copydoc Codec::encodeToFile
         void encodeToFile( MemoryDataStreamPtr &input, const String &outFileName,
-                           CodecDataPtr &pData ) const;
+                           CodecDataPtr &pData ) const override;
         /// @copydoc Codec::decode
-        DecodeResult decode( DataStreamPtr &input ) const;
+        DecodeResult decode( DataStreamPtr &input ) const override;
 
         /// @copydoc Codec::magicNumberToFileExt
-        String magicNumberToFileExt( const char *magicNumberPtr, size_t maxbytes ) const;
+        String magicNumberToFileExt( const char *magicNumberPtr, size_t maxbytes ) const override;
         
-        virtual String getType(void) const;
+        String getType() const override;
 
         /// Static method to startup and register the DDS codec
-        static void startup(void);
+        static void startup();
         /// Static method to shutdown and unregister the DDS codec
-        static void shutdown(void);
+        static void shutdown();
     };
     /** @} */
     /** @} */

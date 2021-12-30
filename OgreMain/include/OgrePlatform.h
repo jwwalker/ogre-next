@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -37,7 +37,7 @@ THE SOFTWARE.
 #define OGRE_PLATFORM_APPLE 3
 #define OGRE_PLATFORM_APPLE_IOS 4
 #define OGRE_PLATFORM_ANDROID 5
-#define OGRE_PLATFORM_NACL 6
+#define OGRE_PLATFORM_UNUSED 6 // It's free for whatever. Used to be NaCL
 #define OGRE_PLATFORM_WINRT 7
 #define OGRE_PLATFORM_EMSCRIPTEN 8
 #define OGRE_PLATFORM_FREEBSD 9
@@ -190,21 +190,6 @@ THE SOFTWARE.
 #   endif
 #elif defined(__ANDROID__)
 #   define OGRE_PLATFORM OGRE_PLATFORM_ANDROID
-#elif defined( __native_client__ ) 
-#   define OGRE_PLATFORM OGRE_PLATFORM_NACL
-#   ifndef OGRE_STATIC_LIB
-#       error OGRE must be built as static for NaCl (OGRE_STATIC=true in CMake)
-#   endif
-#   ifdef OGRE_BUILD_RENDERSYSTEM_GL3PLUS
-#       error OpenGL is not supported on NaCl (OGRE_BUILD_RENDERSYSTEM_GL3PLUS=false in CMake)
-#   endif
-#   ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
-#       if OGRE_NO_GLES3_SUPPORT
-#           define OGRE_TEXTURE_ATLAS
-#       endif
-#   else
-#       error GLES2 render system is required for NaCl (OGRE_BUILD_RENDERSYSTEM_GLES2=false in CMake)
-#   endif
 #elif defined(__FreeBSD__)
 #   define OGRE_PLATFORM OGRE_PLATFORM_FREEBSD
 #else
@@ -229,21 +214,6 @@ THE SOFTWARE.
 #endif
 // Disable OGRE_WCHAR_T_STRINGS until we figure out what to do about it.
 #define OGRE_WCHAR_T_STRINGS 0
-
-// For safely overriding virtual functions
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-#   define OGRE_OVERRIDE override
-#elif OGRE_COMPILER == OGRE_COMPILER_GNUC
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
-#   define OGRE_OVERRIDE
-#else
-#   define OGRE_OVERRIDE
-#endif
-#elif __cplusplus >= 201103L // Noone defines this these days...
-#   define OGRE_OVERRIDE override
-#else
-#   define OGRE_OVERRIDE
-#endif
 
 //----------------------------------------------------------------------------
 // Windows Settings
@@ -294,9 +264,9 @@ THE SOFTWARE.
 #endif // OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
 
 //----------------------------------------------------------------------------
-// Linux/Apple/iOS/Android/NaCl/Emscripten/FreeBSD Settings
+// Linux/Apple/iOS/Android/Emscripten/FreeBSD Settings
 #if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || \
-    OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || \
+    OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || \
     OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
 
 // Enable GCC symbol visibility
@@ -498,7 +468,7 @@ THE SOFTWARE.
 
 #if OGRE_USE_SIMD == 1
     // Define whether or not Ogre compiled with SSE support.
-    #if   OGRE_DOUBLE_PRECISION == 0 && OGRE_CPU == OGRE_CPU_X86 && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+    #if   OGRE_DOUBLE_PRECISION == 0 && OGRE_CPU == OGRE_CPU_X86
         #define __OGRE_HAVE_SSE  1
     #endif
 

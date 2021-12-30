@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -59,7 +59,7 @@ namespace v1 {
         return mData + offset;
     }
 
-    void GL3PlusDefaultHardwareVertexBuffer::unlockImpl(void)
+    void GL3PlusDefaultHardwareVertexBuffer::unlockImpl()
     {
         // Nothing to do
     }
@@ -72,7 +72,7 @@ namespace v1 {
         return mData + offset;
     }
 
-    void GL3PlusDefaultHardwareVertexBuffer::unlock(void)
+    void GL3PlusDefaultHardwareVertexBuffer::unlock()
     {
         mIsLocked = false;
         // Nothing to do
@@ -116,7 +116,7 @@ namespace v1 {
         return mData + offset;
     }
 
-    void GL3PlusDefaultHardwareIndexBuffer::unlockImpl(void)
+    void GL3PlusDefaultHardwareIndexBuffer::unlockImpl()
     {
         // Nothing to do
     }
@@ -127,7 +127,7 @@ namespace v1 {
         return mData + offset;
     }
 
-    void GL3PlusDefaultHardwareIndexBuffer::unlock(void)
+    void GL3PlusDefaultHardwareIndexBuffer::unlock()
     {
         mIsLocked = false;
         // Nothing to do
@@ -141,134 +141,6 @@ namespace v1 {
 
     void GL3PlusDefaultHardwareIndexBuffer::writeData(size_t offset, size_t length, const void* pSource,
                                                       bool discardWholeBuffer)
-    {
-        assert((offset + length) <= mSizeInBytes);
-        // ignore discard, memory is not guaranteed to be zeroised
-        memcpy(mData + offset, pSource, length);
-    }
-
-    GL3PlusDefaultHardwareUniformBuffer::GL3PlusDefaultHardwareUniformBuffer(size_t bufferSize,
-                                                                             HardwareBuffer::Usage usage,
-                                                                             bool useShadowBuffer, const String& name)
-        : HardwareUniformBuffer(0, bufferSize, usage, useShadowBuffer, name)
-    {
-        mData = static_cast<unsigned char*>(OGRE_MALLOC_SIMD(mSizeInBytes, MEMCATEGORY_GEOMETRY));
-    }
-
-    GL3PlusDefaultHardwareUniformBuffer::GL3PlusDefaultHardwareUniformBuffer(HardwareBufferManagerBase* mgr,
-                                                                             size_t bufferSize,
-                                                                             HardwareBuffer::Usage usage,
-                                                                             bool useShadowBuffer, const String& name)
-        : HardwareUniformBuffer(mgr, bufferSize, usage, useShadowBuffer, name)
-    {
-        mData = static_cast<unsigned char*>(OGRE_MALLOC_SIMD(mSizeInBytes, MEMCATEGORY_GEOMETRY));
-    }
-
-    GL3PlusDefaultHardwareUniformBuffer::~GL3PlusDefaultHardwareUniformBuffer()
-    {
-        OGRE_FREE_SIMD(mData, MEMCATEGORY_GEOMETRY);
-    }
-
-    void* GL3PlusDefaultHardwareUniformBuffer::lockImpl(size_t offset,
-                                                        size_t length,
-                                                        LockOptions options)
-    {
-        return mData + offset;
-    }
-
-    void GL3PlusDefaultHardwareUniformBuffer::unlockImpl(void)
-    {
-        // Nothing to do
-    }
-
-    void* GL3PlusDefaultHardwareUniformBuffer::lock(size_t offset,
-                                                    size_t length,
-                                                    LockOptions options)
-    {
-        mIsLocked = true;
-        return mData + offset;
-    }
-
-    void GL3PlusDefaultHardwareUniformBuffer::unlock(void)
-    {
-        mIsLocked = false;
-        // Nothing to do
-    }
-
-    void GL3PlusDefaultHardwareUniformBuffer::readData(size_t offset,
-                                                       size_t length,
-                                                       void* pDest)
-    {
-        assert((offset + length) <= mSizeInBytes);
-        memcpy(pDest, mData + offset, length);
-    }
-
-    void GL3PlusDefaultHardwareUniformBuffer::writeData(size_t offset,
-                                                        size_t length,
-                                                        const void* pSource,
-                                                        bool discardWholeBuffer)
-    {
-        assert((offset + length) <= mSizeInBytes);
-        // ignore discard, memory is not guaranteed to be zeroised
-        memcpy(mData + offset, pSource, length);
-    }
-
-    GL3PlusDefaultHardwareCounterBuffer::GL3PlusDefaultHardwareCounterBuffer(const String& name)
-        : HardwareCounterBuffer(0, sizeof(GLuint), HardwareBuffer::HBU_DYNAMIC, false, name)
-    {
-        mData = static_cast<unsigned char*>(OGRE_MALLOC_SIMD(mSizeInBytes, MEMCATEGORY_GEOMETRY));
-    }
-
-    GL3PlusDefaultHardwareCounterBuffer::GL3PlusDefaultHardwareCounterBuffer(HardwareBufferManagerBase* mgr,
-                                                                             const String& name)
-        : HardwareCounterBuffer(mgr, sizeof(GLuint), HardwareBuffer::HBU_DYNAMIC, false, name)
-    {
-        mData = static_cast<unsigned char*>(OGRE_MALLOC_SIMD(mSizeInBytes, MEMCATEGORY_GEOMETRY));
-    }
-
-    GL3PlusDefaultHardwareCounterBuffer::~GL3PlusDefaultHardwareCounterBuffer()
-    {
-        OGRE_FREE_SIMD(mData, MEMCATEGORY_GEOMETRY);
-    }
-
-    void* GL3PlusDefaultHardwareCounterBuffer::lockImpl(size_t offset,
-                                                        size_t length,
-                                                        LockOptions options)
-    {
-        return mData + offset;
-    }
-
-    void GL3PlusDefaultHardwareCounterBuffer::unlockImpl(void)
-    {
-        // Nothing to do
-    }
-
-    void* GL3PlusDefaultHardwareCounterBuffer::lock(size_t offset,
-                                                    size_t length,
-                                                    LockOptions options)
-    {
-        mIsLocked = true;
-        return mData + offset;
-    }
-
-    void GL3PlusDefaultHardwareCounterBuffer::unlock(void)
-    {
-        mIsLocked = false;
-        // Nothing to do
-    }
-
-    void GL3PlusDefaultHardwareCounterBuffer::readData(size_t offset,
-                                                       size_t length,
-                                                       void* pDest)
-    {
-        assert((offset + length) <= mSizeInBytes);
-        memcpy(pDest, mData + offset, length);
-    }
-
-    void GL3PlusDefaultHardwareCounterBuffer::writeData(size_t offset,
-                                                        size_t length,
-                                                        const void* pSource,
-                                                        bool discardWholeBuffer)
     {
         assert((offset + length) <= mSizeInBytes);
         // ignore discard, memory is not guaranteed to be zeroised
@@ -299,22 +171,6 @@ namespace v1 {
     {
         return HardwareIndexBufferSharedPtr(
             new GL3PlusDefaultHardwareIndexBuffer(itype, numIndexes, usage));
-    }
-
-    HardwareUniformBufferSharedPtr
-    GL3PlusDefaultHardwareBufferManagerBase::createUniformBuffer(size_t sizeBytes, HardwareBuffer::Usage usage,
-                                                                 bool useShadowBuffer, const String& name)
-    {
-        return HardwareUniformBufferSharedPtr(
-            new GL3PlusDefaultHardwareUniformBuffer(this, sizeBytes, usage, useShadowBuffer, name));
-    }
-
-    HardwareCounterBufferSharedPtr
-    GL3PlusDefaultHardwareBufferManagerBase::createCounterBuffer(size_t sizeBytes, HardwareBuffer::Usage usage,
-                                                                 bool useShadowBuffer, const String& name)
-    {
-        return HardwareCounterBufferSharedPtr(
-            new GL3PlusDefaultHardwareCounterBuffer(this, name));
     }
 }
 }

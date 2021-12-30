@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -54,7 +54,7 @@ namespace Ogre
         mParentSystem = owner;
     }
     //-----------------------------------------------------------------------
-    void Particle::resetDimensions(void)
+    void Particle::resetDimensions()
     {
         mOwnDimensions = false;
     }

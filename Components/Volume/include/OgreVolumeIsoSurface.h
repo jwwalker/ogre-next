@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -74,7 +74,7 @@ namespace Volume {
         /// To call Marching Squares with a cube on its bottom.
         static const size_t MS_CORNERS_BOTTOM[4];
 
-        virtual ~IsoSurface(void);
+        virtual ~IsoSurface();
         
         /** Adds triangles to a MeshBuilder via Marching Cubes.
         @param corners

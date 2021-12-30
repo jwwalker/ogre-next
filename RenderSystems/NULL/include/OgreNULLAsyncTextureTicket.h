@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -43,7 +43,7 @@ namespace Ogre
         uint8           *mVboName;
 
         virtual TextureBox mapImpl( uint32 slice );
-        virtual void unmapImpl(void);
+        virtual void unmapImpl();
 
     public:
         NULLAsyncTextureTicket( uint32 width, uint32 height, uint32 depthOrSlices,
@@ -51,7 +51,7 @@ namespace Ogre
                                 PixelFormatGpu pixelFormatFamily );
         virtual ~NULLAsyncTextureTicket();
 
-        virtual bool queryIsTransferDone(void);
+        virtual bool queryIsTransferDone();
     };
 }
 

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
@@ -493,7 +493,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    void CocoaWindow::destroy(void)
+    void CocoaWindow::destroy()
     {
         if(!isFullscreen())
         {
@@ -514,7 +514,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    bool CocoaWindow::isVisible(void) const
+    bool CocoaWindow::isVisible() const
     {
         return mVisible;
     }

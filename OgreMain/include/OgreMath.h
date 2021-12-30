@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -335,7 +335,7 @@ namespace Ogre
         /// Stored value of log(2) for frequent use
         static const Real LOG2;
 
-        static inline Real Log2 (Real fValue) { return std::log(fValue)/LOG2; }
+        static inline Real Log2 (Real fValue) { return std::log2( fValue ); }
 
         static inline Real LogN (Real base, Real fValue) { return std::log(fValue)/std::log(base); }
 
@@ -489,7 +489,7 @@ namespace Ogre
        */
        static void setAngleUnit(AngleUnit unit);
        /** Get the unit being used for angles. */
-       static AngleUnit getAngleUnit(void);
+       static AngleUnit getAngleUnit();
 
        /** Convert from the current AngleUnit to radians. */
        static Real AngleUnitsToRadians(Real units);

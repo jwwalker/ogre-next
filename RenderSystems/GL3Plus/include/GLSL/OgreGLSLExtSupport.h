@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -43,7 +43,6 @@ namespace Ogre
     class GLSLShader;
     class GLSLMonolithicProgram;
     class GLSLMonolithicProgramManager;
-    class GLSLSeparableProgramManager;
     class GLSLShaderFactory;
 
     /** If there is a message in GL info log then post it in the Ogre Log

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -64,11 +64,11 @@ namespace Ogre {
 
     public:
         /// Command object for setting delegate (can set more than once)
-        class CmdDelegate : public ParamCommand
+        class CmdDelegate final : public ParamCommand
         {
         public:
-            String doGet(const void* target) const;
-            void doSet(void* target, const String& val);
+            String doGet(const void* target) const override;
+            void doSet(void* target, const String& val) override;
         };
 
         static void setPrioriry(String shaderLanguage,int priority);
@@ -85,18 +85,18 @@ namespace Ogre {
         /// Choose the delegate to use
         void chooseDelegate() const;
 
-        void createLowLevelImpl(void);
-        void unloadHighLevelImpl(void);
-        void buildConstantDefinitions() const;
-        void loadFromSource(void);
+        void createLowLevelImpl() override;
+        void unloadHighLevelImpl() override;
+        void buildConstantDefinitions() const override;
+        void loadFromSource() override;
 
     public:
         /** Constructor, should be used only by factory classes. */
         UnifiedHighLevelGpuProgram(ResourceManager* creator, const String& name, ResourceHandle handle,
             const String& group, bool isManual = false, ManualResourceLoader* loader = 0);
-        ~UnifiedHighLevelGpuProgram();
+        ~UnifiedHighLevelGpuProgram() override;
 
-        virtual size_t calculateSize(void) const;
+        size_t calculateSize() const override;
 
         /** Adds a new delegate program to the list.
         @remarks
@@ -111,7 +111,7 @@ namespace Ogre {
         const HighLevelGpuProgramPtr& _getDelegate() const;
 
         /** @copydoc GpuProgram::getLanguage */
-        const String& getLanguage(void) const;
+        const String& getLanguage() const override;
 
         /** Creates a new parameters object compatible with this program definition. 
         @remarks
@@ -120,46 +120,46 @@ namespace Ogre {
         HighLevelGpuProgramManager. This method creates a new instance of a parameters
         object containing the definition of the parameters this program understands.
         */
-        GpuProgramParametersSharedPtr createParameters(void);
+        GpuProgramParametersSharedPtr createParameters() override;
         /** @copydoc GpuProgram::_getBindingDelegate */
-        GpuProgram* _getBindingDelegate(void);
+        GpuProgram* _getBindingDelegate() override;
 
         // All the following methods must delegate to the implementation
 
         /** @copydoc GpuProgram::isSupported */
-        bool isSupported(void) const;
+        bool isSupported() const override;
         
         /** @copydoc GpuProgram::isSkeletalAnimationIncluded */
-        bool isSkeletalAnimationIncluded(void) const;
+        bool isSkeletalAnimationIncluded() const override;
 
-        bool isMorphAnimationIncluded(void) const;
+        bool isMorphAnimationIncluded() const override;
 
-        bool isPoseAnimationIncluded(void) const;
-        ushort getNumberOfPosesIncluded(void) const;
+        bool isPoseAnimationIncluded() const override;
+        ushort getNumberOfPosesIncluded() const override;
 
-        bool isVertexTextureFetchRequired(void) const;
-        GpuProgramParametersSharedPtr getDefaultParameters(void);
-        bool hasDefaultParameters(void) const;
-        bool getPassSurfaceAndLightStates(void) const;
-        bool getPassFogStates(void) const;
-        bool getPassTransformStates(void) const;
-        bool hasCompileError(void) const;
-        void resetCompileError(void);
+        bool isVertexTextureFetchRequired() const override;
+        GpuProgramParametersSharedPtr getDefaultParameters() override;
+        bool hasDefaultParameters() const override;
+        bool getPassSurfaceAndLightStates() const override;
+        bool getPassFogStates() const override;
+        bool getPassTransformStates() const override;
+        bool hasCompileError() const override;
+        void resetCompileError() override;
 
-        void load(bool backgroundThread = false);
-        void reload(LoadingFlags flags = LF_DEFAULT);
-        bool isReloadable(void) const;
-        bool isLoaded(void) const;
-        bool isLoading() const;
-        LoadingState getLoadingState() const;
-        void unload(void);
-        size_t getSize(void) const;
-        void touch(void);
-        bool isBackgroundLoaded(void) const;
-        void setBackgroundLoaded(bool bl);
-        void escalateLoading();
-        void addListener(Listener* lis);
-        void removeListener(Listener* lis);
+        void load(bool backgroundThread = false) override;
+        void reload(LoadingFlags flags = LF_DEFAULT) override;
+        bool isReloadable() const override;
+        bool isLoaded() const override;
+        bool isLoading() const override;
+        LoadingState getLoadingState() const override;
+        void unload() override;
+        size_t getSize() const override;
+        void touch() override;
+        bool isBackgroundLoaded() const override;
+        void setBackgroundLoaded(bool bl) override;
+        void escalateLoading() override;
+        void addListener(Listener* lis) override;
+        void removeListener(Listener* lis) override;
 
     };
 
@@ -168,13 +168,13 @@ namespace Ogre {
     {
     public:
         UnifiedHighLevelGpuProgramFactory();
-        ~UnifiedHighLevelGpuProgramFactory();
+        ~UnifiedHighLevelGpuProgramFactory() override;
         /// Get the name of the language this factory creates programs for
-        const String& getLanguage(void) const;
+        const String& getLanguage() const override;
         HighLevelGpuProgram* create(ResourceManager* creator, 
             const String& name, ResourceHandle handle,
-            const String& group, bool isManual, ManualResourceLoader* loader);
-        void destroy(HighLevelGpuProgram* prog);
+            const String& group, bool isManual, ManualResourceLoader* loader) override;
+        void destroy(HighLevelGpuProgram* prog) override;
 
     };
 

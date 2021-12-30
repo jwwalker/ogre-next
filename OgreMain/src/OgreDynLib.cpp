@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -48,7 +48,7 @@ THE SOFTWARE.
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 #   include "macUtils.h"
 #endif
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || OGRE_PLATFORM == OGRE_PLATFORM_NACL 
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 #   include <dlfcn.h>
 #endif
 
@@ -68,7 +68,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    void DynLib::load()
+    void DynLib::load( const bool bOptional )
     {
         // Log library load
         LogManager::getSingleton().logMessage("Loading library " + mName);
@@ -77,7 +77,7 @@ namespace Ogre {
 #if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
         if (name.find(".js") == String::npos)
             name += ".js";
-#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
+#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
         // dlopen() does not add .so to the filename, like windows does for .dll
         if (name.find(".so") == String::npos)
         {
@@ -105,11 +105,21 @@ namespace Ogre {
         }
 #endif
         if( !mInst )
-            OGRE_EXCEPT(
-                Exception::ERR_INTERNAL_ERROR, 
-                "Could not load dynamic library " + mName + 
-                ".  System Error: " + dynlibError(),
-                "DynLib::load" );
+        {
+            if( !bOptional )
+            {
+                OGRE_EXCEPT(
+                    Exception::ERR_INTERNAL_ERROR,
+                    "Could not load dynamic library " + mName + ".  System Error: " + dynlibError(),
+                    "DynLib::load" );
+            }
+            else
+            {
+                LogManager::getSingleton().logMessage( "Could not load optional dynamic library " +
+                                                           mName + ".  System Error: " + dynlibError(),
+                                                       LML_CRITICAL );
+            }
+        }
     }
 
     //-----------------------------------------------------------------------
@@ -118,24 +128,26 @@ namespace Ogre {
         // Log library unload
         LogManager::getSingleton().logMessage("Unloading library " + mName);
 
-        if( DYNLIB_UNLOAD( mInst ) )
+        if( mInst )
         {
-            OGRE_EXCEPT(
-                Exception::ERR_INTERNAL_ERROR, 
-                "Could not unload dynamic library " + mName +
-                ".  System Error: " + dynlibError(),
-                "DynLib::unload");
+            if( DYNLIB_UNLOAD( mInst ) )
+            {
+                OGRE_EXCEPT(
+                    Exception::ERR_INTERNAL_ERROR,
+                    "Could not unload dynamic library " + mName + ".  System Error: " + dynlibError(),
+                    "DynLib::unload" );
+            }
         }
-
     }
-
+    //-----------------------------------------------------------------------
+    bool DynLib::isLoaded() const { return mInst != NULL; }
     //-----------------------------------------------------------------------
     void* DynLib::getSymbol( const String& strName ) const throw()
     {
         return (void*)DYNLIB_GETSYM( mInst, strName.c_str() );
     }
     //-----------------------------------------------------------------------
-    String DynLib::dynlibError( void ) 
+    String DynLib::dynlibError()
     {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         LPTSTR lpMsgBuf; 
@@ -185,7 +197,11 @@ namespace Ogre {
 #endif
         return ret;
 #elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
-        return String(dlerror());
+        const char *errorStr = dlerror();
+        if( errorStr )
+            return String( errorStr );
+        else
+            return String( "" );
 #else
         return String("");
 #endif

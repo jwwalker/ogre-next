@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -116,8 +116,8 @@ namespace Ogre
         uint32 id;
     public:
         AtomAbstractNode(AbstractNode *ptr);
-        AbstractNode *clone() const;
-        String getValue() const;
+        AbstractNode *clone() const override;
+        String getValue() const override;
     private:
         void parseNumber() const;
     };
@@ -137,8 +137,8 @@ namespace Ogre
         AbstractNodeList overrides; // For use when processing object inheritance and overriding
     public:
         ObjectAbstractNode(AbstractNode *ptr);
-        AbstractNode *clone() const;
-        String getValue() const;
+        AbstractNode *clone() const override;
+        String getValue() const override;
 
         void addVariable(const String &name);
         void setVariable(const String &name, const String &value);
@@ -155,8 +155,8 @@ namespace Ogre
         AbstractNodeList values;
     public:
         PropertyAbstractNode(AbstractNode *ptr);
-        AbstractNode *clone() const;
-        String getValue() const;
+        AbstractNode *clone() const override;
+        String getValue() const override;
     };
 
     /** This abstract node represents an import statement */
@@ -166,8 +166,8 @@ namespace Ogre
         String target, source;
     public:
         ImportAbstractNode();
-        AbstractNode *clone() const;
-        String getValue() const;
+        AbstractNode *clone() const override;
+        String getValue() const override;
     };
 
     /** This abstract node represents a variable assignment */
@@ -177,8 +177,8 @@ namespace Ogre
         String name;
     public:
         VariableAccessAbstractNode(AbstractNode *ptr);
-        AbstractNode *clone() const;
-        String getValue() const;
+        AbstractNode *clone() const override;
+        String getValue() const override;
     };
 
     class ScriptCompilerEvent;
@@ -455,11 +455,11 @@ namespace Ogre
         /// Adds a script extension that can be handled (e.g. *.material, *.pu, etc.)
         void addScriptPattern(const String &pattern);
         /// @copydoc ScriptLoader::getScriptPatterns
-        const StringVector& getScriptPatterns(void) const;
+        const StringVector& getScriptPatterns() const override;
         /// @copydoc ScriptLoader::parseScript
-        void parseScript(DataStreamPtr& stream, const String& groupName);
+        void parseScript(DataStreamPtr& stream, const String& groupName) override;
         /// @copydoc ScriptLoader::getLoadingOrder
-        Real getLoadingOrder(void) const;
+        Real getLoadingOrder() const override;
 
         /** Override standard Singleton retrieval.
         @remarks
@@ -476,7 +476,7 @@ namespace Ogre
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ScriptCompilerManager& getSingleton(void);
+        static ScriptCompilerManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -492,7 +492,7 @@ namespace Ogre
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static ScriptCompilerManager* getSingletonPtr(void);
+        static ScriptCompilerManager* getSingletonPtr();
     };
 
     // Standard event types

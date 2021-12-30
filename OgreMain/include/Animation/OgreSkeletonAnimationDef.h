@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -91,11 +91,11 @@ namespace Ogre
         ~SkeletonAnimationDef();
 
         void setName( const String &name )                              { mName = name; }
-        const String& getNameStr(void) const                            { return mName; }
+        const String& getNameStr() const                            { return mName; }
         void _setSkeletonDef( const SkeletonDef *skeletonDef )          { mSkeletonDef = skeletonDef; }
 
-        Real getNumFrames( void ) const { return mNumFrames; }
-        Real getOriginalFrameRate( void ) const { return mOriginalFrameRate; }
+        Real getNumFrames() const { return mNumFrames; }
+        Real getOriginalFrameRate() const { return mOriginalFrameRate; }
 
         void build( const v1::Skeleton *skeleton, const v1::Animation *animation, Real frameRate );
 

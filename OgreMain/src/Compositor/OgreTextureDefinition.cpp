@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -46,7 +46,7 @@ namespace Ogre
                 mDefaultLocalTextureSource == TEXTURE_GLOBAL );
     }
     //-----------------------------------------------------------------------------------
-    size_t TextureDefinitionBase::getNumInputChannels(void) const
+    size_t TextureDefinitionBase::getNumInputChannels() const
     {
         size_t numInputChannels = 0;
         NameToChannelMap::const_iterator itor = mNameToChannelMap.begin();
@@ -65,7 +65,7 @@ namespace Ogre
         return numInputChannels;
     }
     //-----------------------------------------------------------------------------------
-    size_t TextureDefinitionBase::getNumInputBufferChannels(void) const
+    size_t TextureDefinitionBase::getNumInputBufferChannels() const
     {
         size_t numInputChannels = 0;
         IdString nullString;
@@ -276,7 +276,7 @@ namespace Ogre
             mLocalRtvs.erase( itor );
     }
     //-----------------------------------------------------------------------------------
-    void TextureDefinitionBase::removeAllRenderTextureViews( void ) { mLocalRtvs.clear(); }
+    void TextureDefinitionBase::removeAllRenderTextureViews() { mLocalRtvs.clear(); }
     //-----------------------------------------------------------------------------------
     void TextureDefinitionBase::createTextures( const TextureDefinitionVec &textureDefs,
                                                 CompositorChannelVec &inOutTexContainer,

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -55,15 +55,15 @@ namespace v1 {
             the creation of resources (in this case mesh data),
             working within a fixed memory budget.
     */
-    class _OgreExport MeshManager: public ResourceManager, public Singleton<MeshManager>,
+    class _OgreExport MeshManager final : public ResourceManager, public Singleton<MeshManager>,
         public ManualResourceLoader
     {
     public:
         MeshManager();
-        ~MeshManager();
+        ~MeshManager() override;
 
         /** Initialises the manager, only to be called by OGRE internally. */
-        void _initialise(void);
+        void _initialise();
 
         /// Get a resource by name
         /// @see ResourceManager::getResourceByName
@@ -388,7 +388,7 @@ namespace v1 {
         */
         void setPrepareAllMeshesForShadowVolumes(bool enable);
         /** Retrieves whether all Meshes should prepare themselves for shadow volumes. */
-        bool getPrepareAllMeshesForShadowVolumes(void);
+        bool getPrepareAllMeshesForShadowVolumes();
 
         /** Override standard Singleton retrieval.
         @remarks
@@ -405,7 +405,7 @@ namespace v1 {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MeshManager& getSingleton(void);
+        static MeshManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -421,12 +421,12 @@ namespace v1 {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static MeshManager* getSingletonPtr(void);
+        static MeshManager* getSingletonPtr();
 
         /** Gets the factor by which the bounding box of an entity is padded.
             Default is 0.01
         */
-        Real getBoundsPaddingFactor(void);
+        Real getBoundsPaddingFactor();
 
         /** Sets the factor by which the bounding box of an entity is padded
         */
@@ -446,13 +446,13 @@ namespace v1 {
         MeshSerializerListener *getListener();
 
         /** @see ManualResourceLoader::loadResource */
-        void loadResource(Resource* res);
+        void loadResource(Resource* res) override;
 
     protected:
         /// @copydoc ResourceManager::createImpl
         Resource* createImpl(const String& name, ResourceHandle handle,
             const String& group, bool isManual, ManualResourceLoader* loader,
-            const NameValuePairList* createParams);
+            const NameValuePairList* createParams) override;
 
         /** Utility method for tessellating 2D meshes.
         */
@@ -461,9 +461,9 @@ namespace v1 {
             HardwareBuffer::Usage indexBufferUsage = HardwareBuffer::HBU_STATIC_WRITE_ONLY,
             bool indexSysMem = false);
 
-        void createPrefabPlane(void);
-        void createPrefabCube(void);
-        void createPrefabSphere(void);
+        void createPrefabPlane();
+        void createPrefabCube();
+        void createPrefabSphere();
 
         /** Enum identifying the types of manual mesh built by this manager */
         enum MeshBuildType

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -72,8 +72,10 @@ namespace Ogre {
         /** Loads the passed library.
         @param filename
             The name of the library. The extension can be omitted.
+        @param bOptional
+            When true, we will skip it if it fails to initialize
         */
-        DynLib* load(const String& filename);
+        DynLib *load( const String &filename, const bool bOptional );
 
         /** Unloads the passed library.
         @param lib
@@ -96,7 +98,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DynLibManager& getSingleton(void);
+        static DynLibManager& getSingleton();
         /** Override standard Singleton retrieval.
         @remarks
         Why do we do this? Well, it's because the Singleton
@@ -112,7 +114,7 @@ namespace Ogre {
         but the implementation stays in this single compilation unit,
         preventing link errors.
         */
-        static DynLibManager* getSingletonPtr(void);
+        static DynLibManager* getSingletonPtr();
     };
     /** @} */
     /** @} */

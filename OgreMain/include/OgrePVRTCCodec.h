@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -70,9 +70,9 @@ namespace Ogre {
         virtual String getType() const;        
 
 		/// Static method to startup and register the PVRTC codec
-		static void startup(void);
+		static void startup();
 		/// Static method to shutdown and unregister the PVRTC codec
-		static void shutdown(void);
+		static void shutdown();
 
 	private:
 		/// Decode PVRTCV2 image format

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -100,12 +100,12 @@ namespace Ogre {
         /// Default constructor
         DefaultShadowCameraSetup();
         /// Destructor
-        virtual ~DefaultShadowCameraSetup();
+        ~DefaultShadowCameraSetup() override;
 
         /// Default shadow camera setup
-        virtual void getShadowCamera( const SceneManager *sm, const Camera *cam,
-                                      const Light *light, Camera *texCam, size_t iteration,
-                                      const Vector2 &viewportRealSize ) const;
+        void getShadowCamera( const SceneManager *sm, const Camera *cam, const Light *light,
+                              Camera *texCam, size_t iteration,
+                              const Vector2 &viewportRealSize ) const override;
     };
 
     /** @} */

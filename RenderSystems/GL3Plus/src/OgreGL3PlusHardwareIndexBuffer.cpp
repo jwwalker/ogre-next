@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -123,7 +123,7 @@ namespace v1 {
         return retPtr;
     }
 
-    void GL3PlusHardwareIndexBuffer::unlockImpl(void)
+    void GL3PlusHardwareIndexBuffer::unlockImpl()
     {
         if (mLockedToScratch)
         {
@@ -239,7 +239,7 @@ namespace v1 {
         }
     }
 
-    void GL3PlusHardwareIndexBuffer::_updateFromShadow(void)
+    void GL3PlusHardwareIndexBuffer::_updateFromShadow()
     {
         if (mUseShadowBuffer && mShadowUpdated && !mSuppressHardwareUpdate)
         {

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-This source file is a part of OGRE
+This source file is a part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 
 For the latest info, see http://www.ogre3d.org/
@@ -29,8 +29,6 @@ THE SOFTWARE
 #define OGRE_AUTO_MUTEX_NAME mutex
 #if OGRE_THREAD_PROVIDER == 0
     #include "OgreThreadDefinesNone.h"
-#elif OGRE_THREAD_PROVIDER == 1
-    #include "OgreThreadDefinesBoost.h"
 #elif OGRE_THREAD_PROVIDER == 2
     #include "OgreThreadDefinesPoco.h"
 #elif OGRE_THREAD_PROVIDER == 3

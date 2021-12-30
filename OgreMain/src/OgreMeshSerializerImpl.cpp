@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -1235,7 +1235,7 @@ namespace v1 {
 
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calcBoneAssignmentSize(void)
+    size_t MeshSerializerImpl::calcBoneAssignmentSize()
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2206,7 +2206,7 @@ namespace v1 {
 
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calcPoseKeyframePoseRefSize(void)
+    size_t MeshSerializerImpl::calcPoseKeyframePoseRefSize()
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
         // unsigned short poseIndex
@@ -3599,7 +3599,7 @@ namespace v1 {
 
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl_v1_41::calcPoseVertexSize(void)
+    size_t MeshSerializerImpl_v1_41::calcPoseVertexSize()
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
         // unsigned long vertexIndex

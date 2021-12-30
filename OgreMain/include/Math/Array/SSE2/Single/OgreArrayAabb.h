@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -151,7 +151,7 @@ namespace Ogre
         inline ArrayAabb intersection( const ArrayAabb& b2 ) const;
 
         /// Calculate the volume of this box
-        inline ArrayReal volume(void) const;
+        inline ArrayReal volume() const;
 
         /// Tests whether another box contained by this box.
         inline ArrayMaskR contains( const ArrayAabb &other ) const;

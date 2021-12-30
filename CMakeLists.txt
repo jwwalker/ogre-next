@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for OGRE
+# This file is part of the CMake build system for OGRE-Next
 #     (Object-oriented Graphics Rendering Engine)
 # For the latest info, see http://www.ogre3d.org/
 #
@@ -8,8 +8,8 @@
 #-------------------------------------------------------------------
 
 ######################################################################
-# OGRE BUILD SYSTEM
-# Welcome to the CMake build system for OGRE.
+# OGRE-Next BUILD SYSTEM
+# Welcome to the CMake build system for OGRE-Next.
 # This is the main file where we prepare the general build environment
 # and provide build configuration options.
 ######################################################################
@@ -49,13 +49,16 @@ if (APPLE AND NOT ANDROID)
 endif ()
 
 
-project(OGRE)
+project(OGRE-Next)
+# legacy variables from the old name OGRE
+set(OGRE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+set(OGRE_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 # Include necessary submodules
 set(CMAKE_MODULE_PATH
-  "${OGRE_SOURCE_DIR}/CMake"
-  "${OGRE_SOURCE_DIR}/CMake/Utils"
-  "${OGRE_SOURCE_DIR}/CMake/Packages"
+  "${CMAKE_SOURCE_DIR}/CMake"
+  "${CMAKE_SOURCE_DIR}/CMake/Utils"
+  "${CMAKE_SOURCE_DIR}/CMake/Packages"
 )
 
 if(ANDROID)
@@ -68,7 +71,7 @@ include(MacroLogFeature)
 include(OgreAddTargets)
 include(OgreConfigTargets)
 include(PreprocessorUtils)
-set(OGRE_TEMPLATES_DIR "${OGRE_SOURCE_DIR}/CMake/Templates")
+set(OGRE_TEMPLATES_DIR "${CMAKE_SOURCE_DIR}/CMake/Templates")
 set(OGRE_WORK_DIR ${OGRE_BINARY_DIR})
 
 
@@ -84,7 +87,7 @@ endif ()
 
 # determine Ogre version numbers
 include(OgreGetVersion)
-ogre_get_version(${OGRE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
+ogre_get_version(${CMAKE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
 message(STATUS "Configuring OGRE ${OGRE_VERSION}")
 # Configure version file for use by scripts
 configure_file("${OGRE_TEMPLATES_DIR}/version.txt.in" "${OGRE_BINARY_DIR}/version.txt" @ONLY)
@@ -119,6 +122,11 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
   endif ()
   # This is a set of sensible warnings that provide meaningful output
   set(OGRE_WARNING_FLAGS "-Wall -Winit-self -Wno-overloaded-virtual -Wcast-qual -Wwrite-strings -Wextra -Wno-unused-parameter -Wshadow -Wno-missing-field-initializers -Wno-long-long")
+
+  if( CMAKE_COMPILER_IS_GNUCXX )
+    set( OGRE_WARNING_FLAGS "${OGRE_WARNING_FLAGS} -Wsuggest-override" )
+  endif()
+
   if (EMSCRIPTEN)
       set(OGRE_WARNING_FLAGS "${OGRE_WARNING_FLAGS} -Wno-warn-absolute-paths")
   elseif (NOT APPLE AND NOT CMAKE_COMPILER_IS_CLANGXX)
@@ -227,25 +235,25 @@ else()
 endif()
 
 # Add OgreMain include path
-include_directories("${OGRE_SOURCE_DIR}/OgreMain/include")
+include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include")
 include_directories("${OGRE_BINARY_DIR}/include")
 if (APPLE)
   if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-    include_directories("${OGRE_SOURCE_DIR}/OgreMain/include/iOS")
+    include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/iOS")
 
     # Set static early for proper dependency detection
     set(OGRE_STATIC TRUE)
   else ()
-    include_directories("${OGRE_SOURCE_DIR}/OgreMain/include/OSX")
+    include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/OSX")
   endif ()
 endif (APPLE)
 
 # Add platform-specific render system Metal include path
 if (APPLE AND OGRE_BUILD_RENDERSYSTEM_METAL)
   if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-    include_directories("${OGRE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/iOS")
+    include_directories("${CMAKE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/iOS")
   else ()
-    include_directories("${OGRE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/OSX")
+    include_directories("${CMAKE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/OSX")
   endif ()
 endif (APPLE AND OGRE_BUILD_RENDERSYSTEM_METAL)
 
@@ -273,7 +281,7 @@ endif(WIN32 OR APPLE)
 
 # Set up iOS overrides.
 if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-  include_directories("${OGRE_SOURCE_DIR}/OgreMain/include/iOS")
+  include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/iOS")
 
   # Set build variables
   set(XCODE_ATTRIBUTE_SDKROOT iphoneos)
@@ -298,7 +306,9 @@ if (OGRE_BUILD_PLATFORM_APPLE_IOS)
   set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
   set( CMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2" )
 
-  set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_INCLUDING_64_BIT)")
+  if( NOT CMAKE_GENERATOR STREQUAL "Ninja" )
+    set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_INCLUDING_64_BIT)")
+  endif()
   string (REPLACE "-msse2" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   string (REPLACE "-msse" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 elseif (ANDROID)
@@ -310,10 +320,8 @@ elseif (ANDROID)
   if( NOT ANDROID_GLES_ONLY )
    set(OGRE_CONFIG_ENABLE_GLES2_VAO_SUPPORT FALSE CACHE BOOL "Disable VAO on Android" FORCE)
   else()
-   set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM FALSE CACHE BOOL "Disable RTSS component on Android ES1" FORCE)
    set(OGRE_BUILD_COMPONENT_VOLUME FALSE CACHE BOOL "Disable volume component on Android ES1" FORCE)
    set(OGRE_BUILD_COMPONENT_PAGING FALSE CACHE BOOL "Disable paging component on Android ES1" FORCE)
-   set(OGRE_BUILD_COMPONENT_TERRAIN FALSE CACHE BOOL "Disable terrain component on Android ES1" FORCE)
   endif()
 
   set(OGRE_BUILD_TESTS FALSE CACHE BOOL "Disable tests on Android" FORCE)
@@ -336,7 +344,6 @@ elseif(EMSCRIPTEN)
   set(OGRE_BUILD_TESTS FALSE CACHE BOOL "Disable tests on Emscripten" FORCE)
   set(OGRE_BUILD_COMPONENT_VOLUME FALSE CACHE BOOL "Disable volume component on Emscripten" FORCE)
   set(OGRE_BUILD_COMPONENT_PAGING FALSE CACHE BOOL "Disable paging component on Emscripten" FORCE)
-  set(OGRE_BUILD_COMPONENT_TERRAIN FALSE CACHE BOOL "Disable terrain component on Emscripten" FORCE)
   set(OGRE_CONFIG_ALLOCATOR 1 CACHE STRING "Use default allocator on Emscripten" FORCE)
   set(OGRE_CONFIG_CONTAINERS_USE_CUSTOM_ALLOCATOR FALSE CACHE BOOL "Containers use default allocator on Emscripten" FORCE)
 elseif (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
@@ -419,17 +426,8 @@ if( APPLE )
     option(OGRE_BUILD_PLATFORM_APPLE_IOS "Build For iOS (Apple only)" FALSE)
     option(OGRE_BUILD_RENDERSYSTEM_METAL "Build Metal RenderSystem (Apple only)" TRUE)
 endif()
-cmake_dependent_option(OGRE_BUILD_PLATFORM_NACL "Build Ogre for Google's Native Client (NaCl)" FALSE "OPENGLES2_FOUND;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" FALSE)
 option(OGRE_BUILD_PLUGIN_PFX "Build ParticleFX plugin" TRUE)
 
-cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_PBS_MOBILE
-"PBS Stands for Physically Based Shading and it's the default material for most entities and meshes. This is the 'mobile' version for OpenGL ES 2.0.
-If you're targetting only GL ES 3.0 and above; you shouldn't use this component and use the non-mobile instead. Although this component may work with
-ES 3.0, GL3+ and even DX11 render systems, the mobile version uses uniform variables and limited shader based instancing, whereas non-mobile uses
-uniform buffers, texture arrays and true hardware instancing for lower API overhead" FALSE "" FALSE)
-cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_UNLIT_MOBILE
-"Unlit material system supporting texture animations, multiple diffuse texture units (aka multitexturing) with Photoshop-like blend modes. This is the
-'mobile' version for OpenGL ES 2.0. If you're targetting only GL ES 3.0 and above; you shouldn't use this component and use the non-mobile instead." FALSE "" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_PBS
 "PBS Stands for Physically Based Shading and it's the default material for most entities and meshes. This is the 'desktop' version for OpenGL 3.3+ and D3D11." TRUE "" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_UNLIT
@@ -438,13 +436,9 @@ cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_UNLIT
 cmake_dependent_option(OGRE_BUILD_COMPONENT_PAGING "Build Paging component" FALSE "" FALSE)
 option( OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS "Component to use planar reflections, can be used by both HlmsPbs & HlmsUnlit" FALSE )
 cmake_dependent_option(OGRE_BUILD_COMPONENT_MESHLODGENERATOR "Build MeshLodGenerator component" TRUE "" FALSE)
-cmake_dependent_option(OGRE_BUILD_COMPONENT_TERRAIN "Build Terrain component" FALSE "" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_VOLUME "Build Volume component" FALSE "" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_PROPERTY "Build Property component" FALSE "Boost_FOUND" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_OVERLAY "Build Overlay component" TRUE "FREETYPE_FOUND OR OGRE_BUILD_PLATFORM_WINRT OR OGRE_BUILD_PLATFORM_WINDOWS_PHONE" FALSE)
-option(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM "Build RTShader System component" FALSE)
-cmake_dependent_option(OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS "Build RTShader System FFP core shaders" FALSE "OGRE_BUILD_COMPONENT_RTSHADERSYSTEM" FALSE)
-cmake_dependent_option(OGRE_BUILD_RTSHADERSYSTEM_EXT_SHADERS "Build RTShader System extensions shaders" FALSE "OGRE_BUILD_COMPONENT_RTSHADERSYSTEM" FALSE)
 cmake_dependent_option(OGRE_BUILD_LIBS_AS_FRAMEWORKS "Build frameworks for libraries on OS X." TRUE "APPLE;NOT OGRE_BUILD_PLATFORM_APPLE_IOS" FALSE)
 
 option(OGRE_BUILD_SAMPLES2 "Build Ogre new demos (2.1)" TRUE)
@@ -507,7 +501,6 @@ cmake_dependent_option(OGRE_CONFIG_ENABLE_GLES3_SUPPORT "Enable OpenGL ES 3.x Fe
 cmake_dependent_option(OGRE_CONFIG_RENDERDOC_INTEGRATION "Programmatically schedule captures when launched from RenderDoc" TRUE "NOT APPLE;RenderDoc_FOUND" FALSE)
 option(OGRE_CONFIG_ENABLE_FINE_LIGHT_MASK_GRANULARITY "Forward+ will support setLightMask, for a fine granularity control over which lights affect which objects. Performance impact may vary (may be slower, may be faster if you filter a lot of lights)" FALSE)
 option(OGRE_CONFIG_ENABLE_TBB_SCHEDULER "Enable TBB's scheduler initialisation/shutdown." TRUE)
-cmake_dependent_option(OGRE_USE_BOOST "Use Boost extensions" FALSE "Boost_FOUND" FALSE)
 option(OGRE_CONFIG_ENABLE_LIGHT_OBB_RESTRAINT "Enable Light OBB restraints" FALSE)
 
 cmake_dependent_option( OGRE_BUILD_COMPONENT_SCENE_FORMAT "Component to export and import scenes (meshes, textures, items, entities)" TRUE "OGRE_CONFIG_ENABLE_JSON" FALSE )
@@ -556,8 +549,6 @@ endif()
 
 # hide advanced options
 mark_as_advanced(
-  OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS
-  OGRE_BUILD_RTSHADERSYSTEM_EXT_SHADERS
   OGRE_CONFIG_DOUBLE
   OGRE_CONFIG_NODE_INHERIT_TRANSFORM
   OGRE_CONFIG_ALLOCATOR
@@ -582,7 +573,6 @@ mark_as_advanced(
   OGRE_CONFIG_ENABLE_TBB_SCHEDULER
   OGRE_CONFIG_ENABLE_FINE_LIGHT_MASK_GRANULARITY
   OGRE_CONFIG_ENABLE_LIGHT_OBB_RESTRAINT
-  OGRE_USE_BOOST
   OGRE_INSTALL_SAMPLES_SOURCE
   OGRE_FULL_RPATH
   OGRE_PLUGIN_LIB_PREFIX

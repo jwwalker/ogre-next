@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -75,7 +75,7 @@ namespace Ogre {
         @par
             The subclass must have called it's own createParamDictionary before calling this method.
         */
-        void addBaseParameters(void) { /* actually do nothing - for future possible use */ }
+        void addBaseParameters() { /* actually do nothing - for future possible use */ }
 
         ParticleSystem* mParent;
     public:
@@ -115,7 +115,7 @@ namespace Ogre {
             This property is useful for determining the type of affector procedurally so another
             can be created.
         */
-        const String &getType(void) const { return mType; }
+        const String &getType() const { return mType; }
 
     };
     /** @} */

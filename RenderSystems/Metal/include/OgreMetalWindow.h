@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -29,9 +29,8 @@ THE SOFTWARE.
 #define _OgreMetalWindow_H_
 
 #include "OgreMetalPrerequisites.h"
-#include "OgreWindow.h"
 
-#include "OgreMetalRenderTargetCommon.h"
+#include "OgreWindow.h"
 
 #include "OgreMetalView.h"
 
@@ -41,21 +40,22 @@ namespace Ogre
 {
     class MetalWindow : public Window
     {
-        bool    mClosed;
-        bool    mHidden;
-        bool    mIsExternal;
-        bool    mHwGamma;
+        bool mClosed;
+        bool mHidden;
+        bool mIsExternal;
+        bool mHwGamma;
 
-        CAMetalLayer        *mMetalLayer;
+        CAMetalLayer *      mMetalLayer;
         id<CAMetalDrawable> mCurrentDrawable;
-        OgreMetalView       *mMetalView;
+        OgreMetalView *     mMetalView;
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
-        NSWindow            *mWindow;
+        NSWindow *mWindow;
 #endif
-        MetalDevice         *mDevice;
+        MetalDevice *mDevice;
 
-        inline void checkLayerSizeChanges(void);
-        void setResolutionFromView(void);
+        inline void checkLayerSizeChanges();
+        void        setResolutionFromView();
+
     public:
         MetalWindow( const String &title, uint32 width, uint32 height, bool fullscreenMode,
                      const NameValuePairList *miscParams, MetalDevice *ownerDevice );
@@ -63,28 +63,27 @@ namespace Ogre
 
         virtual float getViewPointToPixelScale() const;
 
-        virtual void swapBuffers(void);
-        virtual void windowMovedOrResized(void);
+        virtual void swapBuffers();
+        virtual void windowMovedOrResized();
 
-        virtual bool nextDrawable(void);
+        virtual bool nextDrawable();
 
         virtual void create( bool fullScreen, const NameValuePairList *miscParams );
-        virtual void destroy(void);
+        virtual void destroy();
 
         void _initialize( TextureGpuManager *textureGpuManager );
 
         virtual void reposition( int32 left, int32 top );
         virtual void requestResolution( uint32 width, uint32 height );
 
-        virtual bool isClosed(void) const;
+        virtual bool isClosed() const;
         virtual void _setVisible( bool visible );
-        virtual bool isVisible(void) const;
+        virtual bool isVisible() const;
         virtual void setHidden( bool hidden );
-        virtual bool isHidden(void) const;
+        virtual bool isHidden() const;
 
-        virtual void getCustomAttribute( IdString name, void* pData );
+        virtual void getCustomAttribute( IdString name, void *pData );
     };
-}
+}  // namespace Ogre
 
 #endif
-

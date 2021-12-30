@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -173,11 +173,11 @@ namespace Ogre
         virtual ~CompositorShadowNodeDef() {}
 
         /// Overloaded to prevent creating input channels.
-        virtual IdString addTextureSourceName( const String &name, size_t index,
-                                               TextureSource textureSource );
-        virtual void addBufferInput( size_t inputChannel, IdString name );
+        IdString addTextureSourceName( const String &name, size_t index,
+                                               TextureSource textureSource ) override;
+        void addBufferInput( size_t inputChannel, IdString name ) override;
 
-        virtual void postInitializePassDef( CompositorPassDef *passDef );
+        void postInitializePassDef( CompositorPassDef *passDef ) override;
 
         void setDefaultTechnique( ShadowMapTechniques techn )   { mDefaultTechnique = techn; }
 
@@ -233,7 +233,7 @@ namespace Ogre
             We should validate here if it's not possible to validate at any other time
             or if it's substantially easier to do so here.
         */
-        virtual void _validateAndFinish(void);
+        virtual void _validateAndFinish();
     };
 
     /** @} */

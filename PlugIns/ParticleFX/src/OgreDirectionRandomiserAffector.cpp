@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -113,17 +113,17 @@ namespace Ogre {
         mKeepVelocity = keepVelocity;
     }
     //-----------------------------------------------------------------------
-    Real DirectionRandomiserAffector::getRandomness(void) const
+    Real DirectionRandomiserAffector::getRandomness() const
     {
         return mRandomness;
     }
     //-----------------------------------------------------------------------
-    Real DirectionRandomiserAffector::getScope(void) const
+    Real DirectionRandomiserAffector::getScope() const
     {
         return mScope;
     }
     //-----------------------------------------------------------------------
-    bool DirectionRandomiserAffector::getKeepVelocity(void) const
+    bool DirectionRandomiserAffector::getKeepVelocity() const
     {
         return mKeepVelocity;
     }

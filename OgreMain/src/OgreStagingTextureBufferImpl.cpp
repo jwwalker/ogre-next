@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -65,12 +65,12 @@ namespace Ogre
         return this->mSize < static_cast<const StagingTextureBufferImpl*>( other )->mSize;
     }
     //-----------------------------------------------------------------------------------
-    size_t StagingTextureBufferImpl::_getSizeBytes(void)
+    size_t StagingTextureBufferImpl::_getSizeBytes()
     {
         return mSize;
     }
     //-----------------------------------------------------------------------------------
-    void StagingTextureBufferImpl::startMapRegion(void)
+    void StagingTextureBufferImpl::startMapRegion()
     {
         StagingTexture::startMapRegion();
         mCurrentOffset = 0;

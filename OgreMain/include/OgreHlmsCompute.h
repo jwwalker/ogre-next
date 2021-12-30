@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -115,18 +115,18 @@ namespace Ogre
         void processPieces( const StringVector &pieceFiles );
         HlmsComputePso compileShader( HlmsComputeJob *job, uint32 finalHash );
 
-        virtual HlmsDatablock* createDatablockImpl( IdString datablockName,
-                                                    const HlmsMacroblock *macroblock,
-                                                    const HlmsBlendblock *blendblock,
-                                                    const HlmsParamVec &paramVec );
+        HlmsDatablock *createDatablockImpl( IdString datablockName,            //
+                                            const HlmsMacroblock *macroblock,  //
+                                            const HlmsBlendblock *blendblock,  //
+                                            const HlmsParamVec &paramVec ) override;
 
-        virtual void setupRootLayout( RootLayout &rootLayout );
+        void setupRootLayout( RootLayout &rootLayout ) override;
 
     public:
         HlmsCompute( AutoParamDataSource *autoParamDataSource );
-        virtual ~HlmsCompute();
+        ~HlmsCompute() override;
 
-        virtual void reloadFrom( Archive *newDataFolder, ArchiveVec *libraryFolders=0 );
+        void reloadFrom( Archive *newDataFolder, ArchiveVec *libraryFolders=0 ) override;
 
         /** An HlmsComputeJob is very similar to an HlmsDatablock, except it
             contains a compute job instead. If multiple HlmsComputeJob end up
@@ -166,31 +166,28 @@ namespace Ogre
         void destroyComputeJob( IdString name );
 
         /// Destroys all jobs created via @see createComputeJob
-        void destroyAllComputeJobs(void);
+        void destroyAllComputeJobs();
 
         /// Destroys the shader cache from all jobs, causing us to reload shaders from file again
-        virtual void clearShaderCache(void);
+        void clearShaderCache() override;
 
         /// Main function for dispatching a compute job.
         void dispatch( HlmsComputeJob *job, SceneManager *sceneManager, Camera *camera );
 
-        virtual void _changeRenderSystem( RenderSystem *newRs );
+        void _changeRenderSystem( RenderSystem *newRs ) override;
 
-        virtual HlmsDatablock* createDefaultDatablock(void);
+        HlmsDatablock* createDefaultDatablock() override;
 
-        virtual uint32 fillBuffersFor( const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
-                                       bool casterPass, uint32 lastCacheHash,
-                                       uint32 lastTextureHash );
+        uint32 fillBuffersFor( const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
+                               bool casterPass, uint32 lastCacheHash, uint32 lastTextureHash ) override;
 
-        virtual uint32 fillBuffersForV1( const HlmsCache *cache,
-                                         const QueuedRenderable &queuedRenderable,
-                                         bool casterPass, uint32 lastCacheHash,
-                                         CommandBuffer *commandBuffer );
+        uint32 fillBuffersForV1( const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
+                                 bool casterPass, uint32 lastCacheHash,
+                                 CommandBuffer *commandBuffer ) override;
 
-        virtual uint32 fillBuffersForV2( const HlmsCache *cache,
-                                         const QueuedRenderable &queuedRenderable,
-                                         bool casterPass, uint32 lastCacheHash,
-                                         CommandBuffer *commandBuffer );
+        uint32 fillBuffersForV2( const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
+                                 bool casterPass, uint32 lastCacheHash,
+                                 CommandBuffer *commandBuffer ) override;
     };
 
     struct _OgreExport ComputeProperty

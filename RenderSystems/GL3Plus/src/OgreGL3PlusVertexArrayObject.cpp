@@ -1,6 +1,6 @@
 /*
   -----------------------------------------------------------------------------
-  This source file is part of OGRE
+  This source file is part of OGRE-Next
   (Object-oriented Graphics Rendering Engine)
   For the latest info, see http://www.ogre3d.org/
 
@@ -56,7 +56,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    void GL3PlusOldVertexArrayObject::bind(void)
+    void GL3PlusOldVertexArrayObject::bind()
     {
         if (mVAO)
         {

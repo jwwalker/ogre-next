@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-This source file is a part of OGRE
+This source file is a part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 
 For the latest info, see http://www.ogre3d.org/
@@ -39,11 +39,8 @@ namespace Ogre
     {
     public:
         DefaultWorkQueue(const String& name = BLANKSTRING);
-#ifdef __cplusplus >= 201103L
-        virtual ~DefaultWorkQueue(void) noexcept(true);
-#else
-        virtual ~DefaultWorkQueue(void);
-#endif
+        virtual ~DefaultWorkQueue() noexcept(true);
+
         /** Process the next request on the queue. 
         @remarks
             This method is public, but only intended for advanced users to call. 

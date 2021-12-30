@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -104,21 +104,21 @@ namespace Ogre {
         Bone    *mParentBone;
 
         /// @copydoc Node::updateFromParentImpl.
-        void updateFromParentImpl(void);
+        void updateFromParentImpl() override;
 
     public:
         TagPoint( IdType id, SceneManager* creator, NodeMemoryManager *nodeMemoryManager,
                   SceneNode *parent );
-        virtual ~TagPoint();
+        ~TagPoint() override;
 
         /// Don't call directly. @see Bone::addTagPoint
         void _setParentBone( Bone *bone );
-        void _unsetParentBone(void);
+        void _unsetParentBone();
 
         /// Gets this Bones's parent (NULL if no parent).
-        Bone* getParentBone(void) const                                 { return mParentBone; }
+        Bone* getParentBone() const                                 { return mParentBone; }
 
-        Matrix3 _getDerivedOrientationMatrix(void) const;
+        Matrix3 _getDerivedOrientationMatrix() const;
 
         /// @See Node::updateAllTransforms.
         /// This version grabs the parent Bone of a TagPoint, derives the final transform

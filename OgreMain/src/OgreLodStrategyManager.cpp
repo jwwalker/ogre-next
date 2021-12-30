@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -36,11 +36,11 @@ THE SOFTWARE.
 namespace Ogre {
     //-----------------------------------------------------------------------
     template<> LodStrategyManager* Singleton<LodStrategyManager>::msSingleton = 0;
-    LodStrategyManager* LodStrategyManager::getSingletonPtr(void)
+    LodStrategyManager* LodStrategyManager::getSingletonPtr()
     {
         return msSingleton;
     }
-    LodStrategyManager& LodStrategyManager::getSingleton(void)
+    LodStrategyManager& LodStrategyManager::getSingleton()
     {
         assert( msSingleton );  return ( *msSingleton );
     }

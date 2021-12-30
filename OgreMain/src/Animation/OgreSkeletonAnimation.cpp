@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -55,7 +55,7 @@ namespace Ogre
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void SkeletonAnimation::_initialize(void)
+    void SkeletonAnimation::_initialize()
     {
         const FastArray<size_t> &slotStarts = *mSlotStarts;
 
@@ -166,12 +166,12 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    Real SkeletonAnimation::getNumFrames(void) const
+    Real SkeletonAnimation::getNumFrames() const
     {
         return mDefinition->mNumFrames;
     }
     //-----------------------------------------------------------------------------------
-    Real SkeletonAnimation::getDuration(void) const
+    Real SkeletonAnimation::getDuration() const
     {
         return mDefinition->mNumFrames / mFrameRate;
     }

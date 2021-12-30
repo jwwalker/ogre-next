@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -160,14 +160,6 @@ namespace Ogre
             // maximum size this can handle, delegate
             return AllocPolicy::getMaxAllocationSize();
         }
-
-#if __cplusplus < 201103L
-        void construct(pointer p)
-        {
-            // call placement new
-            new(static_cast<void*>(p)) T();
-        }
-#endif
 
         void construct(pointer p, const T& val)
         {

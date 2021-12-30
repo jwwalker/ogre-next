@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -61,21 +61,21 @@ namespace Ogre
 
         bool mWarnedNoAutomipmapsAlready;
 
-        void setupComputeShaders( void );
-        void destroyComputeShaders( void );
+        void setupComputeShaders();
+        void destroyComputeShaders();
         void setGaussianFilterParams( HlmsComputeJob *job, uint8 kernelRadius,
                                       float gaussianDeviationFactor );
 
-        virtual void analyzeBarriers( const bool bClearBarriers = true );
+        void analyzeBarriers( const bool bClearBarriers = true ) override;
 
     public:
         CompositorPassMipmap( const CompositorPassMipmapDef *definition,  //
                               const RenderTargetViewDef *rtv, CompositorNode *parentNode );
-        virtual ~CompositorPassMipmap();
+        ~CompositorPassMipmap() override;
 
-        virtual void execute( const Camera *lodCamera );
+        void execute( const Camera *lodCamera ) override;
 
-        virtual bool notifyRecreated( const TextureGpu *channel );
+        bool notifyRecreated( const TextureGpu *channel ) override;
 
     private:
         CompositorPassMipmapDef const *mDefinition;
