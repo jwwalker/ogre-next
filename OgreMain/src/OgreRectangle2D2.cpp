@@ -29,15 +29,13 @@ THE SOFTWARE.
 
 #include "OgreRectangle2D2.h"
 
-#include "Vao/OgreStagingBuffer.h"
-#include "Vao/OgreVaoManager.h"
-#include "Vao/OgreVertexArrayObject.h"
-
-#include "OgreSceneManager.h"
-
 #include "OgreHlms.h"
 #include "OgreHlmsManager.h"
 #include "OgreRoot.h"
+#include "OgreSceneManager.h"
+#include "Vao/OgreStagingBuffer.h"
+#include "Vao/OgreVaoManager.h"
+#include "Vao/OgreVertexArrayObject.h"
 
 namespace Ogre
 {
@@ -172,8 +170,9 @@ namespace Ogre
         Vector2 posCenter[2] = { mPosition, mSize };
 
         const size_t numIterations = isStereo() ? 2u : 1u;
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_LOW
         const float *vertexDataStart = vertexData;
-
+#endif
         for( size_t i = 0u; i < numIterations; ++i )
         {
             posCenter[i].y = -posCenter[i].y;
@@ -224,8 +223,9 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void Rectangle2D::fillBuffer( float *RESTRICT_ALIAS vertexData, size_t maxElements )
     {
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_LOW
         const float *vertexDataStart = vertexData;
-
+#endif
         const size_t numIterations = isStereo() ? 2u : 1u;
         const bool bHasNormals = hasNormals();
 
@@ -363,10 +363,7 @@ namespace Ogre
         mChanged = false;
     }
     //-----------------------------------------------------------------------------------
-    const String &Rectangle2D::getMovableType() const
-    {
-        return Rectangle2DFactory::FACTORY_TYPE_NAME;
-    }
+    const String &Rectangle2D::getMovableType() const { return Rectangle2DFactory::FACTORY_TYPE_NAME; }
     //-----------------------------------------------------------------------------------
     const LightList &Rectangle2D::getLights() const
     {

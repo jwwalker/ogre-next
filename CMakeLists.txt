@@ -116,15 +116,40 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     set(OGRE_GCC_HAS_SSE FALSE)
   else()
     check_cxx_compiler_flag(-msse OGRE_GCC_HAS_SSE)
+
+    if( UNIX AND (EXISTS /usr/bin/ld.lld OR EXISTS /usr/local/bin/ld.lld) )
+      message( STATUS "Using lld linker" )
+      set( CMAKE_EXE_LINKER_FLAGS "-fuse-ld=lld" )
+    else()
+      message( "BUILD PERFORMANCE - lld linker not found. Consider installing it for much faster link times" )
+    endif()
   endif()
   if (OGRE_GCC_HAS_SSE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
   endif ()
   # This is a set of sensible warnings that provide meaningful output
-  set(OGRE_WARNING_FLAGS "-Wall -Winit-self -Wno-overloaded-virtual -Wcast-qual -Wwrite-strings -Wextra -Wno-unused-parameter -Wshadow -Wno-missing-field-initializers -Wno-long-long")
+  set(OGRE_WARNING_FLAGS
+      "-Wall -Winit-self -Wcast-qual -Wwrite-strings -Wextra -Wno-unused-parameter -Wshadow -Wimplicit-fallthrough")
 
   if( CMAKE_COMPILER_IS_GNUCXX )
+    # On GCC:
+    # - Wsign-conversion has too many false positives. See https://stackoverflow.com/a/64542771
+    # - Wconversion is too dumb. Too many false positives.
     set( OGRE_WARNING_FLAGS "${OGRE_WARNING_FLAGS} -Wsuggest-override" )
+  else()
+    set( OGRE_WARNING_FLAGS "${OGRE_WARNING_FLAGS} \
+        -Winconsistent-missing-destructor-override -Wcomma -Wsign-conversion -Wconversion" )
+#    set( OGRE_WARNING_FLAGS
+#        "-Weverything -Wno-reserved-id-macro -Wno-old-style-cast -Wno-documentation-unknown-command \
+#        -Wno-zero-as-null-pointer-constant -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-undef \
+#        -Wno-padded -Werror" )
+#    set( OGRE_WARNING_FLAGS
+#        "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-unused-macros -Wno-newline-eof \
+#        -Wno-exit-time-destructors -Wno-global-constructors -Wno-gnu-zero-variadic-macro-arguments \
+#        -Wno-documentation -Wno-shadow -Wno-switch-enum -Wno-missing-prototypes \
+#        -Wno-used-but-marked-unused -Wno-zero-as-null-pointer-constant -Wno-old-style-cast \
+#        -Wno-double-promotion -Wno-reserved-id-macro -Wno-undef -Wno-documentation-unknown-command \
+#        -Wno-float-equal -Wno-covered-switch-default -Werror" )
   endif()
 
   if (EMSCRIPTEN)
@@ -344,7 +369,7 @@ elseif(EMSCRIPTEN)
   set(OGRE_BUILD_TESTS FALSE CACHE BOOL "Disable tests on Emscripten" FORCE)
   set(OGRE_BUILD_COMPONENT_VOLUME FALSE CACHE BOOL "Disable volume component on Emscripten" FORCE)
   set(OGRE_BUILD_COMPONENT_PAGING FALSE CACHE BOOL "Disable paging component on Emscripten" FORCE)
-  set(OGRE_CONFIG_ALLOCATOR 1 CACHE STRING "Use default allocator on Emscripten" FORCE)
+  set(OGRE_CONFIG_ALLOCATOR 0 CACHE STRING "Use default allocator on Emscripten" FORCE)
   set(OGRE_CONFIG_CONTAINERS_USE_CUSTOM_ALLOCATOR FALSE CACHE BOOL "Containers use default allocator on Emscripten" FORCE)
 elseif (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
 
@@ -420,7 +445,7 @@ endif()
 if( OGRE_GLSUPPORT_USE_EGL_HEADLESS )
 	math( EXPR OGRE_GLSUPPORT_NUM_INTERFACES "${OGRE_GLSUPPORT_NUM_INTERFACES} + 1" )
 endif()
-cmake_dependent_option(OGRE_BUILD_RENDERSYSTEM_GLES2 "Build OpenGL ES 2.x RenderSystem" FALSE "OPENGLES_FOUND;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" FALSE)
+cmake_dependent_option(OGRE_BUILD_RENDERSYSTEM_GLES2 "Build OpenGL ES 2.x RenderSystem" FALSE "OPENGLES2_FOUND;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" FALSE)
 cmake_dependent_option(OGRE_BUILD_RENDERSYSTEM_VULKAN "Build Vulkan RenderSystem" TRUE "Vulkan_FOUND" FALSE)
 if( APPLE )
     option(OGRE_BUILD_PLATFORM_APPLE_IOS "Build For iOS (Apple only)" FALSE)
@@ -454,14 +479,13 @@ set(OGRE_PLUGIN_LIB_PREFIX "" CACHE STRING "Prefix dynamically linked plugins, e
 
 if (WINDOWS_STORE OR WINDOWS_PHONE)
 # WinRT can only use the standard allocator
-set(OGRE_CONFIG_ALLOCATOR 1 CACHE STRING "Forcing Standard Allocator for WinRT" FORCE)
+set(OGRE_CONFIG_ALLOCATOR 0 CACHE STRING "Forcing no Allocator for WinRT" FORCE)
 else ()
-set(OGRE_CONFIG_ALLOCATOR 1 CACHE STRING
+set(OGRE_CONFIG_ALLOCATOR 0 CACHE STRING
 "Specify the memory allocator to use. Possible values:
-  1 - Standard allocator
-  2 - nedmalloc - NOT RECOMMENDED - Only useful in WinXP & for debugging mem. corruption - Has known issues see https://github.com/ned14/nedmalloc/issues/15
+  0 - None
+  1 - Standard allocator. Supports additional debugging (see OGRE_CONFIG_MEMTRACK)
   3 - User-provided allocator
-  4 - nedmalloc with pooling - NOT RECOMMENDED - See nedmalloc issues.
   5 - Debug allocator that will assert on most forms of memory corruption and provides deterministic memory addressing (for easier debugging w/ data breakpoints). Not indended for release or deployment. You may want to tweak OGRE_TRACK_POOL_SIZE in OgreMain/src/OgreMemoryTrackAlloc.cpp."
 )
 endif ()
@@ -477,6 +501,9 @@ set( OGRE_DEBUG_LEVEL_RELEASE 0 CACHE STRING
     "Specify debug level for Release, RelWithDebInfo and MinSizeRel builds. See OGRE_MAX_DEBUG_LEVEL_DEBUG" )
 
 cmake_dependent_option(OGRE_CONFIG_CONTAINERS_USE_CUSTOM_ALLOCATOR "STL containers in Ogre use the custom allocator" TRUE "" FALSE)
+if( OGRE_CONFIG_ALLOCATOR EQUAL 0 )
+    set(OGRE_CONFIG_CONTAINERS_USE_CUSTOM_ALLOCATOR FALSE CACHE BOOL "Forced off when OGRE_CONFIG_ALLOCATOR = 0" FORCE)
+endif()
 option(OGRE_CONFIG_STRING_USE_CUSTOM_ALLOCATOR "Ogre String uses the custom allocator" FALSE)
 option(OGRE_CONFIG_MEMTRACK_DEBUG "Enable Ogre's memory tracker in debug mode" FALSE)
 option(OGRE_CONFIG_MEMTRACK_RELEASE "Enable Ogre's memory tracker in release mode" FALSE)

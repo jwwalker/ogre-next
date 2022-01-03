@@ -151,10 +151,7 @@ namespace Ogre
         return mDebugVisualizationMode;
     }
     //-------------------------------------------------------------------------
-    Vector3 VctVoxelizerSourceBase::getVoxelOrigin() const
-    {
-        return mRegionToVoxelize.getMinimum();
-    }
+    Vector3 VctVoxelizerSourceBase::getVoxelOrigin() const { return mRegionToVoxelize.getMinimum(); }
     //-------------------------------------------------------------------------
     Vector3 VctVoxelizerSourceBase::getVoxelCellSize() const
     {
@@ -165,13 +162,10 @@ namespace Ogre
     //-------------------------------------------------------------------------
     Vector3 VctVoxelizerSourceBase::getVoxelResolution() const
     {
-        return Vector3( mWidth, mHeight, mDepth );
+        return Vector3( (Real)mWidth, (Real)mHeight, (Real)mDepth );
     }
     //-------------------------------------------------------------------------
-    TextureGpuManager *VctVoxelizerSourceBase::getTextureGpuManager()
-    {
-        return mTextureGpuManager;
-    }
+    TextureGpuManager *VctVoxelizerSourceBase::getTextureGpuManager() { return mTextureGpuManager; }
     //-------------------------------------------------------------------------
     RenderSystem *VctVoxelizerSourceBase::getRenderSystem() { return mRenderSystem; }
     //-------------------------------------------------------------------------

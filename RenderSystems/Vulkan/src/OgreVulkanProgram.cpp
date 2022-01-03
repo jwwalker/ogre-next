@@ -43,7 +43,14 @@ THE SOFTWARE.
 #include "OgreRenderSystemCapabilities.h"
 #include "OgreRoot.h"
 
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include "glslang/Public/ShaderLang.h"
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic pop
+#endif
 #include "glslang/SPIRV/Logger.h"
 
 // Inclusion of SPIRV headers triggers lots of C++11 errors we don't care
@@ -1035,9 +1042,9 @@ namespace Ogre
             mConstantDefs->map.insert( GpuConstantDefinitionMap::value_type( varName, def ) );
             vp->mConstantDefsSorted.push_back( def );
 
-            vp->mConstantsBytesToWrite =
-                std::max<uint32>( vp->mConstantsBytesToWrite,
-                                  def.logicalIndex + def.arraySize * def.elementSize * sizeof( float ) );
+            vp->mConstantsBytesToWrite = std::max<uint32>(
+                vp->mConstantsBytesToWrite,
+                uint32( def.logicalIndex + def.arraySize * def.elementSize * sizeof( float ) ) );
         }
 
         VulkanConstantDefinitionBindingParam bindingParam;
@@ -1307,13 +1314,22 @@ namespace Ogre
         {
             const GpuConstantDefinition &def = *itor;
 
-            void *RESTRICT_ALIAS src;
+            void const *RESTRICT_ALIAS src;
             if( def.isFloat() )
-                src = (void *)&( *( params->getFloatConstantList().begin() + def.physicalIndex ) );
+            {
+                src = (void const *)&( *( params->getFloatConstantList().begin() +
+                                          static_cast<ptrdiff_t>( def.physicalIndex ) ) );
+            }
             else if( def.isUnsignedInt() )
-                src = (void *)&( *( params->getUnsignedIntConstantList().begin() + def.physicalIndex ) );
+            {
+                src = (void const *)&( *( params->getUnsignedIntConstantList().begin() +
+                                          static_cast<ptrdiff_t>( def.physicalIndex ) ) );
+            }
             else
-                src = (void *)&( *( params->getIntConstantList().begin() + def.physicalIndex ) );
+            {
+                src = (void const *)&( *( params->getIntConstantList().begin() +
+                                          static_cast<ptrdiff_t>( def.physicalIndex ) ) );
+            }
 
             memcpy( &dstData[def.logicalIndex], src, def.elementSize * def.arraySize * sizeof( float ) );
 

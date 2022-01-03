@@ -57,7 +57,7 @@ namespace Ogre
     /**
     @class IesLoader
     */
-    class _OgreHlmsPbsExport IesLoader : public UtilityAlloc
+    class _OgreHlmsPbsExport IesLoader : public OgreAllocatedObj
     {
         float mCandelaMult;
         /// Vertical angle aka Cone Angle
@@ -67,7 +67,7 @@ namespace Ogre
         float mBallastFactor;
         float mBallastLampPhotometricFactor;
 
-        LampConeType::LampConeType mLampConeType;
+        LampConeType::LampConeType   mLampConeType;
         LampHorizType::LampHorizType mLampHorizType;
 
         FastArray<float> mAngleData;

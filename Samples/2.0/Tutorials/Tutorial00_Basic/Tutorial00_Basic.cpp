@@ -24,7 +24,7 @@
 #include "OgreWindowEventUtilities.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-#   include "OSX/macUtils.h"
+#    include "OSX/macUtils.h"
 #endif
 static void registerHlms()
 {
@@ -129,13 +129,13 @@ static void registerHlms()
     }
 }
 
-class MyWindowEventListener : public Ogre::WindowEventListener
+class MyWindowEventListener final : public Ogre::WindowEventListener
 {
     bool mQuit;
 
 public:
     MyWindowEventListener() : mQuit( false ) {}
-    virtual void windowClosed( Ogre::Window *rw ) { mQuit = true; }
+    void windowClosed( Ogre::Window *rw ) override { mQuit = true; }
 
     bool getQuit() const { return mQuit; }
 };
@@ -164,7 +164,7 @@ int main( int argc, const char *argv[] )
     const char *pluginsFile = "plugins.cfg";
 #    endif
 #else
-    const char *pluginsFile = 0; // TODO
+    const char *pluginsFile = 0;  // TODO
 #endif
     Root *root = OGRE_NEW Root( pluginsFolder + pluginsFile,     //
                                 writeAccessFolder + "ogre.cfg",  //

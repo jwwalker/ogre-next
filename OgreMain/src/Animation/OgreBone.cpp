@@ -26,22 +26,24 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 #include "OgreStableHeaders.h"
-#include "Animation/OgreBone.h"
-#include "Animation/OgreTagPoint.h"
-#include "OgreNode.h"
-#include "OgreLogManager.h"
 
+#include "Animation/OgreBone.h"
+
+#include "Animation/OgreTagPoint.h"
 #include "Math/Array/OgreBoneMemoryManager.h"
-#include "Math/Array/OgreKfTransform.h"
 #include "Math/Array/OgreBooleanMask.h"
+#include "Math/Array/OgreKfTransform.h"
+#include "OgreLogManager.h"
+#include "OgreNode.h"
 
 #if OGRE_DEBUG_MODE
-    #define CACHED_TRANSFORM_OUT_OF_DATE() this->setCachedTransformOutOfDate()
+#    define CACHED_TRANSFORM_OUT_OF_DATE() this->setCachedTransformOutOfDate()
 #else
-    #define CACHED_TRANSFORM_OUT_OF_DATE() ((void)0)
+#    define CACHED_TRANSFORM_OUT_OF_DATE() ( (void)0 )
 #endif
 
-namespace Ogre {
+namespace Ogre
+{
     //-----------------------------------------------------------------------
     Bone::Bone() :
         IdObject( 0 ),
@@ -56,8 +58,8 @@ namespace Ogre {
         mParent( 0 ),
         mName( "@Dummy Bone" ),
         mBoneMemoryManager( 0 ),
-        mGlobalIndex( -1 ),
-        mParentIndex( -1 )
+        mGlobalIndex( std::numeric_limits<size_t>::max() ),
+        mParentIndex( std::numeric_limits<size_t>::max() )
     {
     }
     //-----------------------------------------------------------------------
@@ -68,8 +70,8 @@ namespace Ogre {
 #endif
     }
     //-----------------------------------------------------------------------
-    void Bone::_initialize( IdType id, BoneMemoryManager *boneMemoryManager,
-                            Bone *parent, ArrayMatrixAf4x3 const * RESTRICT_ALIAS reverseBind )
+    void Bone::_initialize( IdType id, BoneMemoryManager *boneMemoryManager, Bone *parent,
+                            ArrayMatrixAf4x3 const *RESTRICT_ALIAS reverseBind )
     {
 #if OGRE_DEBUG_MODE
         assert( !mInitialized );
@@ -77,21 +79,21 @@ namespace Ogre {
 #endif
 
         this->_setId( id );
-        mReverseBind        = reverseBind;
-        mParent             = parent;
-        mBoneMemoryManager  = boneMemoryManager;
+        mReverseBind = reverseBind;
+        mParent = parent;
+        mBoneMemoryManager = boneMemoryManager;
 
         if( mParent )
             mDepthLevel = mParent->mDepthLevel + 1;
 
-        //Will initialize mTransform
+        // Will initialize mTransform
         mBoneMemoryManager->nodeCreated( mTransform, mDepthLevel );
         mTransform.mOwner[mTransform.mIndex] = this;
         if( mParent )
         {
             const BoneTransform parentTransform = mParent->mTransform;
             mTransform.mParentTransform[mTransform.mIndex] =
-                                &parentTransform.mDerivedTransform[parentTransform.mIndex];
+                &parentTransform.mDerivedTransform[parentTransform.mIndex];
 
             mParent->mChildren.push_back( this );
             this->mParentIndex = mParent->mChildren.size() - 1;
@@ -101,22 +103,22 @@ namespace Ogre {
     void Bone::_deinitialize( bool debugCheckLifoOrder )
     {
         TagPointVec::const_iterator itor = mTagPointChildren.begin();
-        TagPointVec::const_iterator end  = mTagPointChildren.end();
+        TagPointVec::const_iterator endt = mTagPointChildren.end();
 
-        while( itor != end )
+        while( itor != endt )
         {
-            (*itor)->_unsetParentBone();
-            (*itor)->mParentIndex = -1;
+            ( *itor )->_unsetParentBone();
+            ( *itor )->mParentIndex = std::numeric_limits<size_t>::max();
             ++itor;
         }
 
         mTagPointChildren.clear();
 
 #if OGRE_DEBUG_MODE
-        //Calling mParent->removeChild() is not necessary during Release mode at all,
-        //However we need to call this->_deinitialize in LIFO order (children first,
-        //then parents). We check that here via this assert.
-        //And for the assert to work, we need to call removeChild.
+        // Calling mParent->removeChild() is not necessary during Release mode at all,
+        // However we need to call this->_deinitialize in LIFO order (children first,
+        // then parents). We check that here via this assert.
+        // And for the assert to work, we need to call removeChild.
         if( mParent )
             mParent->removeChild( this );
         assert( mChildren.empty() || !debugCheckLifoOrder );
@@ -125,8 +127,8 @@ namespace Ogre {
         if( mBoneMemoryManager )
             mBoneMemoryManager->nodeDestroyed( mTransform, mDepthLevel );
 
-        mReverseBind        = 0;
-        mBoneMemoryManager  = 0;
+        mReverseBind = 0;
+        mBoneMemoryManager = 0;
 
 #if OGRE_DEBUG_MODE
         mInitialized = false;
@@ -139,18 +141,18 @@ namespace Ogre {
         mCachedTransformOutOfDate = true;
 
         BoneVec::const_iterator itor = mChildren.begin();
-        BoneVec::const_iterator end  = mChildren.end();
+        BoneVec::const_iterator endt = mChildren.end();
 
-        while( itor != end )
+        while( itor != endt )
         {
-            (*itor)->setCachedTransformOutOfDate();
+            ( *itor )->setCachedTransformOutOfDate();
             ++itor;
         }
 #else
         OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR,
-                    "Do not call setCachedTransformOutOfDate in Release builds.\n"
-                    "Use CACHED_TRANSFORM_OUT_OF_DATE macro instead!",
-                    "Bone::setCachedTransformOutOfDate" );
+                     "Do not call setCachedTransformOutOfDate in Release builds.\n"
+                     "Use CACHED_TRANSFORM_OUT_OF_DATE macro instead!",
+                     "Bone::setCachedTransformOutOfDate" );
 #endif
     }
     //-----------------------------------------------------------------------
@@ -160,7 +162,7 @@ namespace Ogre {
         {
             const BoneTransform parentTransform = mParent->mTransform;
             mTransform.mParentTransform[mTransform.mIndex] =
-                                    &parentTransform.mDerivedTransform[parentTransform.mIndex];
+                &parentTransform.mDerivedTransform[parentTransform.mIndex];
         }
 
         _memoryRebased();
@@ -169,10 +171,10 @@ namespace Ogre {
     void Bone::_memoryRebased()
     {
         BoneVec::iterator itor = mChildren.begin();
-        BoneVec::iterator end  = mChildren.end();
-        while( itor != end )
+        BoneVec::iterator endt = mChildren.end();
+        while( itor != endt )
         {
-            (*itor)->resetParentTransformPtr();
+            ( *itor )->resetParentTransformPtr();
             ++itor;
         }
     }
@@ -191,7 +193,8 @@ namespace Ogre {
 
         if( child->mParentIndex < mTagPointChildren.size() )
         {
-            TagPointVec::iterator itor = mTagPointChildren.begin() + child->mParentIndex;
+            TagPointVec::iterator itor =
+                mTagPointChildren.begin() + static_cast<ptrdiff_t>( child->mParentIndex );
 
             assert( child == *itor && "mParentIndex was out of date!!!" );
 
@@ -199,11 +202,11 @@ namespace Ogre {
             {
                 itor = efficientVectorRemove( mTagPointChildren, itor );
                 child->_unsetParentBone();
-                child->mParentIndex = -1;
+                child->mParentIndex = std::numeric_limits<size_t>::max();
 
-                //The node that was at the end got swapped and has now a different index
+                // The node that was at the end got swapped and has now a different index
                 if( itor != mTagPointChildren.end() )
-                    (*itor)->mParentIndex = itor - mTagPointChildren.begin();
+                    ( *itor )->mParentIndex = static_cast<size_t>( itor - mTagPointChildren.begin() );
             }
         }
     }
@@ -215,11 +218,11 @@ namespace Ogre {
 #endif
         if( nodeParent )
         {
-            //This "Hack" just works. Don't ask. And it's fast!
+            // This "Hack" just works. Don't ask. And it's fast!
             //(we're responsible for ensuring the memory layout matches)
             Transform parentTransf = nodeParent->_getTransform();
-            mTransform.mParentNodeTransform[mTransform.mIndex] = reinterpret_cast<SimpleMatrixAf4x3*>(
-                                                &parentTransf.mDerivedTransform[parentTransf.mIndex] );
+            mTransform.mParentNodeTransform[mTransform.mIndex] = reinterpret_cast<SimpleMatrixAf4x3 *>(
+                &parentTransf.mDerivedTransform[parentTransf.mIndex] );
         }
         else
         {
@@ -227,7 +230,7 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void Bone::setInheritOrientation(bool inherit)
+    void Bone::setInheritOrientation( bool inherit )
     {
         mTransform.mInheritOrientation[mTransform.mIndex] = inherit;
         CACHED_TRANSFORM_OUT_OF_DATE();
@@ -238,16 +241,13 @@ namespace Ogre {
         return mTransform.mInheritOrientation[mTransform.mIndex];
     }
     //-----------------------------------------------------------------------
-    void Bone::setInheritScale(bool inherit)
+    void Bone::setInheritScale( bool inherit )
     {
         mTransform.mInheritScale[mTransform.mIndex] = inherit;
         CACHED_TRANSFORM_OUT_OF_DATE();
     }
     //-----------------------------------------------------------------------
-    bool Bone::getInheritScale() const
-    {
-        return mTransform.mInheritScale[mTransform.mIndex];
-    }
+    bool Bone::getInheritScale() const { return mTransform.mInheritScale[mTransform.mIndex]; }
     //-----------------------------------------------------------------------
     Matrix4 Bone::_getDerivedTransform() const
     {
@@ -265,7 +265,7 @@ namespace Ogre {
         return parentNodeTransform;
     }
     //-----------------------------------------------------------------------
-    const SimpleMatrixAf4x3& Bone::_getFullTransformUpdated()
+    const SimpleMatrixAf4x3 &Bone::_getFullTransformUpdated()
     {
         _updateFromParent();
         return mTransform.mDerivedTransform[mTransform.mIndex];
@@ -281,7 +281,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Bone::updateFromParentImpl()
     {
-        //Retrieve from parents. Unfortunately we need to do AoS -> SoA -> AoS conversion
+        // Retrieve from parents. Unfortunately we need to do AoS -> SoA -> AoS conversion
         /*ArrayMatrixAf4x3 nodeMat;
         ArrayMatrixAf4x3 parentMat;
         nodeMat.loadFromAoS( mTransform.mParentNodeTransform );
@@ -322,32 +322,32 @@ namespace Ogre {
     }
     //-----------------------------------------------------------------------
     void Bone::updateAllTransforms( const size_t numNodes, BoneTransform t,
-                                    ArrayMatrixAf4x3 const * RESTRICT_ALIAS _reverseBind,
+                                    ArrayMatrixAf4x3 const *RESTRICT_ALIAS _reverseBind,
                                     size_t numBinds )
     {
         size_t currentBind = 0;
-        numBinds = (numBinds + ARRAY_PACKED_REALS - 1) / ARRAY_PACKED_REALS;
+        numBinds = ( numBinds + ARRAY_PACKED_REALS - 1 ) / ARRAY_PACKED_REALS;
 
         ArrayMatrixAf4x3 derivedTransform;
-        for( size_t i=0; i<numNodes; i += ARRAY_PACKED_REALS )
+        for( size_t i = 0; i < numNodes; i += ARRAY_PACKED_REALS )
         {
-            //Retrieve from parents. Unfortunately we need to do SoA -> AoS -> SoA conversion
+            // Retrieve from parents. Unfortunately we need to do SoA -> AoS -> SoA conversion
             ArrayMatrixAf4x3 nodeMat;
             ArrayMatrixAf4x3 parentMat;
 
             nodeMat.loadFromAoS( t.mParentNodeTransform );
             parentMat.loadFromAoS( t.mParentTransform );
 
-            //ArrayMatrixAf4x3::retain is quite lengthy in instruction count, and the
-            //general case is to inherit both attributes. This branch is justified.
+            // ArrayMatrixAf4x3::retain is quite lengthy in instruction count, and the
+            // general case is to inherit both attributes. This branch is justified.
             if( !BooleanMask4::allBitsSet( t.mInheritOrientation, t.mInheritScale ) )
             {
-                ArrayMaskR inheritOrientation   = BooleanMask4::getMask( t.mInheritOrientation );
-                ArrayMaskR inheritScale         = BooleanMask4::getMask( t.mInheritScale );
+                ArrayMaskR inheritOrientation = BooleanMask4::getMask( t.mInheritOrientation );
+                ArrayMaskR inheritScale = BooleanMask4::getMask( t.mInheritScale );
                 parentMat.retain( inheritOrientation, inheritScale );
             }
 
-            const ArrayMatrixAf4x3 * RESTRICT_ALIAS reverseBind = _reverseBind + currentBind;
+            const ArrayMatrixAf4x3 *RESTRICT_ALIAS reverseBind = _reverseBind + currentBind;
 
             derivedTransform.makeTransform( *t.mPosition, *t.mScale, *t.mOrientation );
             derivedTransform = parentMat * derivedTransform;
@@ -362,13 +362,13 @@ namespace Ogre {
                 first reverse transform by the Bone's original derived position/orientation/scale,
                 then transform by the new derived position/orientation/scale.
             */
-            //derivedTransform = nodeMat * ( derivedTransform * (*reverseBind) );
+            // derivedTransform = nodeMat * ( derivedTransform * (*reverseBind) );
             derivedTransform *= *reverseBind;
             derivedTransform = nodeMat * derivedTransform;
             derivedTransform.streamToAoS( t.mFinalTransform );
 
 #if OGRE_DEBUG_MODE
-            for( size_t j=0; j<ARRAY_PACKED_REALS; ++j )
+            for( size_t j = 0; j < ARRAY_PACKED_REALS; ++j )
             {
                 if( t.mOwner[j] )
                     t.mOwner[j]->mCachedTransformOutOfDate = false;
@@ -380,35 +380,32 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------
-    void Bone::removeChild( Bone* child )
+    void Bone::removeChild( Bone *child )
     {
         assert( child->getParent() == this && "Node says it's not our child" );
         assert( child->mParentIndex < mChildren.size() && "mParentIndex was out of date!!!" );
 
         if( child->mParentIndex < mChildren.size() )
         {
-            BoneVec::iterator itor = mChildren.begin() + child->mParentIndex;
+            BoneVec::iterator itor = mChildren.begin() + static_cast<ptrdiff_t>( child->mParentIndex );
 
             assert( child == *itor && "mParentIndex was out of date!!!" );
 
             if( child == *itor )
             {
                 itor = efficientVectorRemove( mChildren, itor );
-                child->mParentIndex = -1;
+                child->mParentIndex = std::numeric_limits<size_t>::max();
 
-                //The node that was at the end got swapped and has now a different index
+                // The node that was at the end got swapped and has now a different index
                 if( itor != mChildren.end() )
-                    (*itor)->mParentIndex = itor - mChildren.begin();
+                    ( *itor )->mParentIndex = static_cast<size_t>( itor - mChildren.begin() );
             }
         }
     }
     //-----------------------------------------------------------------------
 #if OGRE_DEBUG_MODE
-    void Bone::_setCachedTransformOutOfDate()
-    {
-        mCachedTransformOutOfDate = true;
-    }
+    void Bone::_setCachedTransformOutOfDate() { mCachedTransformOutOfDate = true; }
 #endif
-}
+}  // namespace Ogre
 
 #undef CACHED_TRANSFORM_OUT_OF_DATE

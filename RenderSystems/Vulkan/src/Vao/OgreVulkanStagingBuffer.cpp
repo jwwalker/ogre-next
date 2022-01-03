@@ -266,9 +266,8 @@ namespace Ogre
                                                 size_t srcLength )
     {
         size_t freeRegionOffset = getFreeDownloadRegion( srcLength );
-        size_t errorCode = (size_t)-1;
 
-        if( freeRegionOffset == errorCode )
+        if( freeRegionOffset == std::numeric_limits<size_t>::max() )
         {
             OGRE_EXCEPT(
                 Exception::ERR_INVALIDPARAMS,
@@ -328,7 +327,7 @@ namespace Ogre
         VkBufferCopy region;
         region.srcOffset = mInternalBufferStart + mMappingStart;
         region.dstOffset = lockStart + dstOffsetStart;
-        region.size = alignToNextMultiple( lockSize, 4u );
+        region.size = alignToNextMultiple<size_t>( lockSize, 4u );
         vkCmdCopyBuffer( device->mGraphicsQueue.mCurrentCmdBuffer, mVboName, dstBuffer, 1u, &region );
 
         if( mUploadOnly )
@@ -385,7 +384,7 @@ namespace Ogre
         VkBufferCopy region;
         region.srcOffset = srcOffset + srcOffsetStart;
         region.dstOffset = mInternalBufferStart + freeRegionOffset;
-        region.size = alignToNextMultiple( srcLength, 4u );
+        region.size = alignToNextMultiple<size_t>( srcLength, 4u );
         vkCmdCopyBuffer( device->mGraphicsQueue.mCurrentCmdBuffer, srcBuffer, mVboName, 1u, &region );
 
         return freeRegionOffset + extraOffset;

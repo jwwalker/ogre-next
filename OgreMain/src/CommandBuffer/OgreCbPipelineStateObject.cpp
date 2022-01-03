@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include "OgreStableHeaders.h"
 
-#include "CommandBuffer/OgreCommandBuffer.h"
 #include "CommandBuffer/OgreCbPipelineStateObject.h"
 
+#include "CommandBuffer/OgreCommandBuffer.h"
 #include "OgreRenderSystem.h"
 
 namespace Ogre
@@ -41,9 +41,9 @@ namespace Ogre
     {
     }
 
-    void CommandBuffer::execute_setPso( CommandBuffer *_this, const CbBase * RESTRICT_ALIAS _cmd )
+    void CommandBuffer::execute_setPso( CommandBuffer *_this, const CbBase *RESTRICT_ALIAS _cmd )
     {
-        const CbPipelineStateObject *cmd = static_cast<const CbPipelineStateObject*>( _cmd );
+        const CbPipelineStateObject *cmd = static_cast<const CbPipelineStateObject *>( _cmd );
         _this->mRenderSystem->_setPipelineStateObject( cmd->pso );
     }
-}
+}  // namespace Ogre

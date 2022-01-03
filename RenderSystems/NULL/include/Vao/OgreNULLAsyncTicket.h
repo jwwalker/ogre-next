@@ -38,15 +38,15 @@ namespace Ogre
     class _OgreNULLExport NULLAsyncTicket : public AsyncTicket
     {
     protected:
-        virtual const void* mapImpl();
+        const void *mapImpl() override;
 
     public:
-        NULLAsyncTicket( BufferPacked *creator, StagingBuffer *stagingBuffer,
-                            size_t elementStart, size_t elementCount );
-        virtual ~NULLAsyncTicket();
+        NULLAsyncTicket( BufferPacked *creator, StagingBuffer *stagingBuffer, size_t elementStart,
+                         size_t elementCount );
+        ~NULLAsyncTicket() override;
 
-        virtual bool queryIsTransferDone();
+        bool queryIsTransferDone() override;
     };
-}
+}  // namespace Ogre
 
 #endif

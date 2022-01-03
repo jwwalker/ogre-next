@@ -27,19 +27,16 @@ THE SOFTWARE.
 */
 
 #include "OgreStableHeaders.h"
+
 #include "OgreHardwareOcclusionQuery.h"
 
-namespace Ogre {
-
-
-    HardwareOcclusionQuery::HardwareOcclusionQuery() : 
-        mPixelCount(0),
-        mIsQueryResultStillOutstanding(false)
+namespace Ogre
+{
+    HardwareOcclusionQuery::HardwareOcclusionQuery() :
+        mPixelCount( 0 ),
+        mIsQueryResultStillOutstanding( false )
     {
     }
-    HardwareOcclusionQuery::~HardwareOcclusionQuery()
-    {
-    }
+    HardwareOcclusionQuery::~HardwareOcclusionQuery() {}
 
-}
-
+}  // namespace Ogre

@@ -33,7 +33,14 @@ THE SOFTWARE.
 #include "OgreVulkanDevice.h"
 #include "OgreVulkanProgram.h"
 
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include "glslang/Public/ShaderLang.h"
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic pop
+#endif
 
 namespace Ogre
 {

@@ -30,9 +30,10 @@ THE SOFTWARE.
 #define _OgreAsyncTextureTicket_H_
 
 #include "OgrePrerequisites.h"
+
+#include "OgreTextureBox.h"
 #include "OgreTextureGpu.h"
 #include "OgreTextureGpuListener.h"
-#include "OgreTextureBox.h"
 
 namespace Ogre
 {
@@ -50,7 +51,7 @@ namespace Ogre
     @par
         Call TextureGpuManager::destroyAsyncTextureTicket when you're done with this ticket.
     */
-    class _OgreExport AsyncTextureTicket : public PassAlloc, public TextureGpuListener
+    class _OgreExport AsyncTextureTicket : public OgreAllocatedObj, public TextureGpuListener
     {
     public:
         enum Status
@@ -68,10 +69,15 @@ namespace Ogre
             TextureBox  srcBox;
 
             DelayedDownload() :
-                textureSrc( 0 ), mipLevel( 0 ), accurateTracking( false ),
-                hasSrcBox( false ), srcBox() {}
-            DelayedDownload( TextureGpu *_textureSrc, uint8 _mipLevel,
-                             bool _accurateTracking, TextureBox *_srcBox ) :
+                textureSrc( 0 ),
+                mipLevel( 0 ),
+                accurateTracking( false ),
+                hasSrcBox( false ),
+                srcBox()
+            {
+            }
+            DelayedDownload( TextureGpu *_textureSrc, uint8 _mipLevel, bool _accurateTracking,
+                             TextureBox *_srcBox ) :
                 textureSrc( _textureSrc ),
                 mipLevel( _mipLevel ),
                 accurateTracking( _accurateTracking ),
@@ -82,27 +88,26 @@ namespace Ogre
         };
 
     protected:
-        Status  mStatus;
-        uint32  mWidth;
-        uint32  mHeight;
-        uint32  mDepthOrSlices;
-        TextureTypes::TextureTypes  mTextureType;
-        PixelFormatGpu              mPixelFormatFamily;
-        uint8   mNumInaccurateQueriesWasCalledInIssuingFrame;
+        Status                     mStatus;
+        uint32                     mWidth;
+        uint32                     mHeight;
+        uint32                     mDepthOrSlices;
+        TextureTypes::TextureTypes mTextureType;
+        PixelFormatGpu             mPixelFormatFamily;
+        uint8                      mNumInaccurateQueriesWasCalledInIssuingFrame;
 
-        DelayedDownload     mDelayedDownload;
+        DelayedDownload mDelayedDownload;
 
         virtual TextureBox mapImpl( uint32 slice ) = 0;
-        virtual void unmapImpl() = 0;
+        virtual void       unmapImpl() = 0;
 
-        virtual void downloadFromGpu( TextureGpu *textureSrc, uint8 mipLevel,
-                                      bool accurateTracking, TextureBox *srcBox=0 );
+        virtual void downloadFromGpu( TextureGpu *textureSrc, uint8 mipLevel, bool accurateTracking,
+                                      TextureBox *srcBox = 0 );
 
     public:
         AsyncTextureTicket( uint32 width, uint32 height, uint32 depthOrSlices,
-                            TextureTypes::TextureTypes textureType,
-                            PixelFormatGpu pixelFormatFamily );
-        virtual ~AsyncTextureTicket();
+                            TextureTypes::TextureTypes textureType, PixelFormatGpu pixelFormatFamily );
+        ~AsyncTextureTicket() override;
 
         /// TextureGpuListener overload
         void notifyTextureChanged( TextureGpu *texture, TextureGpuListener::Reason reason,
@@ -135,9 +140,8 @@ namespace Ogre
             resident and ready; even if there are pending residency changes.
             If it's not ready, we'll listen for when it is.
         */
-        void download( TextureGpu *textureSrc, uint8 mipLevel,
-                       bool accurateTracking, TextureBox *srcBox=0,
-                       bool bImmediate=false );
+        void download( TextureGpu *textureSrc, uint8 mipLevel, bool accurateTracking,
+                       TextureBox *srcBox = 0, bool bImmediate = false );
 
         /** Maps the buffer for CPU access. Will stall if transfer from GPU memory to
             staging area hasn't finished yet. See queryIsTransferDone.
@@ -166,7 +170,7 @@ namespace Ogre
         void unmap();
 
         /// See Image2::convertFromTexture for an example of how to use AyncTextureTicket
-        virtual bool canMapMoreThanOneSlice() const     { return true; }
+        virtual bool canMapMoreThanOneSlice() const { return true; }
 
         uint32 getWidth() const;
         uint32 getHeight() const;
@@ -175,14 +179,14 @@ namespace Ogre
         uint32 getDepth() const;
         /// For TypeCube this value returns 6.
         /// For TypeCubeArray, value returns numSlices * 6u.
-        uint32 getNumSlices() const;
+        uint32         getNumSlices() const;
         PixelFormatGpu getPixelFormatFamily() const;
 
-        size_t getBytesPerRow() const;
+        uint32 getBytesPerRow() const;
         size_t getBytesPerImage() const;
 
         virtual bool queryIsTransferDone();
     };
-}
+}  // namespace Ogre
 
 #endif

@@ -1,7 +1,7 @@
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE-Next
-(Object-oriented Graphics Rendering Engine)
+    (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
 Copyright (c) 2000-2014 Torus Knot Software Ltd
@@ -25,32 +25,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreStableHeaders.h"
-#include "OgrePrerequisites.h"
 
-namespace Ogre
+#ifndef OgreSilentMemory_H_
+#define OgreSilentMemory_H_
+
+// Define silent_memset, a memset that doesn't warn on GCC when we're overriding non-POD structs
+// Same with memcpy
+
+#include <string.h>
+
+#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __MINGW32__ )
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wclass-memaccess"
+
+inline void *silent_memset( void *a, int b, size_t c ) noexcept __nonnull( ( 1 ) );
+inline void *silent_memset( void *a, int b, size_t c ) noexcept
 {
-    /* 
-
-    Ugh, I wish I didn't have to do this.
-
-    The problem is that operator new/delete are *implicitly* static. We have to 
-    instantiate them for each combination exactly once throughout all the compilation
-    units that are linked together, and this appears to be the only way to do it. 
-
-    At least I can do it via templates.
-
-    */
-
-    template class AllocatedObject<GeneralAllocPolicy>;
-    template class AllocatedObject<GeometryAllocPolicy>;
-    template class AllocatedObject<AnimationAllocPolicy>;
-    template class AllocatedObject<SceneCtlAllocPolicy>;
-    template class AllocatedObject<SceneObjAllocPolicy>;
-    template class AllocatedObject<ResourceAllocPolicy>;
-    template class AllocatedObject<ScriptingAllocPolicy>;
-    template class AllocatedObject<RenderSysAllocPolicy>; 
-
-
-
+    return memset( a, b, c );
 }
+
+inline void *silent_memcpy( void *__restrict __dest, const void *__restrict __src,
+                            size_t __n ) noexcept __nonnull( ( 1, 2 ) );
+inline void *silent_memcpy( void *__restrict a, const void *__restrict b, size_t c ) noexcept
+{
+    return memcpy( a, b, c );
+}
+
+__fortify_function void *__NTH( silent_memmove( void *a, const void *b, size_t c ) )
+{
+    return memmove( a, b, c );
+}
+
+#    pragma GCC diagnostic pop
+#else
+#    define silent_memset( a, b, c ) memset( a, b, c )
+#    define silent_memcpy( a, b, c ) memcpy( a, b, c )
+#    define silent_memmove( a, b, c ) memmove( a, b, c )
+#endif
+
+#endif

@@ -36,8 +36,15 @@ THE SOFTWARE.
 #include "OgreLwString.h"
 #include "OgreStringConverter.h"
 
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
+#if defined( __GNUC__ ) && !defined( __clang__ )
+#    pragma GCC diagnostic pop
+#endif
 
 #define TODO_limit_NUM_BIND_TEXTURES  // and co.
 
@@ -365,8 +372,8 @@ namespace Ogre
                                      "RootLayout::parseSet" );
                     }
 
-                    const size_t numStages = itor->value.Size();
-                    for( size_t j = 0u; j < numStages; ++j )
+                    const rapidjson::SizeType numStages = itor->value.Size();
+                    for( rapidjson::SizeType j = 0u; j < numStages; ++j )
                     {
                         if( itor->value[j].IsString() )
                         {
@@ -575,8 +582,8 @@ namespace Ogre
                     itor = descArrays.FindMember( c_rootLayoutVarNames[i] );
                     if( itor != descArrays.MemberEnd() && itor->value.IsArray() )
                     {
-                        const size_t numArrays = itor->value.Size();
-                        for( size_t j = 0u; j < numArrays; ++j )
+                        const rapidjson::SizeType numArrays = itor->value.Size();
+                        for( rapidjson::SizeType j = 0u; j < numArrays; ++j )
                         {
                             if( itor->value[j].IsArray() && itor->value[j].Size() == 2u &&
                                 itor->value[j][0].IsUint() && itor->value[j][1].IsUint() )

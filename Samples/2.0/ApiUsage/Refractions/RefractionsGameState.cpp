@@ -206,8 +206,8 @@ namespace Demo
             Ogre::v1::HardwareBuffer::HBU_STATIC );
 
         Ogre::MeshPtr planeMesh = Ogre::MeshManager::getSingleton().createByImportingV1(
-            "Plane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            planeMeshV1.get(), true, true, true );
+            "Plane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, planeMeshV1.get(), true,
+            true, true );
 
         {
             Ogre::Item *item = sceneManager->createItem( planeMesh, Ogre::SCENE_DYNAMIC );
@@ -255,7 +255,7 @@ namespace Demo
 
                 item->setVisibilityFlags( 0x000000001 );
 
-                size_t idx = i * 4 + j;
+                const size_t idx = static_cast<size_t>( i * 4 + j );
 
                 mSceneNode[idx] = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
                                       ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
@@ -276,14 +276,14 @@ namespace Demo
             const int numX = 8;
             const int numZ = 8;
 
-            const float armsLength = 1.0f;
+            const float armsLengthSpheres = 1.0f;
             const float startX = ( numX - 1 ) / 2.0f;
             const float startZ = ( numZ - 1 ) / 2.0f;
 
             for( int x = 0; x < numX; ++x )
             {
                 for( int z = 0; z < numZ; ++z )
-                    createRefractiveSphere( x, z, numX, numZ, armsLength, startX, startZ );
+                    createRefractiveSphere( x, z, numX, numZ, armsLengthSpheres, startX, startZ );
             }
         }
 

@@ -65,18 +65,18 @@ namespace Ogre
         In short, it may be possible, but there are several issues to workaround,
         hence it is just easier to render the information we need
     */
-    class _OgreHlmsPbsExport IrradianceFieldRaster : public UtilityAlloc
+    class _OgreHlmsPbsExport IrradianceFieldRaster : public OgreAllocatedObj
     {
         IrradianceField *mCreator;
 
-        TextureGpu *mCubemap;
-        TextureGpu *mDepthCubemap;
+        TextureGpu *         mCubemap;
+        TextureGpu *         mDepthCubemap;
         CompositorWorkspace *mRenderWorkspace;
         CompositorWorkspace *mConvertToIfdWorkspace;
         CompositorWorkspace *mIfdIntegrationWorkspace;
 
-        HlmsComputeJob *mConvertToIfdJob;
-        ShaderParams *mShaderParamsConvertToIfd;
+        HlmsComputeJob *     mConvertToIfdJob;
+        ShaderParams *       mShaderParamsConvertToIfd;
         ShaderParams::Param *mProbeIdxParam;
         ShaderParams::Param *mProjectionABParam;
         ShaderParams::Param *mNumProbesParam;

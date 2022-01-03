@@ -28,22 +28,20 @@ THE SOFTWARE.
 
 #include "OgreStableHeaders.h"
 
+#include "Compositor/Pass/OgreCompositorPass.h"
+
 #include "Compositor/OgreCompositorChannel.h"
 #include "Compositor/OgreCompositorManager2.h"
 #include "Compositor/OgreCompositorNode.h"
 #include "Compositor/OgreCompositorNodeDef.h"
 #include "Compositor/OgreCompositorWorkspace.h"
 #include "Compositor/OgreCompositorWorkspaceListener.h"
-#include "Compositor/Pass/OgreCompositorPass.h"
-
 #include "OgreLogManager.h"
 #include "OgrePixelFormatGpuUtils.h"
-#include "OgreViewport.h"
-
 #include "OgreProfiler.h"
 #include "OgreRenderSystem.h"
-
 #include "OgreStringConverter.h"
+#include "OgreViewport.h"
 
 namespace Ogre
 {
@@ -516,10 +514,9 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void CompositorPass::executeResourceTransitions()
     {
-        OGRE_ASSERT_MEDIUM( mResourceTransitions.empty() ||
-                            !mDefinition->mSkipLoadStoreSemantics &&
-                                "Cannot set mSkipLoadStoreSemantics if there will be resource "
-                                "transitions. Try englobing all affected passes in a barrier pass" );
+        OGRE_ASSERT_MEDIUM( ( mResourceTransitions.empty() || !mDefinition->mSkipLoadStoreSemantics ) &&
+                            "Cannot set mSkipLoadStoreSemantics if there will be resource "
+                            "transitions. Try englobing all affected passes in a barrier pass" );
         RenderSystem *renderSystem = mParentNode->getRenderSystem();
         renderSystem->executeResourceTransition( mResourceTransitions );
     }
@@ -529,9 +526,9 @@ namespace Ogre
         const CompositorWorkspaceListenerVec &listeners = mParentNode->getWorkspace()->getListeners();
 
         CompositorWorkspaceListenerVec::const_iterator itor = listeners.begin();
-        CompositorWorkspaceListenerVec::const_iterator end = listeners.end();
+        CompositorWorkspaceListenerVec::const_iterator endt = listeners.end();
 
-        while( itor != end )
+        while( itor != endt )
         {
             ( *itor )->passEarlyPreExecute( this );
             ++itor;
@@ -543,9 +540,9 @@ namespace Ogre
         const CompositorWorkspaceListenerVec &listeners = mParentNode->getWorkspace()->getListeners();
 
         CompositorWorkspaceListenerVec::const_iterator itor = listeners.begin();
-        CompositorWorkspaceListenerVec::const_iterator end = listeners.end();
+        CompositorWorkspaceListenerVec::const_iterator endt = listeners.end();
 
-        while( itor != end )
+        while( itor != endt )
         {
             ( *itor )->passPreExecute( this );
             ++itor;
@@ -557,9 +554,9 @@ namespace Ogre
         const CompositorWorkspaceListenerVec &listeners = mParentNode->getWorkspace()->getListeners();
 
         CompositorWorkspaceListenerVec::const_iterator itor = listeners.begin();
-        CompositorWorkspaceListenerVec::const_iterator end = listeners.end();
+        CompositorWorkspaceListenerVec::const_iterator endt = listeners.end();
 
-        while( itor != end )
+        while( itor != endt )
         {
             ( *itor )->passPosExecute( this );
             ++itor;

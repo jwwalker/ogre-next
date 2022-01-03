@@ -96,7 +96,7 @@ namespace Ogre
         }
         else
         {
-            const float fGridSize = ceilf( sqrtf( numRaysPerPixel ) );
+            const float fGridSize = ceilf( sqrtf( (float)numRaysPerPixel ) );
             const float invGridSize = 1.0f / fGridSize;
             const size_t gridSize = static_cast<size_t>( fGridSize );
             const size_t numGridCells = gridSize * gridSize;
@@ -249,7 +249,9 @@ namespace Ogre
         OGRE_ASSERT_LOW( !mSettings.isRaster() );
 
         float *RESTRICT_ALIAS updateData = reinterpret_cast<float * RESTRICT_ALIAS>( outBuffer );
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_LOW
         const float *RESTRICT_ALIAS updateDataStart = updateData;
+#endif
 
         const Vector2 *subsamples = &mSettings.getSubsamples()[0];
 
@@ -272,7 +274,9 @@ namespace Ogre
                     {
                         for( size_t rayIdx = 0u; rayIdx < numRaysPerPixel; ++rayIdx )
                         {
-                            Vector2 uvOct = Vector2( x + blockX, y + blockY ) + subsamples[rayIdx];
+                            Vector2 uvOct = Vector2( Real( x + blockX ),  //
+                                                     Real( y + blockY ) ) +
+                                            subsamples[rayIdx];
                             uvOct /= static_cast<float>( depthProbeRes );
 
                             Vector3 directionVector = Math::octahedronMappingDecode( uvOct );
@@ -331,7 +335,7 @@ namespace Ogre
         {
             for( size_t x = 0u; x < probeRes; ++x )
             {
-                Vector2 uvOct = Vector2( x, y );
+                Vector2 uvOct = Vector2( (Real)x, (Real)y );
                 uvOct /= static_cast<float>( probeRes );
                 Vector3 directionVector = Math::octahedronMappingDecode( uvOct );
 
@@ -341,7 +345,7 @@ namespace Ogre
                 {
                     for( size_t otherX = 0u; otherX < probeRes; ++otherX )
                     {
-                        Vector2 otherUv = Vector2( otherX, otherY );
+                        Vector2 otherUv = Vector2( (Real)otherX, (Real)otherY );
                         otherUv /= static_cast<float>( probeRes );
                         Vector3 otherDir = Math::octahedronMappingDecode( otherUv );
 
@@ -362,13 +366,15 @@ namespace Ogre
                                                   uint32 maxTapsPerPixel )
     {
         float2 *RESTRICT_ALIAS updateData = reinterpret_cast<float2 * RESTRICT_ALIAS>( outBuffer );
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_LOW
         const float2 *RESTRICT_ALIAS updateDataStart = updateData;
+#endif
 
         for( size_t y = 0u; y < probeRes; ++y )
         {
             for( size_t x = 0u; x < probeRes; ++x )
             {
-                Vector2 uvOct = Vector2( x, y );
+                Vector2 uvOct = Vector2( (Real)x, (Real)y );
                 uvOct /= static_cast<float>( probeRes );
                 Vector3 directionVector = Math::octahedronMappingDecode( uvOct );
 
@@ -380,7 +386,7 @@ namespace Ogre
                 {
                     for( size_t otherX = 0u; otherX < probeRes; ++otherX )
                     {
-                        Vector2 otherUv = Vector2( otherX, otherY );
+                        Vector2 otherUv = Vector2( (Real)otherX, (Real)otherY );
                         otherUv /= static_cast<float>( probeRes );
                         Vector3 otherDir = Math::octahedronMappingDecode( otherUv );
 
@@ -412,7 +418,7 @@ namespace Ogre
                 const uint32 maxIntegrationTapsPerPixel = maxTapsPerPixel;
                 for( size_t i = numTaps; i < maxIntegrationTapsPerPixel; ++i )
                 {
-                    updateData->x = y * probeRes + x;
+                    updateData->x = float( y * probeRes + x );
                     updateData->y = 0;
                     ++updateData;
                 }
@@ -428,7 +434,7 @@ namespace Ogre
         if( mSettings.isRaster() )
         {
             // Avoid Valgrind from complaining when we copy the whole struct to GPU for the integrator
-            memset( &mIfGenParams, 0, sizeof( mIfGenParams ) );
+            silent_memset( &mIfGenParams, 0, sizeof( mIfGenParams ) );
             return;
         }
 
@@ -785,7 +791,9 @@ namespace Ogre
             float2 irradInvFullResolution;
         };
 
-        Vector3 numProbes( mSettings.mNumProbes[0], mSettings.mNumProbes[1], mSettings.mNumProbes[2] );
+        const Vector3 numProbes( (Real)mSettings.mNumProbes[0],  //
+                                 (Real)mSettings.mNumProbes[1],  //
+                                 (Real)mSettings.mNumProbes[2] );
         const Vector3 finalSize = numProbes / mFieldSize;
 
         Matrix4 xform;
@@ -802,8 +810,8 @@ namespace Ogre
             reinterpret_cast<IrradianceFieldRenderParams * RESTRICT_ALIAS>( passBufferPtr );
 
         renderParams->viewToIrradianceFieldRows = xform;
-        renderParams->numProbesAggregated.x = mSettings.mNumProbes[0];
-        renderParams->numProbesAggregated.y = mSettings.mNumProbes[0] * mSettings.mNumProbes[1];
+        renderParams->numProbesAggregated.x = numProbes.x;
+        renderParams->numProbesAggregated.y = numProbes.x * numProbes.y;
         renderParams->padding0 = 0;
         renderParams->padding1 = 0;
 

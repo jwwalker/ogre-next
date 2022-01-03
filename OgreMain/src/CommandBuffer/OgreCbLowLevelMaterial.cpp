@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include "OgreStableHeaders.h"
 
-#include "CommandBuffer/OgreCommandBuffer.h"
 #include "CommandBuffer/OgreCbLowLevelMaterial.h"
 
+#include "CommandBuffer/OgreCommandBuffer.h"
 #include "OgreHlmsLowLevel.h"
 
 namespace Ogre
@@ -46,9 +46,10 @@ namespace Ogre
     {
     }
 
-    void CommandBuffer::execute_lowLevelMaterial( CommandBuffer *_this, const CbBase * RESTRICT_ALIAS _cmd )
+    void CommandBuffer::execute_lowLevelMaterial( CommandBuffer *_this,
+                                                  const CbBase *RESTRICT_ALIAS _cmd )
     {
-        const CbLowLevelMaterial *cmd = static_cast<const CbLowLevelMaterial*>( _cmd );
+        const CbLowLevelMaterial *cmd = static_cast<const CbLowLevelMaterial *>( _cmd );
         cmd->hlmsLowLevel->executeCommand( cmd->movableObject, cmd->renderable, cmd->casterPass );
     }
-}
+}  // namespace Ogre

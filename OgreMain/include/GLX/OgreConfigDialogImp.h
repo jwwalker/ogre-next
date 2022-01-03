@@ -30,8 +30,9 @@ THE SOFTWARE.
 #define __GLXCONFIGDIALOG_H__
 
 #include "../OgrePrerequisites.h"
-#include "../OgreRoot.h"
+
 #include "../OgreRenderSystem.h"
+#include "../OgreRoot.h"
 
 namespace Ogre
 {
@@ -46,11 +47,11 @@ namespace Ogre
     @author
         Steven J. Streeting
     */
-    class _OgreExport ConfigDialog : public UtilityAlloc
+    class _OgreExport ConfigDialog : public OgreAllocatedObj
     {
     public:
         ConfigDialog();
-        virtual ~ConfigDialog() {};
+        virtual ~ConfigDialog(){};
 
         /** Displays the dialog.
         @remarks
@@ -70,7 +71,7 @@ namespace Ogre
         virtual bool display();
 
     protected:
-        RenderSystem* mSelectedRenderSystem;
+        RenderSystem *mSelectedRenderSystem;
     };
-}
+}  // namespace Ogre
 #endif

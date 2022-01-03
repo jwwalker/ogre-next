@@ -28,16 +28,15 @@ THE SOFTWARE.
 #include "OgreStableHeaders.h"
 
 #include "OgreHiddenAreaMeshVr.h"
-#include "OgreRoot.h"
-#include "Vao/OgreVaoManager.h"
-
-#include "OgreMesh2.h"
-#include "OgreMeshManager2.h"
-#include "OgreSubMesh2.h"
 
 #include "OgreConfigFile.h"
 #include "OgreLogManager.h"
+#include "OgreMesh2.h"
+#include "OgreMeshManager2.h"
+#include "OgreRoot.h"
 #include "OgreString.h"
+#include "OgreSubMesh2.h"
+#include "Vao/OgreVaoManager.h"
 
 namespace Ogre
 {
@@ -46,20 +45,20 @@ namespace Ogre
                                                                   ConfigFile &configFile )
     {
         HiddenAreaVrSettings retVal;
-        memset( &retVal, 0, sizeof( retVal ) );
+        silent_memset( &retVal, 0, sizeof( retVal ) );
 
         ConfigFile::SectionIterator itor = configFile.getSectionIterator();
 
         String bestMatch;
         String deviceConfigName;
         String deviceNameUpper = deviceName;
-        StringUtil::toUpperCase(deviceNameUpper);
+        StringUtil::toUpperCase( deviceNameUpper );
         while( itor.hasMoreElements() )
         {
             deviceConfigName = itor.peekNextKey();
             String deviceConfigNameUpper = deviceConfigName;
-            StringUtil::toUpperCase(deviceConfigNameUpper);
-            if( deviceNameUpper.find( deviceConfigNameUpper)  != String::npos &&
+            StringUtil::toUpperCase( deviceConfigNameUpper );
+            if( deviceNameUpper.find( deviceConfigNameUpper ) != String::npos &&
                 deviceConfigName.size() > bestMatch.size() )
             {
                 bestMatch = deviceConfigName;

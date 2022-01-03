@@ -2,12 +2,11 @@
 #ifndef _Demo_OpenVRCompositorListener_H_
 #define _Demo_OpenVRCompositorListener_H_
 
-#include "OgreFrameListener.h"
 #include "Compositor/OgreCompositorWorkspaceListener.h"
 #include "OgreFrameListener.h"
 
-#include "OgreMatrix4.h"
 #include "OgreCamera.h"
+#include "OgreMatrix4.h"
 
 #include "openvr.h"
 
@@ -93,36 +92,35 @@ namespace Demo
             AfterFrustumCulling,
             NumVrWaitingModes
         };
-    }
+    }  // namespace VrWaitingMode
 
     class OpenVRCompositorListener : public Ogre::FrameListener, public Ogre::CompositorWorkspaceListener
     {
     public:
-
     protected:
-        vr::IVRSystem		*mHMD;
-        vr::IVRCompositor	*mVrCompositor;
+        vr::IVRSystem *mHMD;
+        vr::IVRCompositor *mVrCompositor;
 
-        Ogre::TextureGpu	*mVrTexture;
-        Ogre::Root          *mRoot;
-        Ogre::RenderSystem  *mRenderSystem;
+        Ogre::TextureGpu *mVrTexture;
+        Ogre::Root *mRoot;
+        Ogre::RenderSystem *mRenderSystem;
 
         Ogre::CompositorWorkspace *mWorkspace;
 
         int mValidPoseCount;
         vr::TrackedDevicePose_t mTrackedDevicePose[vr::k_unMaxTrackedDeviceCount];
-        Ogre::Matrix4           mDevicePose[vr::k_unMaxTrackedDeviceCount];
-        vr::ETextureType        mApiTextureType;
-        Ogre::VrData            mVrData;
-        Ogre::Camera            *mCamera;
-        Ogre::Camera            *mVrCullCamera;
-        Ogre::Vector3           mCullCameraOffset;
+        Ogre::Matrix4 mDevicePose[vr::k_unMaxTrackedDeviceCount];
+        vr::ETextureType mApiTextureType;
+        Ogre::VrData mVrData;
+        Ogre::Camera *mCamera;
+        Ogre::Camera *mVrCullCamera;
+        Ogre::Vector3 mCullCameraOffset;
 
         VrWaitingMode::VrWaitingMode mWaitingMode;
         VrWaitingMode::VrWaitingMode mFirstGlitchFreeMode;
-        Ogre::Real              mLastCamNear;
-        Ogre::Real              mLastCamFar;
-        bool                    mMustSyncAtEndOfFrame;
+        Ogre::Real mLastCamNear;
+        Ogre::Real mLastCamFar;
+        bool mMustSyncAtEndOfFrame;
 
         static Ogre::Matrix4 convertSteamVRMatrixToMatrix4( vr::HmdMatrix34_t matPose );
         static Ogre::Matrix4 convertSteamVRMatrixToMatrix4( vr::HmdMatrix44_t matPose );
@@ -131,26 +129,27 @@ namespace Demo
         void syncCullCamera();
         void syncCamera();
         void syncCameraProjection( bool bForceUpdate );
+
     public:
         OpenVRCompositorListener( vr::IVRSystem *hmd, vr::IVRCompositor *vrCompositor,
                                   Ogre::TextureGpu *vrTexture, Ogre::Root *root,
-                                  Ogre::CompositorWorkspace *workspace,
-                                  Ogre::Camera *camera, Ogre::Camera *cullCamera );
-        virtual ~OpenVRCompositorListener();
+                                  Ogre::CompositorWorkspace *workspace, Ogre::Camera *camera,
+                                  Ogre::Camera *cullCamera );
+        ~OpenVRCompositorListener() override;
 
-        virtual bool frameStarted( const Ogre::FrameEvent& evt );
-        virtual bool frameRenderingQueued( const Ogre::FrameEvent &evt );
-        virtual bool frameEnded( const Ogre::FrameEvent& evt );
+        bool frameStarted( const Ogre::FrameEvent &evt ) override;
+        bool frameRenderingQueued( const Ogre::FrameEvent &evt ) override;
+        bool frameEnded( const Ogre::FrameEvent &evt ) override;
 
-        virtual void workspacePreUpdate( Ogre::CompositorWorkspace *workspace );
-        virtual void passPreExecute( Ogre::CompositorPass *pass );
+        void workspacePreUpdate( Ogre::CompositorWorkspace *workspace ) override;
+        void passPreExecute( Ogre::CompositorPass *pass ) override;
 
-        virtual void passSceneAfterShadowMaps( Ogre::CompositorPassScene *pass );
-        virtual void passSceneAfterFrustumCulling( Ogre::CompositorPassScene *pass );
+        void passSceneAfterShadowMaps( Ogre::CompositorPassScene *pass ) override;
+        void passSceneAfterFrustumCulling( Ogre::CompositorPassScene *pass ) override;
 
         /// See VrWaitingMode::VrWaitingMode
         void setWaitingMode( VrWaitingMode::VrWaitingMode waitingMode );
-        VrWaitingMode::VrWaitingMode getWaitingMode()   { return mWaitingMode; }
+        VrWaitingMode::VrWaitingMode getWaitingMode() { return mWaitingMode; }
 
         /** When operating in VrWaitingMode::AfterSceneGraph or later, there's a chance
             graphical artifacts appear if the camera transform is immediately changed after
@@ -183,6 +182,6 @@ namespace Demo
         */
         bool canSyncCameraTransformImmediately() const;
     };
-}
+}  // namespace Demo
 
 #endif

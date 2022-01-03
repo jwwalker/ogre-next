@@ -28,14 +28,12 @@ THE SOFTWARE.
 
 #include "Vao/OgreD3D11ReadOnlyBufferPacked.h"
 
+#include "OgreD3D11Mappings.h"
+#include "OgreD3D11RenderSystem.h"
+#include "OgrePixelFormatGpuUtils.h"
 #include "Vao/OgreD3D11BufferInterface.h"
 #include "Vao/OgreD3D11CompatBufferInterface.h"
 #include "Vao/OgreD3D11VaoManager.h"
-
-#include "OgreD3D11Mappings.h"
-#include "OgreD3D11RenderSystem.h"
-
-#include "OgrePixelFormatGpuUtils.h"
 
 namespace Ogre
 {
@@ -80,7 +78,7 @@ namespace Ogre
     {
         assert( cacheIdx < 16 );
 
-        const size_t formatSize = mBytesPerElement != 1u
+        const uint32 formatSize = mBytesPerElement != 1u
                                       ? mBytesPerElement
                                       : PixelFormatGpuUtils::getBytesPerPixel( mPixelFormat );
 
@@ -133,7 +131,7 @@ namespace Ogre
             else if( !mCachedResourceViews[i].mResourceView )
             {
                 // We create in-order. If we hit here, the next ones are also null pointers.
-                resourceView = createResourceView( i, offset, sizeBytes );
+                resourceView = createResourceView( i, (uint32)offset, (uint32)sizeBytes );
                 break;
             }
         }
@@ -141,7 +139,7 @@ namespace Ogre
         if( !resourceView )
         {
             // If we hit here, the cache is full and couldn't find a match.
-            resourceView = createResourceView( mCurrentCacheCursor, offset, sizeBytes );
+            resourceView = createResourceView( mCurrentCacheCursor, (uint32)offset, (uint32)sizeBytes );
         }
 
         return resourceView;
