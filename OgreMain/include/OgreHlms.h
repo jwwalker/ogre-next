@@ -198,7 +198,7 @@ namespace Ogre
     public:
         struct Library
         {
-            Archive *    dataFolder;
+            Archive     *dataFolder;
             StringVector pieceFiles[NumShaderTypes];
         };
 
@@ -206,16 +206,19 @@ namespace Ogre
 
     protected:
         LibraryVec   mLibrary;
-        Archive *    mDataFolder;
+        Archive     *mDataFolder;
         StringVector mPieceFiles[NumShaderTypes];
         HlmsManager *mHlmsManager;
 
         LightGatheringMode mLightGatheringMode;
+        bool               mStaticBranchingLights;
         uint16             mNumLightsLimit;
         uint16             mNumAreaApproxLightsLimit;
         uint16             mNumAreaLtcLightsLimit;
         uint32             mAreaLightsGlobalLightListStart;
         uint32             mRealNumDirectionalLights;
+        uint32             mRealShadowMapPointLights;
+        uint32             mRealShadowMapSpotLights;
         uint32             mRealNumAreaApproxLightsWithMask;
         uint32             mRealNumAreaApproxLights;
         uint32             mRealNumAreaLtcLights;
@@ -348,7 +351,7 @@ namespace Ogre
             The index to the cache entry.
         */
         uint32 addRenderableCache( const HlmsPropertyVec &renderableSetProperties,
-                                   const PiecesMap *      pieces );
+                                   const PiecesMap       *pieces );
 
         /// Retrieves a cache entry using the returned value from @addRenderableCache
         const RenderableCache &getRenderableCache( uint32 hash ) const;
@@ -420,7 +423,7 @@ namespace Ogre
         virtual HlmsDatablock *createDatablockImpl( IdString              datablockName,
                                                     const HlmsMacroblock *macroblock,
                                                     const HlmsBlendblock *blendblock,
-                                                    const HlmsParamVec &  paramVec ) = 0;
+                                                    const HlmsParamVec   &paramVec ) = 0;
 
         virtual HlmsDatablock *createDefaultDatablock();
 
@@ -472,7 +475,7 @@ namespace Ogre
 
         const String &getTypeNameStr() const { return mTypeNameStr; }
         void          _notifyManager( HlmsManager *manager ) { mHlmsManager = manager; }
-        HlmsManager * getHlmsManager() const { return mHlmsManager; }
+        HlmsManager  *getHlmsManager() const { return mHlmsManager; }
         const String &getShaderProfile() const { return mShaderProfile; }
         IdString      getShaderSyntax() const { return mShaderSyntax; }
 
@@ -524,6 +527,38 @@ namespace Ogre
         void   setMaxNonCasterDirectionalLights( uint16 maxLights );
         uint16 getMaxNonCasterDirectionalLights() const { return mNumLightsLimit; }
 
+        /** By default shadow-caster spot and point lights are hardcoded into shaders.
+
+            This means that if you have 8 spot/point lights and then you add a 9th one,
+            a whole new set of shaders will be created.
+            Even more if you have a combination of 3 spot and 5 point lights and the combination
+            has changed to 4 spot and 4 point lights then you'll get the next set of shaders
+
+            This setting allows you to tremendously reduce the amount of shader permutations
+            by forcing Ogre to switching to static branching with an upper limit to the max
+            number of shadow-casting spot or point lights.
+
+            See    Hlms::setAreaLightForwardSettings
+        @remarks
+            All point and spot lights must share the same hlms_shadowmap atlas
+
+            This is mostly an D3D11 / HLSL SM 5.0 restriction
+            (https://github.com/OGRECave/ogre-next/pull/255) but it may also help with
+            performance in other APIs.
+
+            If multiple atlas support is needed, using Texture2DArrays may be a good solution,
+            although it is currently untested and may need additional fixes to get it working
+
+        @param maxShadowMapLights
+            Maximum number of shadow-caster spot and point lights.
+            0 to allow unlimited number of lights, at the cost of shader recompilations
+            when spot or point  lights are added or removed or their combination are changed.
+
+            Default value is 0.
+         */
+        virtual void setStaticBranchingLights( bool staticBranchingLights );
+        bool         getStaticBranchingLights( void ) const { return mStaticBranchingLights; }
+
         /** Area lights use regular Forward.
         @param areaLightsApproxLimit
             Maximum number of area approx lights that will be considered by the shader.
@@ -556,17 +591,17 @@ namespace Ogre
         virtual void _loadJson( const rapidjson::Value &jsonValue, const HlmsJson::NamedBlocks &blocks,
                                 HlmsDatablock *datablock, const String &resourceGroup,
                                 HlmsJsonListener *listener,
-                                const String &    additionalTextureExtension ) const
+                                const String     &additionalTextureExtension ) const
         {
         }
         virtual void _saveJson( const HlmsDatablock *datablock, String &outString,
                                 HlmsJsonListener *listener,
-                                const String &    additionalTextureExtension ) const
+                                const String     &additionalTextureExtension ) const
         {
         }
 
         virtual void _collectSamplerblocks( set<const HlmsSamplerblock *>::type &outSamplerblocks,
-                                            const HlmsDatablock *                datablock ) const
+                                            const HlmsDatablock                 *datablock ) const
         {
         }
 #endif
@@ -593,7 +628,7 @@ namespace Ogre
         */
         virtual void reloadFrom( Archive *newDataFolder, ArchiveVec *libraryFolders = 0 );
 
-        Archive *         getDataFolder() { return mDataFolder; }
+        Archive          *getDataFolder() { return mDataFolder; }
         const LibraryVec &getPiecesLibrary() const { return mLibrary; }
         ArchiveVec        getPiecesLibraryAsArchiveVec() const;
 
@@ -701,7 +736,7 @@ namespace Ogre
         */
         virtual void calculateHashFor( Renderable *renderable, uint32 &outHash, uint32 &outCasterHash );
 
-        virtual void analyzeBarriers( BarrierSolver &          barrierSolver,
+        virtual void analyzeBarriers( BarrierSolver           &barrierSolver,
                                       ResourceTransitionArray &resourceTransitions,
                                       Camera *renderingCamera, const bool bCasterPass );
 
@@ -757,11 +792,11 @@ namespace Ogre
                                        bool casterPass, uint32 lastCacheHash,
                                        uint32 lastTextureHash ) = 0;
 
-        virtual uint32 fillBuffersForV1( const HlmsCache *       cache,
+        virtual uint32 fillBuffersForV1( const HlmsCache        *cache,
                                          const QueuedRenderable &queuedRenderable, bool casterPass,
                                          uint32 lastCacheHash, CommandBuffer *commandBuffer ) = 0;
 
-        virtual uint32 fillBuffersForV2( const HlmsCache *       cache,
+        virtual uint32 fillBuffersForV2( const HlmsCache        *cache,
                                          const QueuedRenderable &queuedRenderable, bool casterPass,
                                          uint32 lastCacheHash, CommandBuffer *commandBuffer ) = 0;
 
@@ -888,6 +923,7 @@ namespace Ogre
         static const IdString DualParaboloidMapping;
         static const IdString InstancedStereo;
         static const IdString StaticBranchLights;
+        static const IdString StaticBranchShadowMapLights;
         static const IdString NumShadowMapLights;
         static const IdString NumShadowMapTextures;
         static const IdString PssmSplits;
