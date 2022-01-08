@@ -50,15 +50,15 @@ endif ()
 
 
 project(OGRE-Next)
-# legacy variables from the old name OGRE
-set(OGRE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-set(OGRE_BINARY_DIR ${CMAKE_BINARY_DIR})
+# capture ogre location, and at the same time hide legacy cache variables
+set(OGRE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(OGRE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 # Include necessary submodules
 set(CMAKE_MODULE_PATH
-  "${CMAKE_SOURCE_DIR}/CMake"
-  "${CMAKE_SOURCE_DIR}/CMake/Utils"
-  "${CMAKE_SOURCE_DIR}/CMake/Packages"
+  "${OGRE_SOURCE_DIR}/CMake"
+  "${OGRE_SOURCE_DIR}/CMake/Utils"
+  "${OGRE_SOURCE_DIR}/CMake/Packages"
 )
 
 if(ANDROID)
@@ -71,7 +71,7 @@ include(MacroLogFeature)
 include(OgreAddTargets)
 include(OgreConfigTargets)
 include(PreprocessorUtils)
-set(OGRE_TEMPLATES_DIR "${CMAKE_SOURCE_DIR}/CMake/Templates")
+set(OGRE_TEMPLATES_DIR "${OGRE_SOURCE_DIR}/CMake/Templates")
 set(OGRE_WORK_DIR ${OGRE_BINARY_DIR})
 
 
@@ -87,7 +87,7 @@ endif ()
 
 # determine Ogre version numbers
 include(OgreGetVersion)
-ogre_get_version(${CMAKE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
+ogre_get_version(${OGRE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
 message(STATUS "Configuring OGRE ${OGRE_VERSION}")
 # Configure version file for use by scripts
 configure_file("${OGRE_TEMPLATES_DIR}/version.txt.in" "${OGRE_BINARY_DIR}/version.txt" @ONLY)
@@ -260,25 +260,25 @@ else()
 endif()
 
 # Add OgreMain include path
-include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include")
+include_directories("${OGRE_SOURCE_DIR}/OgreMain/include")
 include_directories("${OGRE_BINARY_DIR}/include")
 if (APPLE)
   if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-    include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/iOS")
+    include_directories("${OGRE_SOURCE_DIR}/OgreMain/include/iOS")
 
     # Set static early for proper dependency detection
     set(OGRE_STATIC TRUE)
   else ()
-    include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/OSX")
+    include_directories("${OGRE_SOURCE_DIR}/OgreMain/include/OSX")
   endif ()
 endif (APPLE)
 
 # Add platform-specific render system Metal include path
 if (APPLE AND OGRE_BUILD_RENDERSYSTEM_METAL)
   if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-    include_directories("${CMAKE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/iOS")
+    include_directories("${OGRE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/iOS")
   else ()
-    include_directories("${CMAKE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/OSX")
+    include_directories("${OGRE_SOURCE_DIR}/RenderSystems/Metal/include/Windowing/OSX")
   endif ()
 endif (APPLE AND OGRE_BUILD_RENDERSYSTEM_METAL)
 
@@ -306,8 +306,6 @@ endif(WIN32 OR APPLE)
 
 # Set up iOS overrides.
 if (OGRE_BUILD_PLATFORM_APPLE_IOS)
-  include_directories("${CMAKE_SOURCE_DIR}/OgreMain/include/iOS")
-
   # Set build variables
   set(XCODE_ATTRIBUTE_SDKROOT iphoneos)
   if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
@@ -453,6 +451,8 @@ if( APPLE )
 endif()
 option(OGRE_BUILD_PLUGIN_PFX "Build ParticleFX plugin" TRUE)
 
+option( OGRE_ADDRESS_SANITIZER_ASAN "Build with Asan (Address Sanitizer)" OFF )
+
 cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_PBS
 "PBS Stands for Physically Based Shading and it's the default material for most entities and meshes. This is the 'desktop' version for OpenGL 3.3+ and D3D11." TRUE "" FALSE)
 cmake_dependent_option(OGRE_BUILD_COMPONENT_HLMS_UNLIT
@@ -574,8 +574,26 @@ if( NOT Remotery_FOUND AND OGRE_PROFILING_PROVIDER STREQUAL "remotery" )
 	set( OGRE_PROFILING_PROVIDER "none" )
 endif()
 
+if( OGRE_ADDRESS_SANITIZER_ASAN )
+	if( APPLE )
+		set( CMAKE_XCODE_GENERATE_SCHEME ON )
+		set( CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER ON )
+		set( CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER_USE_AFTER_RETURN ON )
+	elseif( UNIX )
+		set( CMAKE_C_FLAGS
+			"${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address" )
+		set( CMAKE_CXX_FLAGS
+			"${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address" )
+		set( CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address" )
+	elseif( MSVC )
+		set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS_DEBUG} /fsanitize=address" )
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} /fsanitize=address" )
+	endif()
+endif()
+
 # hide advanced options
 mark_as_advanced(
+  OGRE_ADDRESS_SANITIZER_ASAN
   OGRE_CONFIG_DOUBLE
   OGRE_CONFIG_NODE_INHERIT_TRANSFORM
   OGRE_CONFIG_ALLOCATOR
