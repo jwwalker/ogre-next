@@ -448,6 +448,9 @@
 	@else
 		float3 finalColour = passBuf.ambientUpperHemi.xyz * pixelData.diffuse.xyz;
 	@end
+	
+	// Experimental extra ambient light - JWW
+	finalColour += material.userValue[2].xyz * pixelData.diffuse.xyz;
 
 	@property( hlms_static_branch_shadow_map_lights || hlms_lights_point || hlms_lights_spot || hlms_lights_area_approx || hlms_lights_area_ltc )
 		float3 lightDir;
