@@ -1,8 +1,6 @@
-@piece( custom_ps_functions )
-@insertpiece( Common_Matrix_DeclLoadOgreFloat4x3 )
-@end
-
 @piece( custom_ps_uv_modifier_macros )
 #undef UV_DIFFUSE
 #define UV_DIFFUSE( p ) mul( float4( (p), 1.0, 0.0 ), makeOgreFloat4x3( material.userValue[0], material.userValue[1], float4(0.0) ) ).xy
+#undef makeOgreFloat4x3
+@insertpiece( Common_Matrix_DeclLoadOgreFloat4x3 )
 @end
