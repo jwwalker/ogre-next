@@ -87,4 +87,6 @@
 		finalColour += vctSpecular.w == 0 ? float3( 0, 0, 0 ) :
 											(passBuf.ambientUpperHemi.xyz * pixelData.diffuse.xyz);
 	@end
+	
+	finalColour += material.userValue[2].xyz * pixelData.diffuse.xyz; // JWW extra ambient
 @end
