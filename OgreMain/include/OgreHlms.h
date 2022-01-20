@@ -557,7 +557,7 @@ namespace Ogre
             Default value is 0.
          */
         virtual void setStaticBranchingLights( bool staticBranchingLights );
-        bool         getStaticBranchingLights( void ) const { return mStaticBranchingLights; }
+        bool         getStaticBranchingLights() const { return mStaticBranchingLights; }
 
         /** Area lights use regular Forward.
         @param areaLightsApproxLimit
@@ -912,8 +912,6 @@ namespace Ogre
         static const IdString LightsAreaApprox;
         static const IdString LightsAreaLtc;
         static const IdString LightsAreaTexMask;
-        static const IdString LightsAttenuation;
-        static const IdString LightsSpotParams;
         static const IdString LightsAreaTexColour;
         static const IdString AllPointLights;
 
