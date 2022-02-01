@@ -1,5 +1,6 @@
 var NAVTREEINDEX24 =
 {
+"class_ogre_1_1_cocoa_window.html#ab1885eb97809cbe0598a24ba2aa25893":[7,0,0,88,65],
 "class_ogre_1_1_cocoa_window.html#ab59896b81175dd9c9932f1b303023746":[7,0,0,88,53],
 "class_ogre_1_1_cocoa_window.html#ab68df06eb40f02027ced6e54a131d6b9":[7,0,0,88,1],
 "class_ogre_1_1_cocoa_window.html#ab78a921e54419be677839cdf15d1f0b8":[7,0,0,88,43],
@@ -248,6 +249,5 @@ var NAVTREEINDEX24 =
 "class_ogre_1_1_colour_image_affector_1_1_cmd_image_adjust.html#aa6baf8872837f8c1bf0145e2ee433c02":[7,0,0,94,0,0],
 "class_ogre_1_1_colour_image_affector_1_1_cmd_image_adjust.html#acbfa224b7d10bd20b83002856c07a9f0":[7,0,0,94,0,1],
 "class_ogre_1_1_colour_image_affector_factory.html":[7,0,0,95],
-"class_ogre_1_1_colour_image_affector_factory.html#a073f267f4efff156cac2d0a2ef40f7dd":[7,0,0,95,0],
-"class_ogre_1_1_colour_image_affector_factory.html#a1c727e879a260c37b00ce5505fe8e144":[7,0,0,95,3]
+"class_ogre_1_1_colour_image_affector_factory.html#a073f267f4efff156cac2d0a2ef40f7dd":[7,0,0,95,0]
 };
