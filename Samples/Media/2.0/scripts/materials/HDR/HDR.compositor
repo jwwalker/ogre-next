@@ -132,6 +132,7 @@ compositor_node HdrPostprocessingNode
 			input		1	lumRt1
 
 			profiling_id "Obtain Final Luminance value"
+			identifier 811 // JWWalker, identify exposure pass
 		}
 	}
 
@@ -158,6 +159,7 @@ compositor_node HdrPostprocessingNode
 			input		1	lumRt0
 
 			profiling_id "Bloom (Start)"
+			identifier 812 // JWWalker, identify bloom pass
 		}
 	}
 
