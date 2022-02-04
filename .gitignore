@@ -29,3 +29,6 @@ AndroidDependencies/
 Build/
 EmscriptenDependencies
 EmscriptenBuild
+build32/.vs/OGRE-Next/project-colors.json
+build32/
+build64/
