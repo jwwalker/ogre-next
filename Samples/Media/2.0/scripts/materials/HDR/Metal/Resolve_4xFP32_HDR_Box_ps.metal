@@ -1,7 +1,9 @@
 #include <metal_stdlib>
 using namespace metal;
 
-inline float max3( float x, float y, float z ) { return max(x, max(y, z)); }
+inline float maxthree( float x, float y, float z ) { return max(x, max(y, z)); }
+// JWWalker: Metal 2.1 and later has a built-in function max3, so to resolve the conflict,
+// I renamed this from max3 to maxthree.
 
 #if !MSAA_INITIALIZED
     #define MSAA_SUBSAMPLE_WEIGHT	0.25
@@ -21,13 +23,13 @@ inline float rcp( float x )
 // it is more optimal to fold the weighting into the tonemap operation.
 inline float3 tonemapWithWeight( float invLum, float3 c, float w )
 {
-    return c * (invLum * w * rcp( max3(c.r, c.g, c.b) * invLum + 1.0 ));
+    return c * (invLum * w * rcp( maxthree(c.r, c.g, c.b) * invLum + 1.0 ));
 }
 
 // Apply this to restore the linear HDR color before writing out the result of the resolve.
 inline float3 tonemapInvert( float invLum, float3 c )
 {
-    float3 val = c * rcp( 1.0 - max3(c.r, c.g, c.b) );
+    float3 val = c * rcp( 1.0 - maxthree(c.r, c.g, c.b) );
     return val * rcp( invLum );
 }
 
