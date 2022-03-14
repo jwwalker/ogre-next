@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"_ogre_lod_prerequisites_8h.html#a2443cfc3de127c74d364ec23ecfddcad":[8,0,0,1,0,20,0],
 "_ogre_lod_prerequisites_8h.html#a85a340f35bf274668aa757bed23b5ff1":[8,0,0,1,0,20,3],
 "_ogre_lod_prerequisites_8h.html#aab2b912370b681335fc1d156739c94fe":[8,0,0,1,0,20,2],
 "_ogre_lod_prerequisites_8h.html#ae57d12f3dc7924e86a2aee7c779d8726":[8,0,0,1,0,20,5],
@@ -112,8 +113,8 @@ var NAVTREEINDEX4 =
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540ab88d99795b06ddfab7dca3bc55dea303":[8,0,4,3,0,13,1,6],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540ac3a7d5a193ef3c437fcbdc8c61cc34a2":[8,0,4,3,0,13,1,15],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540ac3a7d5a193ef3c437fcbdc8c61cc34a2":[8,0,4,3,0,13,1,20],
-"_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540acd7ddc0ba749aedac2cc5094d3fdd798":[8,0,4,3,0,13,1,19],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540acd7ddc0ba749aedac2cc5094d3fdd798":[8,0,4,3,0,13,1,28],
+"_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540acd7ddc0ba749aedac2cc5094d3fdd798":[8,0,4,3,0,13,1,19],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540ad1bedf019953e0d051a8a7e2a09239ab":[8,0,4,3,0,13,1,25],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540adfcb13f3e780b581c69f3bcedda4f0f7":[8,0,4,3,0,13,1,7],
 "_ogre_metal_pixel_format_to_shader_type_8h.html#a320bd6a6b273a3abe76add6b64ff8540adfd30f4d22843cdfaa3527cbf82d21fd":[8,0,4,3,0,13,1,22],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "_ogre_particle_system_8h.html":[8,0,2,0,174],
 "_ogre_particle_system_manager_8h.html":[8,0,2,0,175],
 "_ogre_particle_system_renderer_8h.html":[8,0,2,0,176],
-"_ogre_pass_8h.html":[8,0,2,0,177],
-"_ogre_patch_mesh_8h.html":[8,0,2,0,178]
+"_ogre_pass_8h.html":[8,0,2,0,177]
 };
