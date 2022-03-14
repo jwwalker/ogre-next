@@ -337,6 +337,14 @@ namespace Ogre
         rsc->setComputeProgramConstantBoolCount( 16384 );
         rsc->setComputeProgramConstantIntCount( 16384 );
 
+#if defined( __IPHONE_13_0 ) || defined( __MAC_10_15 )
+        if( @available( iOS 13.0, macOS 10.15, * ) )
+        {
+            if( mActiveDevice->mDevice.hasUnifiedMemory )
+                rsc->setCapability( RSC_UMA );
+        }
+#endif
+
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
         uint8 mrtCount = 8u;
 #else
@@ -2243,8 +2251,11 @@ namespace Ogre
             }
 
             // Setup baseInstance.
-            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * sizeof( uint32 )
-                                                atIndex:15];
+#if TARGET_OS_SIMULATOR == 0
+            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * 4u atIndex:15];
+#else
+            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * 256u atIndex:15];
+#endif
 
             [mActiveRenderEncoder drawIndexedPrimitives:primType
                                              indexCount:drawCmd->primCount
@@ -2287,8 +2298,11 @@ namespace Ogre
         {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
             // Setup baseInstance.
-            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * sizeof( uint32 )
-                                                atIndex:15];
+#if TARGET_OS_SIMULATOR == 0
+            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * 4u atIndex:15];
+#else
+            [mActiveRenderEncoder setVertexBufferOffset:drawCmd->baseInstance * 256u atIndex:15];
+#endif
             [mActiveRenderEncoder drawPrimitives:primType
                                      vertexStart:drawCmd->firstVertexIndex
                                      vertexCount:drawCmd->primCount
@@ -2367,7 +2381,11 @@ namespace Ogre
 #    endif
 
         // Setup baseInstance.
-        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * sizeof( uint32 ) atIndex:15];
+#if TARGET_OS_SIMULATOR == 0
+        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * 4u atIndex:15];
+#else
+        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * 256u atIndex:15];
+#endif
 
         [mActiveRenderEncoder
             drawIndexedPrimitives:mCurrentPrimType
@@ -2393,7 +2411,11 @@ namespace Ogre
     {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
         // Setup baseInstance.
-        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * sizeof( uint32 ) atIndex:15];
+#if TARGET_OS_SIMULATOR == 0
+        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * 4u atIndex:15];
+#else
+        [mActiveRenderEncoder setVertexBufferOffset:cmd->baseInstance * 256u atIndex:15];
+#endif
         [mActiveRenderEncoder
             drawPrimitives:mCurrentPrimType
                vertexStart:0 /*cmd->firstVertexIndex already handled in _setRenderOperation*/
