@@ -32,21 +32,20 @@ differences have diverged long enough.
 
 ## Supported Platforms
 
- * Windows (XP\*, 7, 8, 10)
+ * Windows (7, 8, 10)
  * Linux
- * macOS\*\*
+ * macOS\*
  * iOS
- * Android\*\*\*
+ * Android\*\*
 
-(\*) XP support is through GL3+. Recent drivers are needed. Old GPUs do not have stable GL drivers capable of running Ogre-Next 2.x.<br/>
-(\*\*) Metal Backend is highly recommended. GL backend is supported in macOS, but the window subsystem hasn't been ported to 2.4 yet.<br/>
-(\*\*\*) Device must be Vulkan-capable. Android 7.0+ is supported; but Android 8.0+ is strongly recommended due to lots of driver bugs in older versions.<br/>
+(\*) Metal Backend is highly recommended. GL backend is supported in macOS, but the window subsystem hasn't been ported to 2.4 yet.<br/>
+(\*\*) Device must be Vulkan-capable. Android 7.0+ is supported; but Android 8.0+ is strongly recommended due to lots of driver bugs in older versions.<br/>
 
 ## Supported Compilers
 
  * Clang 3.3 or newer
  * GCC 5 or newer
- * VS2008 or newer
+ * VS2013 or newer
  
 ## Samples
 For a list of samples and their demonstrated features, refer to the [samples section in the manual.](https://ogrecave.github.io/ogre-next/api/latest/_samples.html) 
@@ -109,9 +108,8 @@ For a list of samples and their demonstrated features, refer to the [samples sec
 
 # Dependencies (Windows)
 
-* Visual Studio 2008 SP1 - 2017 (2019 not tested). MinGW may work but we strongly recommend Visual Studio.
-* [DirectX June 2010 SDK](https://www.microsoft.com/en-us/download/details.aspx?id=6812). Optional.
-  Needed if you use older Visual Studio versions and want the D3D11 plugin. Also comes with useful tools.
+* Visual Studio 2013 - 2019 (2022 not tested). MinGW may work but we strongly recommend Visual Studio.
+* [DirectX June 2010 SDK](https://www.microsoft.com/en-us/download/details.aspx?id=6812). Optional. Comes with useful tools.
 * Windows 10 SDK. Contains the latest DirectX SDK, thus recommended over the DX June 2010 SDK,
   but you may still want to install the June 2010 SDK for those tools.
 * Windows 7 or newer is highly recommended. For Windows Vista & 7, you need to have the
