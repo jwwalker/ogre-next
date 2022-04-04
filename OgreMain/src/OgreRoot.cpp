@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 #include "Animation/OgreSkeletonManager.h"
 #include "Compositor/OgreCompositorManager2.h"
+#include "OgreAbiUtils.h"
 #include "OgreArchiveManager.h"
 #include "OgreBillboardChain.h"
 #include "OgreBillboardSet.h"
@@ -130,8 +131,8 @@ namespace Ogre
     typedef void ( *DLL_STOP_PLUGIN )();
 
     //-----------------------------------------------------------------------
-    Root::Root( const String &pluginFileName, const String &configFileName, const String &logFileName,
-                const String &appName ) :
+    Root::Root( const AbiCookie *abiCookie, const String &pluginFileName, const String &configFileName,
+                const String &logFileName, const String &appName ) :
         mAppName( appName ),
         mQueuedEnd( false ),
         mLogManager( 0 ),
@@ -166,6 +167,9 @@ namespace Ogre
             mLogManager = OGRE_NEW LogManager();
             mLogManager->createLog( logFileName, true, true );
         }
+
+        if( abiCookie )
+            testAbiCookie( *abiCookie );
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
         mAndroidLogger = OGRE_NEW AndroidLogListener();
@@ -1411,16 +1415,26 @@ namespace Ogre
     {
         LogManager::getSingleton().logMessage( "Installing plugin: " + plugin->getName() );
 
-        mPlugins.push_back( plugin );
-        plugin->install();
+        AbiCookie abiCookie;
+        plugin->getAbiCookie( abiCookie );
 
-        // if rendersystem is already initialised, call rendersystem init too
-        if( mIsInitialised )
+        if( testAbiCookie( abiCookie, false ) )
         {
-            plugin->initialise();
-        }
+            mPlugins.push_back( plugin );
+            plugin->install();
 
-        LogManager::getSingleton().logMessage( "Plugin successfully installed" );
+            // if rendersystem is already initialised, call rendersystem init too
+            if( mIsInitialised )
+            {
+                plugin->initialise();
+            }
+
+            LogManager::getSingleton().logMessage( "Plugin successfully installed" );
+        }
+        else
+        {
+            LogManager::getSingleton().logMessage( "Plugin failed ABI test" );
+        }
     }
     //---------------------------------------------------------------------
     void Root::uninstallPlugin( Plugin *plugin )
@@ -1700,5 +1714,4 @@ namespace Ogre
                 mWorkQueue->startup();
         }
     }
-
 }  // namespace Ogre
