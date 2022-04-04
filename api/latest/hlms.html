@@ -168,7 +168,7 @@ Viewports and Scissor tests</h2>
 </ul>
 <h2><a class="anchor" id="HlmsChangesBlocks"></a>
 A lot of data is stored in "Blocks"</h2>
-<p >Described in detail in the 9.3.Blocks|outline "Blocks section", many parameters have been grouped into blocks. Changing depth checks means changing the whole Macroblock.</p>
+<p >Described in detail in the <a class="el" href="hlms.html#HlmsBlocks">Blocks section</a>, many parameters have been grouped into blocks. Changing depth checks means changing the whole Macroblock.</p>
 <p >You could be thinking the reason I came up with these two is to fit with D3D11′s grand scheme of things while being compatible with OpenGL. But that's a half truth and an awesome side effect. I've been developing the Hlms using OpenGL this whole time.</p>
 <p >An OpenGL fan will tell you that grouping these together in single call like D3D11 did barely reduces API overhead in practice (as long as you keep sorting by state), and they're right about that.</p>
 <p >However, there are big advantages for using blocks:</p>
@@ -207,7 +207,16 @@ The three components</h1>
    <h1><a class="anchor" id="HlmsBlocks"></a>
 Blocks</h1>
 <p >We're introducing the concept of blocks, most of them are immutable. Being immutable means you can't change the Macro- Blend- &amp; Samplerblocks after being created. If you want to make a change, you have to create a new block and assign the new one. The previous one won't be destroyed until asked explicitly.</p>
-<p >Technically on OpenGL render systems (GL3+, GLES2) you could <code>const_cast</code> the pointers, change the block's parameters (mind you, the pointer is shared by other datablocks, so you will be changing them as well as side effect) and it would probably work. But it will definitely fail on D3D11 render system.</p>
+<p >Technically on OpenGL render systems (GL3+, GLES2) you could <code>const_cast</code> the pointers, change the block's parameters (mind you, the pointer is shared by other datablocks, so you will be changing them as well as side effect) and it would probably work. But it will definitely fail on D3D11 render system. <br  />
+</p>
+<p >Refer to the following pages for parameter references:</p><ul>
+<li><a class="el" href="hlmsblendblockref.html">Reference Guide: HLMS Blendblock</a></li>
+<li><a class="el" href="hlmspbsdatablockref.html">Reference Guide: HLMS PBS Datablock</a></li>
+<li><a class="el" href="hlmsunlitdatablockref.html">Reference Guide: HLMS Unlit Datablock</a></li>
+<li><a class="el" href="hlmsterradatablockref.html">Reference Guide: HLMS Terra Datablock</a></li>
+<li><a class="el" href="hlmsmacroblockref.html">Reference Guide: HLMS Macroblock</a></li>
+<li><a class="el" href="hlmssamplerref.html">Reference Guide: HLMS Samplerblock</a></li>
+</ul>
 <h2><a class="anchor" id="HlmsBlocksDatablocks"></a>
 Datablocks</h2>
 <p >A Datablock is a "material" from the user's perspective. It is the only mutable block. It holds data (i.e. material properties) that will be passed directly to the shaders, and also holds which Macroblock, Blendblocks and Samplerblocks are assigned to it.</p>
@@ -678,7 +687,7 @@ Automatic batching</h2>
 <div class="line">    <a class="code hl_typedef" href="namespace_ogre.html#a64f3c3e34647277a00b67ae0dfa1a528">uint16</a>      yIdx;</div>
 <div class="line">    <a class="code hl_typedef" href="namespace_ogre.html#a64f3c3e34647277a00b67ae0dfa1a528">uint16</a>      divisor;</div>
 <div class="line">};</div>
-<div class="ttc" id="anamespace_ogre_html_a64f3c3e34647277a00b67ae0dfa1a528"><div class="ttname"><a href="namespace_ogre.html#a64f3c3e34647277a00b67ae0dfa1a528">Ogre::uint16</a></div><div class="ttdeci">::uint16_t uint16</div><div class="ttdef"><b>Definition:</b> OgrePlatform.h:527</div></div>
+<div class="ttc" id="anamespace_ogre_html_a64f3c3e34647277a00b67ae0dfa1a528"><div class="ttname"><a href="namespace_ogre.html#a64f3c3e34647277a00b67ae0dfa1a528">Ogre::uint16</a></div><div class="ttdeci">::uint16_t uint16</div><div class="ttdef"><b>Definition:</b> OgrePlatform.h:531</div></div>
 </div><!-- fragment --><p >The texture pointer is the actual atlas/array texture.</p>
 <p >On Desktop, only xIdx is used, which indicates which slice in the array contains our texture.</p>
 <p >In order to sample in the pixel shader, one needs to perform:</p>
@@ -745,7 +754,7 @@ Automatic parameters</h3>
 <div class="line">    <span class="keywordtype">float</span>       packMaxRatio;</div>
 <div class="line">    ThresholdVec    textureArraysTresholds;</div>
 <div class="line">};</div>
-<div class="ttc" id="anamespace_ogre_html_a5a7c15d68e8c7d585c410bc5a93682f4"><div class="ttname"><a href="namespace_ogre.html#a5a7c15d68e8c7d585c410bc5a93682f4">Ogre::uint32</a></div><div class="ttdeci">::uint32_t uint32</div><div class="ttdef"><b>Definition:</b> OgrePlatform.h:528</div></div>
+<div class="ttc" id="anamespace_ogre_html_a5a7c15d68e8c7d585c410bc5a93682f4"><div class="ttname"><a href="namespace_ogre.html#a5a7c15d68e8c7d585c410bc5a93682f4">Ogre::uint32</a></div><div class="ttdeci">::uint32_t uint32</div><div class="ttdef"><b>Definition:</b> OgrePlatform.h:532</div></div>
 </div><!-- fragment --><p >The comments and the code itself should be self-explanatory. The setting <code>pixelFormat</code> allows to force a conversion to a particular format. When left as <code>PF_UNKNOWN</code>, the texture's original format will be used (except for RGB/BGR/ARGB/BGRA/etc variations).</p>
 <p >The setting <code>maxTexturesPerArray</code> controls the maximum number of textures that can be packed together. Note the actual number may be lower either due to hardware limitations (i.e. you can't make an uv atlas with 16 512x512 textures on a GPU that has a maximum texture resolution of 1024x1024) or due to the <code>textureArraysTresholds</code> parameter (which only applies on Desktop).</p>
 <p >The parameters <code>packNonPow2</code> and <code>packMaxRatio</code> operate under the assumption that such textures are rare and therefore should not be packed to prevent memory waste.</p>

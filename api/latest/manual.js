@@ -202,67 +202,7 @@ var manual =
       [ "Thread safety of SceneNodes", "threading.html#ThreadSafetySceneNodes", null ]
     ] ],
     [ "Performance Hints", "performance.html", null ],
-    [ "HLMS: High Level Material System", "hlms.html", [
-      [ "Fundamental changes", "hlms.html#HlmsChanges", [
-        [ "Viewports and Scissor tests", "hlms.html#HlmsChangesViewports", null ],
-        [ "A lot of data is stored in \"Blocks\"", "hlms.html#HlmsChangesBlocks", null ],
-        [ "Materials are still alive", "hlms.html#HlmsChangesMaterialsAlive", null ],
-        [ "Fixed Function has been removed", "hlms.html#HlmsChangesFFP", null ]
-      ] ],
-      [ "The three components", "hlms.html#HlmsComponents", null ],
-      [ "Blocks", "hlms.html#HlmsBlocks", [
-        [ "Datablocks", "hlms.html#HlmsBlocksDatablocks", null ],
-        [ "Macroblocks", "hlms.html#HlmsBlocksMacroblocks", null ],
-        [ "Blendblocks", "hlms.html#HlmsBlocksBlendblocks", null ],
-        [ "Samplerblocks", "hlms.html#HlmsBlocksSampleblocks", null ]
-      ] ],
-      [ "Hlms templates", "hlms.html#HlmsTemplates", null ],
-      [ "The Hlms preprocessor", "hlms.html#HlmsPreprocessor", [
-        [ "Preprocessor syntax", "hlms.html#HlmsPreprocessorSyntax", [
-          [ "@property( expression )", "hlms.html#HlmsPreprocessorSyntaxProperty", null ],
-          [ "@foreach( count, scopedVar, [start] )", "hlms.html#HlmsPreprocessorSyntaxForeach", null ],
-          [ "@counter( variable )", "hlms.html#HlmsPreprocessorSyntaxCounter", null ],
-          [ "@value( variable )", "hlms.html#HlmsPreprocessorSyntaxValue", null ],
-          [ "@set add sub mul div mod min max", "hlms.html#HlmsPreprocessorSyntaxSetEtc", null ],
-          [ "@piece( nameOfPiece )", "hlms.html#HlmsPreprocessorSyntaxPiece", null ],
-          [ "@insertpiece( nameOfPiece )", "hlms.html#HlmsPreprocessorSyntaxInsertpiece", null ],
-          [ "@undefpiece( nameOfPiece )", "hlms.html#HlmsPreprocessorSyntaxUndefpiece", null ],
-          [ "@pset padd psub pmul pdiv pmod pmin pmax", "hlms.html#HlmsPreprocessorSyntaxPsetEtc", null ]
-        ] ]
-      ] ],
-      [ "Creation of shaders", "hlms.html#HlmsCreationOfShaders", [
-        [ "C++ interaction with shader templates", "hlms.html#HlmsCreationOfShadersCpp", null ],
-        [ "Common conventions", "hlms.html#HlmsCreationOfShadersConventions", null ],
-        [ "Hot reloading", "hlms.html#HlmsCreationOfShadersHotReloading", null ],
-        [ "Disabling a stage", "hlms.html#HlmsCreationOfShadersDisablingStage", null ],
-        [ "Customizing an existing implementation", "hlms.html#HlmsCreationOfShadersCustomizing", null ]
-      ] ],
-      [ "Run-time rendering", "hlms.html#HlmsRuntimeRendering", [
-        [ "preparePassHash", "hlms.html#HlmsRuntimeRenderingPreparePassHash", null ],
-        [ "fillBuffersFor", "hlms.html#HlmsRuntimeRenderingFillBuffersFor", null ]
-      ] ],
-      [ "Using the HLMS implementations", "hlms.html#UsingHlmsImplementation", [
-        [ "Initialization", "hlms.html#UsingHlmsImplementationInitialization", null ],
-        [ "Deinitialization", "hlms.html#UsingHlmsImplementationDeinitilization", null ],
-        [ "Creating a datablock", "hlms.html#UsingHlmsImplementationCreatingDatablock", null ]
-      ] ],
-      [ "The Hlms Texture Manager", "hlms.html#HlmsTextureManager", [
-        [ "Automatic batching", "hlms.html#HlmsTextureManagerAutomaticBatching", [
-          [ "Texture types", "hlms.html#HlmsTextureManagerAutomaticBatchingTextureTypes", null ],
-          [ "Automatic parameters", "hlms.html#HlmsTextureManagerAutomaticBatchingAutoParams", null ],
-          [ "Loading a texture twice (i.e. with a different format) via aliasing", "hlms.html#HlmsTextureManagerAutomaticBatchingLoadingTwice", null ]
-        ] ],
-        [ "Manual: Texture packs", "hlms.html#HlmsTextureManagerTexturePacks", null ],
-        [ "Watching out for memory consumption", "hlms.html#HlmsTextureManagerWatchOutMemory", [
-          [ "Additional memory considerations", "hlms.html#HlmsTextureManagerWatchOutMemoryConsiderations", null ],
-          [ "setWorkerThreadMinimumBudget warning", "hlms.html#setWorkerThreadMinimumBudget", null ]
-        ] ]
-      ] ],
-      [ "Troubleshooting", "hlms.html#HlmsTroubleshooting", [
-        [ "My shadows don't show up or are very glitchy", "hlms.html#HlmsTroubleshootingShadow", null ]
-      ] ],
-      [ "Precision / Quality", "hlms.html#autotoc_md21", null ]
-    ] ],
+    [ "HLMS: High Level Material System", "hlms.html", "hlms" ],
     [ "AZDO changes (Aproaching Zero Driver Overhead)", "azdo.html", [
       [ "V2 and v1 objects", "azdo.html#V2AndV1Objects", [
         [ "Longevity of the v1 objects and deprecation", "azdo.html#V2AndV1ObjectsV1Longevity", null ]
@@ -279,16 +219,16 @@ var manual =
       [ "Post-processing the command buffer", "commandbuffer.html#CommandBufferPostProcessing", null ]
     ] ],
     [ "Terra System", "_terra_system.html", [
-      [ "Vertex-bufferless rendering", "_terra_system.html#autotoc_md62", null ],
-      [ "Vertex Trick in Terra", "_terra_system.html#autotoc_md63", null ],
-      [ "Terra cells", "_terra_system.html#autotoc_md64", [
-        [ "First layer, the 4x4 block", "_terra_system.html#autotoc_md65", null ],
-        [ "Outer layers", "_terra_system.html#autotoc_md66", null ]
+      [ "Vertex-bufferless rendering", "_terra_system.html#autotoc_md63", null ],
+      [ "Vertex Trick in Terra", "_terra_system.html#autotoc_md64", null ],
+      [ "Terra cells", "_terra_system.html#autotoc_md65", [
+        [ "First layer, the 4x4 block", "_terra_system.html#autotoc_md66", null ],
+        [ "Outer layers", "_terra_system.html#autotoc_md67", null ]
       ] ],
-      [ "Skirts", "_terra_system.html#autotoc_md67", null ],
-      [ "Shadows", "_terra_system.html#autotoc_md68", null ],
-      [ "Shading", "_terra_system.html#autotoc_md69", null ],
-      [ "Why is it not a component?", "_terra_system.html#autotoc_md70", null ]
+      [ "Skirts", "_terra_system.html#autotoc_md68", null ],
+      [ "Shadows", "_terra_system.html#autotoc_md69", null ],
+      [ "Shading", "_terra_system.html#autotoc_md70", null ],
+      [ "Why is it not a component?", "_terra_system.html#autotoc_md71", null ]
     ] ],
     [ "Tunning memory consumption and resources", "_tuning_memory_resources.html", [
       [ "Grouping textures by type", "_tuning_memory_resources.html#GroupingTexturesByType", null ],
@@ -345,7 +285,7 @@ var manual =
       [ "Old APIs (i.e. D3D11 and GL)", "_root_layouts.html#RootLayoutsOldAPIs", null ],
       [ "New APIs and Root Layouts", "_root_layouts.html#RootLayoutsNewAPIs", null ],
       [ "Setting up root layouts", "_root_layouts.html#RootLayoutsSettingUp", [
-        [ "Could you have used e.g. \"const_buffers\" : [0,7] instead of [4,7]?", "_root_layouts.html#autotoc_md59", null ]
+        [ "Could you have used e.g. \"const_buffers\" : [0,7] instead of [4,7]?", "_root_layouts.html#autotoc_md60", null ]
       ] ],
       [ "Declaring Root Layouts in shaders", "_root_layouts.html#RootLayoutsDeclaringInShaders", null ],
       [ "Baked sets", "_root_layouts.html#RootLayoutsBakedSets", null ],
@@ -356,14 +296,17 @@ var manual =
         [ "Automatic", "_root_layouts.html#RootLayoutsAoTAuto", null ],
         [ "Making GLSL shaders compatible with both Vulkan and OpenGL", "_root_layouts.html#RootLayoutsGLSLForGLandVK", [
           [ "Example:", "_root_layouts.html#RootLayoutsGLSLForGLandVKExample", [
-            [ "OpenGL", "_root_layouts.html#autotoc_md60", null ],
-            [ "Vulkan", "_root_layouts.html#autotoc_md61", null ]
+            [ "OpenGL", "_root_layouts.html#autotoc_md61", null ],
+            [ "Vulkan", "_root_layouts.html#autotoc_md62", null ]
           ] ]
         ] ]
       ] ]
     ] ],
     [ "Resolving Merge Conflicts in Ogre-Next 2.4", "_resolving_merge_conflicts24.html", [
-      [ "Notes:", "_resolving_merge_conflicts24.html#autotoc_md57", null ],
-      [ "Batch Script", "_resolving_merge_conflicts24.html#autotoc_md58", null ]
+      [ "Notes:", "_resolving_merge_conflicts24.html#autotoc_md58", null ],
+      [ "Batch Script", "_resolving_merge_conflicts24.html#autotoc_md59", null ]
+    ] ],
+    [ "What's new in Ogre 2.4", "_ogre24_changes.html", [
+      [ "Ogre to OgreNext name migration", "_ogre24_changes.html#autotoc_md57", null ]
     ] ]
 ];
