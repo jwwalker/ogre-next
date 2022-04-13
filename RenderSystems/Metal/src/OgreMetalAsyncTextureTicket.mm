@@ -131,6 +131,15 @@ namespace Ogre
 
         MTLOrigin mtlOrigin = MTLOriginMake( srcTextureBox.x, srcTextureBox.y, srcTextureBox.z );
         MTLSize mtlSize = MTLSizeMake( srcTextureBox.width, srcTextureBox.height, srcTextureBox.depth );
+        
+        // Can't seem to read the depth data in PFG_D32_FLOAT_S8X24_UINT pixel
+        // format unless I only read the depth, not stencil.  Note that this
+        // will result in 4 bytes per pixel rather than 8. -- JWWalker
+        MTLBlitOption blitOption = MTLBlitOptionNone;
+        if (PixelFormatGpuUtils::isDepth( textureSrc->getPixelFormat() ))
+        {
+			blitOption = MTLBlitOptionDepthFromDepthStencil;
+        }
 
         for( NSUInteger i = 0; i < srcTextureBox.numSlices; ++i )
         {
@@ -142,7 +151,8 @@ namespace Ogre
                                 toBuffer:mVboName
                        destinationOffset:destBytesPerImage * i
                   destinationBytesPerRow:destBytesPerRow
-                destinationBytesPerImage:destBytesPerImage];
+                destinationBytesPerImage:destBytesPerImage
+                                 options:blitOption];
         }
 
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
@@ -160,7 +170,7 @@ namespace Ogre
             }];
             // Flush now for accuracy with downloads.
             mDevice->commitAndNextCommandBuffer();
-        }
+         }
     }
     //-----------------------------------------------------------------------------------
     TextureBox MetalAsyncTextureTicket::mapImpl( uint32 slice )
