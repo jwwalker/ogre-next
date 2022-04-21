@@ -1,5 +1,14 @@
 var NAVTREEINDEX241 =
 {
+"compositor.html#CompositorShadowNodesAtlasAndPointLights":[1,3,1,2],
+"compositor.html#CompositorShadowNodesExample":[1,3,1,1],
+"compositor.html#CompositorShadowNodesReuseEtc":[1,3,1,3],
+"compositor.html#CompositorShadowNodesSetup":[1,3,1,0],
+"compositor.html#CompositorShadowNodesShaders":[1,3,1,5],
+"compositor.html#CompositorShadowNodesTypes":[1,3,1,4],
+"compositor.html#CompositorShadowNodesTypesFocused":[1,3,1,4,1],
+"compositor.html#CompositorShadowNodesTypesPlaneOptimal":[1,3,1,4,3],
+"compositor.html#CompositorShadowNodesTypesPssm":[1,3,1,4,2],
 "compositor.html#CompositorShadowNodesTypesUniform":[1,3,1,4,0],
 "compositor.html#CompositorWorkspaces":[1,3,2],
 "compositor.html#CompositorWorkspacesDataDependencies":[1,3,2,0],
@@ -240,14 +249,5 @@ var NAVTREEINDEX241 =
 "functions_rela_s.html":[7,3,7,14],
 "functions_rela_t.html":[7,3,7,15],
 "functions_rela_v.html":[7,3,7,16],
-"functions_rela_w.html":[7,3,7,17],
-"functions_s.html":[7,3,0,19],
-"functions_t.html":[7,3,0,20],
-"functions_type.html":[7,3,3,0],
-"functions_type.html":[7,3,3],
-"functions_type_b.html":[7,3,3,1],
-"functions_type_c.html":[7,3,3,2],
-"functions_type_d.html":[7,3,3,3],
-"functions_type_e.html":[7,3,3,4],
-"functions_type_f.html":[7,3,3,5]
+"functions_rela_w.html":[7,3,7,17]
 };
