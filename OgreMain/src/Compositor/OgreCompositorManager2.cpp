@@ -851,6 +851,7 @@ namespace Ogre
                     passScene->setAllLoadActions( LoadAction::Clear );
                     passScene->mStoreActionDepth = StoreAction::Store;
                     passScene->mStoreActionStencil = StoreAction::Store;
+                    passScene->mIdentifier = 921;	// JWW
                 }
             }
         }
