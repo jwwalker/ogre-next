@@ -161,8 +161,9 @@ namespace Ogre
         */
         CompositorTargetDef *addTargetPass( const String &renderTargetName, uint32 rtIndex = 0 );
 
-        /// Retrieves an existing pass by it's given index.
+        /// Retrieves an existing pass by its given index.
         CompositorTargetDef *getTargetPass( size_t passIndex ) { return &mTargetPasses[passIndex]; }
+        const CompositorTargetDef *getTargetPass( size_t passIndex ) const { return &mTargetPasses[passIndex]; }
 
         /// Gets the number of target passes in this node.
         size_t getNumTargetPasses() const { return mTargetPasses.size(); }
