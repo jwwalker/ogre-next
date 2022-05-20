@@ -110,6 +110,7 @@ namespace Ogre
     {
     public:
         typedef map<IdString, CompositorNodeDef *>::type CompositorNodeDefMap;
+        typedef vector<CompositorWorkspace *>::type WorkspaceVec;
 
     protected:
         struct QueuedWorkspace
@@ -133,7 +134,6 @@ namespace Ogre
         typedef map<IdString, CompositorWorkspaceDef *>::type CompositorWorkspaceDefMap;
         CompositorWorkspaceDefMap                             mWorkspaceDefs;
 
-        typedef vector<CompositorWorkspace *>::type WorkspaceVec;
         typedef vector<QueuedWorkspace>::type       QueuedWorkspaceVec;
         WorkspaceVec                                mWorkspaces;
         /// All workspaces created via addWorkspace are first stored in this
