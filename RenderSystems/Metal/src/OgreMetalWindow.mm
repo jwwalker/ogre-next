@@ -164,6 +164,7 @@ namespace Ogre
         if( mMetalView.layerSizeDidUpdate )
         {
             // Resize anything if needed
+            mRequestedWidth = 0;		// jww hack
             this->windowMovedOrResized();
 
             mMetalView.layerSizeDidUpdate = NO;
