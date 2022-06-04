@@ -117,6 +117,9 @@ THE SOFTWARE.
 {
     [super viewDidChangeBackingProperties];
     _layerSizeDidUpdate = YES;
+    [NSNotificationCenter.defaultCenter
+		postNotificationName: @"OgreViewDidChangeBackingProperties"
+		object: self];
 }
 
 @end
