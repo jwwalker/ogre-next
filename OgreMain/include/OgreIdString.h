@@ -168,7 +168,7 @@ namespace Ogre
 
         void OGRE_COPY_DEBUG_STRING( uint32 value )
         {
-            sprintf( mDebugString, "[Value 0x%.8x]", value );
+            snprintf( mDebugString, sizeof(mDebugString), "[Value 0x%.8x]", value );
             mDebugString[OGRE_DEBUG_STR_SIZE - 1] = '\0';
         }
 
@@ -270,7 +270,7 @@ namespace Ogre
 #endif
 
             char tmp[( OGRE_HASH_BITS >> 2 ) + 10];
-            sprintf( tmp, "[Hash 0x%.8x]", mHash );
+            snprintf( tmp, sizeof(tmp), "[Hash 0x%.8x]", mHash );
             tmp[( OGRE_HASH_BITS >> 2 ) + 10 - 1] = '\0';
             return std::string( tmp );
 
@@ -308,7 +308,7 @@ namespace Ogre
             {
                 // Not big enough. Use a temp buffer and then copy + truncate.
                 char tmp[( OGRE_HASH_BITS >> 2 ) + 10];
-                sprintf( tmp, "[Hash 0x%.8x]", mHash );
+                snprintf( tmp, sizeof(tmp), "[Hash 0x%.8x]", mHash );
                 tmp[( OGRE_HASH_BITS >> 2 ) + 10 - 1] = '\0';
 
                 memcpy( outCStr, tmp, stringSize );
@@ -317,7 +317,7 @@ namespace Ogre
             else
             {
                 // Write directly to the output buffer. It's big enough.
-                sprintf( outCStr, "[Hash 0x%.8x]", mHash );
+                snprintf( outCStr, stringSize, "[Hash 0x%.8x]", mHash );
                 outCStr[( OGRE_HASH_BITS >> 2 ) + 10 - 1] = '\0';
             }
 
