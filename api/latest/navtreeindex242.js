@@ -1,5 +1,7 @@
 var NAVTREEINDEX242 =
 {
+"class_ogre_1_1v1_1_1_wire_bounding_box.html#ab682cd8eac807d059840e776f247c73f":[5,0,1,70,149],
+"class_ogre_1_1v1_1_1_wire_bounding_box.html#ab703ec1f1cf82763b0ac9c4b1e51a17b":[5,2,11,70,153],
 "class_ogre_1_1v1_1_1_wire_bounding_box.html#ab703ec1f1cf82763b0ac9c4b1e51a17b":[5,0,1,70,153],
 "class_ogre_1_1v1_1_1_wire_bounding_box.html#ab86b755f38ec01b52ed6a512d9d31ef9":[5,2,11,70,22],
 "class_ogre_1_1v1_1_1_wire_bounding_box.html#ab86b755f38ec01b52ed6a512d9d31ef9":[5,0,1,70,22],
@@ -247,7 +249,5 @@ var NAVTREEINDEX242 =
 "functions_rela_g.html":[7,3,7,5],
 "functions_rela_h.html":[7,3,7,6],
 "functions_rela_i.html":[7,3,7,7],
-"functions_rela_l.html":[7,3,7,8],
-"functions_rela_m.html":[7,3,7,9],
-"functions_rela_n.html":[7,3,7,10]
+"functions_rela_l.html":[7,3,7,8]
 };
