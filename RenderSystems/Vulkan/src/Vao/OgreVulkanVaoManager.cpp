@@ -132,7 +132,8 @@ namespace Ogre
 #endif
 
 #ifdef OGRE_VK_WORKAROUND_PVR_ALIGNMENT
-        if( renderSystem->getCapabilities()->getVendor() == GPU_IMGTEC )
+        if( renderSystem->getCapabilities()->getVendor() == GPU_IMGTEC &&
+            !renderSystem->getCapabilities()->getDriverVersion().hasMinVersion( 1, 426, 234 ) )
         {
             Workarounds::mPowerVRAlignment = 16u;
 
@@ -996,8 +997,8 @@ namespace Ogre
             if( vboFlag != CPU_INACCESSIBLE )
             {
                 const bool isCoherent = isVboFlagCoherent( vboFlag );
-                newVbo.dynamicBuffer = new VulkanDynamicBuffer( newVbo.vboName, newVbo.sizeBytes,
-                                                                isCoherent, false, mDevice );
+                newVbo.dynamicBuffer = new VulkanDynamicBuffer(
+                    newVbo.vboName, newVbo.sizeBytes, isCoherent, vboFlag == CPU_READ_WRITE, mDevice );
             }
 
             if( !mUnallocatedVbos[vboFlag].empty() )
