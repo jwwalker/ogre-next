@@ -25,18 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifndef __ColourInterpolatorAffector_H__
-#define __ColourInterpolatorAffector_H__
+#ifndef __ScaleInterpolatorAffector_H__
+#define __ScaleInterpolatorAffector_H__
 
 #include "OgreParticleFXPrerequisites.h"
 
-#include "OgreColourValue.h"
 #include "OgreParticleAffector.h"
 #include "OgreStringInterface.h"
 
 namespace Ogre
 {
-    class _OgreParticleFXExport ColourInterpolatorAffector : public ParticleAffector
+    class _OgreParticleFXExport ScaleInterpolatorAffector : public ParticleAffector
     {
     public:
         // this is something of a hack..
@@ -48,7 +47,7 @@ namespace Ogre
         };
 
         /** Command object for red adjust (see ParamCommand).*/
-        class CmdColourAdjust final : public ParamCommand
+        class CmdScaleAdjust final : public ParamCommand
         {
         public:
             size_t mIndex;
@@ -70,26 +69,26 @@ namespace Ogre
         };
 
         /** Default constructor. */
-        ColourInterpolatorAffector( ParticleSystem *psys );
+        ScaleInterpolatorAffector( ParticleSystem *psys );
 
         /** See ParticleAffector. */
         void _affectParticles( ParticleSystem *pSystem, Real timeElapsed ) override;
 
-        void        setColourAdjust( size_t index, ColourValue colour );
-        ColourValue getColourAdjust( size_t index ) const;
+        void setScaleAdjust( size_t index, Real scale );
+        Real getScaleAdjust( size_t index ) const;
 
         void setTimeAdjust( size_t index, Real time );
         Real getTimeAdjust( size_t index ) const;
 
-        static CmdColourAdjust msColourCmd[MAX_STAGES];
-        static CmdTimeAdjust   msTimeCmd[MAX_STAGES];
+        static CmdScaleAdjust msScaleCmd[MAX_STAGES];
+        static CmdTimeAdjust  msTimeCmd[MAX_STAGES];
 
         /** See ParticleAffector. */
         void _initParticle( Ogre::Particle *pParticle ) override;
 
     protected:
-        ColourValue mColourAdj[MAX_STAGES];
-        Real        mTimeAdj[MAX_STAGES];
+        Real mScaleAdj[MAX_STAGES];
+        Real mTimeAdj[MAX_STAGES];
     };
 
 }  // namespace Ogre

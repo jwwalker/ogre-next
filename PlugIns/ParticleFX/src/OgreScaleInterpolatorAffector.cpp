@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreColourInterpolatorAffector.h"
+#include "OgreScaleInterpolatorAffector.h"
 
 #include "OgreParticle.h"
 #include "OgreParticleSystem.h"
@@ -36,49 +36,45 @@ THE SOFTWARE.
 namespace Ogre
 {
     // init statics
-    ColourInterpolatorAffector::CmdColourAdjust ColourInterpolatorAffector::msColourCmd[MAX_STAGES];
-    ColourInterpolatorAffector::CmdTimeAdjust ColourInterpolatorAffector::msTimeCmd[MAX_STAGES];
+    ScaleInterpolatorAffector::CmdScaleAdjust ScaleInterpolatorAffector::msScaleCmd[MAX_STAGES];
+    ScaleInterpolatorAffector::CmdTimeAdjust ScaleInterpolatorAffector::msTimeCmd[MAX_STAGES];
 
     //-----------------------------------------------------------------------
-    ColourInterpolatorAffector::ColourInterpolatorAffector( ParticleSystem *psys ) :
+    ScaleInterpolatorAffector::ScaleInterpolatorAffector( ParticleSystem *psys ) :
         ParticleAffector( psys )
     {
         for( int i = 0; i < MAX_STAGES; i++ )
         {
-            // set default colour to transparent grey, transparent since we might not want to display the
-            // particle here grey because when a colour component is 0.5f the maximum difference to
-            // another colour component is 0.5f
-            mColourAdj[i] = ColourValue( 0.5f, 0.5f, 0.5f, 0.0f );
+            mScaleAdj[i] = 1.0f;
             mTimeAdj[i] = 1.0f;
         }
 
-        mType = "ColourInterpolator";
+        mType = "ScaleInterpolator";
 
         // Init parameters
-        if( createParamDictionary( "ColourInterpolatorAffector" ) )
+        if( createParamDictionary( "ScaleInterpolatorAffector" ) )
         {
             ParamDictionary *dict = getParamDictionary();
 
             for( size_t i = 0; i < MAX_STAGES; i++ )
             {
-                msColourCmd[i].mIndex = i;
+                msScaleCmd[i].mIndex = i;
                 msTimeCmd[i].mIndex = i;
 
                 StringStream stage;
                 stage << i;
-                String colour_title = String( "colour" ) + stage.str();
+                String scale_title = String( "scale" ) + stage.str();
                 String time_title = String( "time" ) + stage.str();
-                String colour_descr = String( "Stage " ) + stage.str() + String( " colour." );
+                String scale_descr = String( "Stage " ) + stage.str() + String( " scale." );
                 String time_descr = String( "Stage " ) + stage.str() + String( " time." );
 
-                dict->addParameter( ParameterDef( colour_title, colour_descr, PT_COLOURVALUE ),
-                                    &msColourCmd[i] );
+                dict->addParameter( ParameterDef( scale_title, scale_descr, PT_REAL ), &msScaleCmd[i] );
                 dict->addParameter( ParameterDef( time_title, time_descr, PT_REAL ), &msTimeCmd[i] );
             }
         }
     }
     //-----------------------------------------------------------------------
-    void ColourInterpolatorAffector::_affectParticles( ParticleSystem *pSystem, Real timeElapsed )
+    void ScaleInterpolatorAffector::_affectParticles( ParticleSystem *pSystem, Real timeElapsed )
     {
         Particle *p;
         ParticleIterator pi = pSystem->_getIterator();
@@ -89,57 +85,53 @@ namespace Ogre
             const Real life_time = p->mTotalTimeToLive;
             Real particle_time = 1.0f - ( p->mTimeToLive / life_time );
 
+            Real scale;
             if( particle_time <= mTimeAdj[0] )
             {
-                p->mColour = mColourAdj[0];
+                scale = mScaleAdj[0];
             }
             else if( particle_time >= mTimeAdj[MAX_STAGES - 1] )
             {
-                p->mColour = mColourAdj[MAX_STAGES - 1];
+                scale = mScaleAdj[MAX_STAGES - 1];
             }
             else
             {
+                scale = Real( 1.0f );
                 for( int i = 0; i < MAX_STAGES - 1; i++ )
                 {
                     if( particle_time >= mTimeAdj[i] && particle_time < mTimeAdj[i + 1] )
                     {
                         particle_time -= mTimeAdj[i];
                         particle_time /= ( mTimeAdj[i + 1] - mTimeAdj[i] );
-                        p->mColour.r = ( ( mColourAdj[i + 1].r * particle_time ) +
-                                         ( mColourAdj[i].r * ( 1.0f - particle_time ) ) );
-                        p->mColour.g = ( ( mColourAdj[i + 1].g * particle_time ) +
-                                         ( mColourAdj[i].g * ( 1.0f - particle_time ) ) );
-                        p->mColour.b = ( ( mColourAdj[i + 1].b * particle_time ) +
-                                         ( mColourAdj[i].b * ( 1.0f - particle_time ) ) );
-                        p->mColour.a = ( ( mColourAdj[i + 1].a * particle_time ) +
-                                         ( mColourAdj[i].a * ( 1.0f - particle_time ) ) );
+                        scale = ( ( mScaleAdj[i + 1] * particle_time ) +
+                                  ( mScaleAdj[i] * ( 1.0f - particle_time ) ) );
                         break;
                     }
                 }
             }
+
+            p->setDimensions( pSystem->getDefaultWidth() * scale, pSystem->getDefaultHeight() * scale );
         }
     }
 
     //-----------------------------------------------------------------------
-    void ColourInterpolatorAffector::setColourAdjust( size_t index, ColourValue colour )
+    void ScaleInterpolatorAffector::setScaleAdjust( size_t index, Real scale )
     {
-        mColourAdj[index] = colour;
+        mScaleAdj[index] = scale;
     }
     //-----------------------------------------------------------------------
-    ColourValue ColourInterpolatorAffector::getColourAdjust( size_t index ) const
-    {
-        return mColourAdj[index];
-    }
+    Real ScaleInterpolatorAffector::getScaleAdjust( size_t index ) const { return mScaleAdj[index]; }
 
     //-----------------------------------------------------------------------
-    void ColourInterpolatorAffector::setTimeAdjust( size_t index, Real time ) { mTimeAdj[index] = time; }
+    void ScaleInterpolatorAffector::setTimeAdjust( size_t index, Real time ) { mTimeAdj[index] = time; }
     //-----------------------------------------------------------------------
-    Real ColourInterpolatorAffector::getTimeAdjust( size_t index ) const { return mTimeAdj[index]; }
+    Real ScaleInterpolatorAffector::getTimeAdjust( size_t index ) const { return mTimeAdj[index]; }
 
     //-----------------------------------------------------------------------
-    void ColourInterpolatorAffector::_initParticle( Ogre::Particle *pParticle )
+    void ScaleInterpolatorAffector::_initParticle( Ogre::Particle *pParticle )
     {
-        pParticle->mColour = mColourAdj[0];
+        pParticle->setDimensions( mParent->getDefaultWidth() * mScaleAdj[0],
+                                  mParent->getDefaultHeight() * mScaleAdj[0] );
     }
 
     //-----------------------------------------------------------------------
@@ -148,25 +140,25 @@ namespace Ogre
     // Command objects
     //-----------------------------------------------------------------------
     //-----------------------------------------------------------------------
-    String ColourInterpolatorAffector::CmdColourAdjust::doGet( const void *target ) const
+    String ScaleInterpolatorAffector::CmdScaleAdjust::doGet( const void *target ) const
     {
         return StringConverter::toString(
-            static_cast<const ColourInterpolatorAffector *>( target )->getColourAdjust( mIndex ) );
+            static_cast<const ScaleInterpolatorAffector *>( target )->getScaleAdjust( mIndex ) );
     }
-    void ColourInterpolatorAffector::CmdColourAdjust::doSet( void *target, const String &val )
+    void ScaleInterpolatorAffector::CmdScaleAdjust::doSet( void *target, const String &val )
     {
-        static_cast<ColourInterpolatorAffector *>( target )->setColourAdjust(
-            mIndex, StringConverter::parseColourValue( val ) );
+        static_cast<ScaleInterpolatorAffector *>( target )->setScaleAdjust(
+            mIndex, StringConverter::parseReal( val ) );
     }
     //-----------------------------------------------------------------------
-    String ColourInterpolatorAffector::CmdTimeAdjust::doGet( const void *target ) const
+    String ScaleInterpolatorAffector::CmdTimeAdjust::doGet( const void *target ) const
     {
         return StringConverter::toString(
-            static_cast<const ColourInterpolatorAffector *>( target )->getTimeAdjust( mIndex ) );
+            static_cast<const ScaleInterpolatorAffector *>( target )->getTimeAdjust( mIndex ) );
     }
-    void ColourInterpolatorAffector::CmdTimeAdjust::doSet( void *target, const String &val )
+    void ScaleInterpolatorAffector::CmdTimeAdjust::doSet( void *target, const String &val )
     {
-        static_cast<ColourInterpolatorAffector *>( target )->setTimeAdjust(
+        static_cast<ScaleInterpolatorAffector *>( target )->setTimeAdjust(
             mIndex, StringConverter::parseReal( val ) );
     }
 

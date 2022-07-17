@@ -4,7 +4,7 @@ This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2017 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,38 +25,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifndef _OgreAtmospherePrerequisites_H_
-#define _OgreAtmospherePrerequisites_H_
+#ifndef __ScaleInterpolatorAffectorFactory_H__
+#define __ScaleInterpolatorAffectorFactory_H__
 
-#include "OgrePrerequisites.h"
+#include "OgreParticleFXPrerequisites.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
-#    if defined( OGRE_STATIC_LIB )
-#        define _OgreAtmosphereExport
-#    else
-#        if defined( OgreAtmosphere_EXPORTS )
-#            define _OgreAtmosphereExport __declspec( dllexport )
-#        else
-#            if defined( __MINGW32__ )
-#                define _OgreAtmosphereExport
-#            else
-#                define _OgreAtmosphereExport __declspec( dllimport )
-#            endif
-#        endif
-#    endif
-#elif defined( OGRE_GCC_VISIBILITY )
-#    if !defined( OGRE_STATIC_LIB )
-#        define _OgreAtmosphereExport __attribute__( ( visibility( "default" ) ) )
-#    else
-#        define _OgreAtmosphereExport __attribute__( ( visibility( "hidden" ) ) )
-#    endif
-#else
-#    define _OgreAtmosphereExport
-#endif
+#include "OgreParticleAffectorFactory.h"
+#include "OgreScaleInterpolatorAffector.h"
 
 namespace Ogre
 {
-    class Atmosphere;
+    /** Factory class for ScaleInterpolatorAffector. */
+    class _OgreParticleFXExport ScaleInterpolatorAffectorFactory final : public ParticleAffectorFactory
+    {
+        /** See ParticleAffectorFactory */
+        String getName() const override { return "ScaleInterpolator"; }
+
+        /** See ParticleAffectorFactory */
+        ParticleAffector *createAffector( ParticleSystem *psys ) override
+        {
+            ParticleAffector *p = new ScaleInterpolatorAffector( psys );
+            mAffectors.push_back( p );
+            return p;
+        }
+    };
+
 }  // namespace Ogre
 
 #endif
