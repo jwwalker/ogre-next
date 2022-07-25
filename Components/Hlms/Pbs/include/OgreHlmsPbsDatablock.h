@@ -88,6 +88,12 @@ namespace Ogre
             /// while still looking somewhat similar to Default.
             /// If you still need more performance, see BlinnPhongLegacy
             BlinnPhong = 0x00000002,
+            
+            /// Implements a cartoonish style with quantized light.
+            JWToon = 0x0000000C,
+            
+            /// Implements a cartoonish style that's not quite as dark on the edges.
+            JWToonWeak = 0x0000000D,
 
             /// Same as Default, but the geometry term is not height-correlated
             /// which most notably causes edges to be dimmer and is less correct.
