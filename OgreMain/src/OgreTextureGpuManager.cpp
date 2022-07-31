@@ -2642,7 +2642,7 @@ namespace Ogre
                 try
                 {
                     if( data )
-                        img->load( data );
+                        img->load2( data, loadRequest.name );
                 }
                 catch( Exception &e )
                 {
