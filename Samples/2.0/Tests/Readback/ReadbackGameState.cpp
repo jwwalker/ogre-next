@@ -25,6 +25,8 @@
 #include "OgreTextureGpu.h"
 #include "OgreTextureGpuManager.h"
 
+#include <sstream>
+
 using namespace Demo;
 
 namespace Demo
@@ -134,10 +136,8 @@ namespace Demo
             Ogre::TextureTypes::Type2D );
         const Ogre::uint32 resolution = 96u;
         readbackTex->setResolution( resolution, resolution );
-        readbackTex->setPixelFormat( Ogre::PFG_RGBA8_UNORM );
+        readbackTex->setPixelFormat( Ogre::PFG_D32_FLOAT );
         readbackTex->scheduleTransitionTo( Ogre::GpuResidency::Resident );
-
-        // const Ogre::PixelFormatGpu pixelFormat = readbackTex->getPixelFormat();
 
         mGraphicsSystem->getSceneManager()->updateSceneGraph();
 
@@ -147,112 +147,48 @@ namespace Demo
             compositorManager->addWorkspace( mGraphicsSystem->getSceneManager(), readbackTex,
                                              mGraphicsSystem->getCamera(), "Readback Workspace", false );
 
-        const size_t iterations = 50u;
-        for( size_t i = 0u; i < iterations; ++i )
+        workspace->_validateFinalTarget();
+        workspace->_beginUpdate( false );
+        workspace->_update();
+        workspace->_endUpdate( false );
+
+        Ogre::Image2 image;
+        image.convertFromTexture( readbackTex, 0u, 0u );
+        Ogre::TextureBox box = image.getData( 0u );
+
+        float minVal = INFINITY;
+        float maxVal = -INFINITY;
+        const float *depths = static_cast<const float *>( box.data );
+        for( Ogre::uint32 i = 0; i < resolution * resolution ; ++i)
         {
-            // Choose random colour
-            Ogre::ColourValue randColour(
-                Ogre::Math::RangeRandom( 0.0f, 1.0f ), Ogre::Math::RangeRandom( 0.0f, 1.0f ),
-                Ogre::Math::RangeRandom( 0.0f, 1.0f ), Ogre::Math::RangeRandom( 0.0f, 1.0f ) );
-
-            // Quantize
-            const Ogre::RGBA asRgba = randColour.getAsRGBA();
-            randColour.setAsRGBA( asRgba );
-            mRgbaReference = asRgba;
-
-            mUnlitDatablock->setColour( randColour );
-
-            uint32_t rgba = randColour.getAsABGR();
-            const uint8_t *rgba8 = reinterpret_cast<const uint8_t *>( &rgba );
-
-            Ogre::LogManager::getSingleton().logMessage(
-                "Testing colour: " + std::to_string( rgba8[0] ) + " " + std::to_string( rgba8[1] ) +
-                    " " + std::to_string( rgba8[2] ) + " " + std::to_string( rgba8[3] ),
-                Ogre::LML_CRITICAL );
-
-            workspace->_validateFinalTarget();
-            workspace->_beginUpdate( false );
-            workspace->_update();
-            workspace->_endUpdate( false );
-
-            Ogre::Image2 image;
-            image.convertFromTexture( readbackTex, 0u, 0u );
-
-            if( ( i & 0x1u ) == 0u )
+            float x = depths[i];
+            if( x < minVal )
             {
-                Ogre::TextureBox box = image.getData( 0u );
-                mTextureBox = &box;
-
-                mGraphicsSystem->getSceneManager()->executeUserScalableTask( this, true );
-                // execute(0u,1u);
-
-                if( mRaceConditionDetected )
-                {
-                    Ogre::LogManager::getSingleton().logMessage(
-                        "Race condition detected!. Expected value: " + std::to_string( rgba8[0] ) + " " +
-                            std::to_string( rgba8[1] ) + " " + std::to_string( rgba8[2] ) + " " +
-                            std::to_string( rgba8[3] ) +
-                            " Got instead: " + std::to_string( mRgbaResult[0] ) + " " +
-                            std::to_string( mRgbaResult[1] ) + " " + std::to_string( mRgbaResult[2] ) +
-                            " " + std::to_string( mRgbaResult[3] ),
-                        Ogre::LML_CRITICAL );
-
-                    mRaceConditionDetected = false;
-
-                    OGRE_EXCEPT( Ogre::Exception::ERR_RT_ASSERTION_FAILED, "Race condition detected!",
-                                 "Test failed!" );
-                }
+                minVal = x;
             }
+            if(x > maxVal)
+            {
+                maxVal = x;
+            }
+        }
+        if(minVal < maxVal)
+        {
+            Ogre::LogManager::getSingleton().stream()
+                << "Depth values range from " << minVal << " to " << maxVal;
+        }
+        else
+        {
+            Ogre::LogManager::getSingleton().stream() << "Depth values are all == " << minVal;
         }
 
         compositorManager->removeWorkspace( workspace );
         textureManager->destroyTexture( readbackTex );
-
-        // We don't to give a seizure to users
-        mUnlitDatablock->setColour( Ogre::ColourValue::Black );
 
         TutorialGameState::update( timeSinceLast );
     }
     //-----------------------------------------------------------------------------------
     void ReadbackGameState::execute( size_t threadId, size_t numThreads )
     {
-        const Ogre::uint32 rgbaRef = mRgbaReference;
-        const Ogre::TextureBox box = *mTextureBox;
-
-        const uint8_t *refValue = reinterpret_cast<const Ogre::uint8 *>( &rgbaRef );
-
-        const size_t heightToProcess = std::max<size_t>( 1u, box.height / numThreads );
-        const size_t heightStart = heightToProcess * threadId;
-
-        // Clamp heightEnd (in case there's more threads than rows)
-        // Ceil heightEnd for the last thread (when box.height / numThreads is not perfectly divisible)
-        size_t heightEnd = heightToProcess * ( threadId + 1u );
-        if( ( threadId + 2u ) * heightToProcess > box.height )
-            heightEnd = box.height;
-
-        for( size_t y = heightStart; y < heightEnd; ++y )
-        {
-            for( size_t x = 0u; x < box.width; ++x )
-            {
-                const Ogre::uint8 *dataPtr = reinterpret_cast<const Ogre::uint8 *>( box.data ) +
-                                             y * box.bytesPerRow + x * box.bytesPerPixel;
-
-                // const Ogre::ColourValue readValue = box.getColourAt( x, y, 0u, pixelFormat );
-                // if( readValue != randColour )
-                if( dataPtr[0] != refValue[3] || dataPtr[1] != refValue[2] ||
-                    dataPtr[2] != refValue[1] || dataPtr[3] != refValue[0] )
-                {
-                    if( !mRaceConditionDetected )
-                    {
-                        mRgbaResult[0] = dataPtr[0];
-                        mRgbaResult[1] = dataPtr[1];
-                        mRgbaResult[2] = dataPtr[2];
-                        mRgbaResult[3] = dataPtr[3];
-                    }
-                    mRaceConditionDetected = true;
-                }
-            }
-        }
     }
     //-----------------------------------------------------------------------------------
     void ReadbackGameState::generateDebugText( float timeSinceLast, Ogre::String &outText )

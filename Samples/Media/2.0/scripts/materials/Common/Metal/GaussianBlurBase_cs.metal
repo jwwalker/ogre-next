@@ -92,7 +92,7 @@ inline @insertpiece( lds_data_type ) sampleTex( int2 i2Position, float2 f2Offset
 inline void ComputeFilterKernel( int iPixelOffset, int iLineOffset, int2 i2Center, int2 i2Inc,
 								 constant Params &p,
 								 @insertpiece( lds_definition ),
-								 texture2d<@insertpiece(uav0_pf_type), access::write> outputImage )
+								 metal::texture2d<@insertpiece(uav0_pf_type), metal::access::write, void> outputImage )
 {
 	@property( !downscale_lq )
 		@insertpiece( data_type ) outColour[ 4 ];

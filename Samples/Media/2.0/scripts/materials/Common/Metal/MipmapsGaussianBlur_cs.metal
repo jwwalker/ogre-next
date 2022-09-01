@@ -32,11 +32,11 @@
 	@property( downscale_lq )
 		@foreach( 2, iPixel )
 			outputImage.write( float4( outColour[ @iPixel ], 1.0 ), uint2( i2Center +  @iPixel * i2Inc ),
-							   p.dstLodIdx );@end
+							   0 );@end
 	@end @property( !downscale_lq )
 		@foreach( 2, iPixel )
 			outputImage.write( float4( (outColour[ @iPixel * 2 ] + outColour[ @iPixel * 2 + 1 ]) * 0.5, 1.0 ),
 							   uint2( i2Center +  @iPixel * i2Inc ),
-							   p.dstLodIdx );@end
+							   0 );@end
 	@end
 @end
