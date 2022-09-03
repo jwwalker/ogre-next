@@ -155,7 +155,8 @@ namespace Ogre
         }
         region.bufferImageHeight = 0;
 
-        region.imageSubresource.aspectMask = VulkanMappings::getImageAspect( textureSrc->getPixelFormat() );
+        region.imageSubresource.aspectMask =
+            VulkanMappings::getImageAspect( textureSrc->getPixelFormat() );
         region.imageSubresource.mipLevel = mipLevel;
         region.imageSubresource.baseArrayLayer = srcTextureBox.sliceStart;
         region.imageSubresource.layerCount = srcTextureBox.numSlices;
