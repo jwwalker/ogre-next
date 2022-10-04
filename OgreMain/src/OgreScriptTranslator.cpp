@@ -1227,7 +1227,7 @@ namespace Ogre{
                             ++itor;
                         }
                     }
-                    paramVec.push_back( std::pair<IdString, String>( prop->name, value ) );
+                    paramVec.emplace_back( prop->name, value );
                     }
                 }
             }
@@ -1361,7 +1361,7 @@ namespace Ogre{
                         AbstractNodeList::const_iterator i0 = getNodeAt(prop->values, 0), i1 = getNodeAt(prop->values, 1);
                         String name, value;
                         if(getString(*i0, &name) && getString(*i1, &value))
-                            mTextureAliases.insert(std::make_pair(name, value));
+                            mTextureAliases.emplace( name, value );
                         else
                             compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
                                 "set_texture_alias must have 2 string argument");
@@ -3123,13 +3123,8 @@ namespace Ogre{
             return;
         }
 
-        Pass *pass = any_cast<Pass*>(node->parent->context);
-        pass->setShadowCasterVertexProgram(evt.mName);
-        if(pass->getShadowCasterVertexProgram()->isSupported())
-        {
-            GpuProgramParametersSharedPtr params = pass->getShadowCasterVertexProgramParameters();
-            GpuProgramTranslator::translateProgramParameters(compiler, params, node);
-        }
+        compiler->addError( ScriptCompiler::CE_UNEXPECTEDTOKEN, node->file, node->line,
+                            "shadow_caster_vertex_program_ref is deprecated and will be ignored" );
     }
     //-------------------------------------------------------------------------
     void PassTranslator::translateShadowCasterFragmentProgramRef(ScriptCompiler *compiler, ObjectAbstractNode *node)
@@ -3149,13 +3144,8 @@ namespace Ogre{
             return;
         }
 
-        Pass *pass = any_cast<Pass*>(node->parent->context);
-        pass->setShadowCasterFragmentProgram(evt.mName);
-        if(pass->getShadowCasterFragmentProgram()->isSupported())
-        {
-            GpuProgramParametersSharedPtr params = pass->getShadowCasterFragmentProgramParameters();
-            GpuProgramTranslator::translateProgramParameters(compiler, params, node);
-        }
+        compiler->addError( ScriptCompiler::CE_INVALIDPARAMETERS, node->file, node->line,
+                            "shadow_caster_fragment_program_ref is deprecated and will be ignored" );
     }
 
     /**************************************************************************
@@ -4503,7 +4493,8 @@ namespace Ogre{
                                 mUnit->setContentType(TextureUnitState::CONTENT_NAMED);
                                 break;
                             case ID_SHADOW:
-                                mUnit->setContentType(TextureUnitState::CONTENT_SHADOW);
+                                compiler->addError( ScriptCompiler::CE_INVALIDPARAMETERS, prop->file,
+                                                    prop->line, atom->value + " is deprecated" );
                                 break;
                             case ID_COMPOSITOR:
                                 mUnit->setContentType(TextureUnitState::CONTENT_COMPOSITOR);
@@ -4749,7 +4740,7 @@ namespace Ogre{
                             value += ((AtomAbstractNode*)(*it).get())->value;
                         }
                     }
-                    customParameters.push_back(std::make_pair(name, value));
+                    customParameters.emplace_back( name, value );
                 }
             }
             else if((*i)->type == ANT_OBJECT)
@@ -4827,7 +4818,7 @@ namespace Ogre{
 
                     ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::GPU_PROGRAM, value);
                     compiler->_fireEvent(&evt, 0);
-                    customParameters.push_back(std::make_pair("delegate", evt.mName));
+                    customParameters.emplace_back( "delegate", evt.mName );
                 }
                 else
                 {
@@ -4844,7 +4835,7 @@ namespace Ogre{
                             value += ((AtomAbstractNode*)(*it).get())->value;
                         }
                     }
-                    customParameters.push_back(std::make_pair(name, value));
+                    customParameters.emplace_back( name, value );
                 }
             }
             else if((*i)->type == ANT_OBJECT)
@@ -4958,7 +4949,7 @@ namespace Ogre{
                             }
                         }
                     }
-                    customParameters.push_back(std::make_pair(name, value));
+                    customParameters.emplace_back( name, value );
                 }
             }
             else if((*i)->type == ANT_OBJECT)
