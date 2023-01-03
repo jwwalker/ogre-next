@@ -894,7 +894,7 @@ namespace Ogre
                 if( datablock->getCubemapProbe() )
                     setProperty( PbsProperty::UseParallaxCorrectCubemaps, 1 );
                 setProperty( PbsProperty::EnvProbeMap,
-                             static_cast<int32>( reflectionTexture->getName().mHash ) );
+                             static_cast<int32>( reflectionTexture->getName().getU32Value() ) );
             }
         }
 
@@ -963,25 +963,25 @@ namespace Ogre
             if( isSigned )
             {
                 setProperty( PbsProperty::NormalSamplingFormat,
-                             static_cast<int32>( PbsProperty::NormalRgSnorm.mHash ) );
+                             static_cast<int32>( PbsProperty::NormalRgSnorm.getU32Value() ) );
                 setProperty( PbsProperty::NormalRgSnorm,
-                             static_cast<int32>( PbsProperty::NormalRgSnorm.mHash ) );
+                             static_cast<int32>( PbsProperty::NormalRgSnorm.getU32Value() ) );
             }
             else
             {
                 if( nmPixelFormat != PFG_BC3_UNORM )
                 {
                     setProperty( PbsProperty::NormalSamplingFormat,
-                                 static_cast<int32>( PbsProperty::NormalRgUnorm.mHash ) );
+                                 static_cast<int32>( PbsProperty::NormalRgUnorm.getU32Value() ) );
                     setProperty( PbsProperty::NormalRgUnorm,
-                                 static_cast<int32>( PbsProperty::NormalRgUnorm.mHash ) );
+                                 static_cast<int32>( PbsProperty::NormalRgUnorm.getU32Value() ) );
                 }
                 else
                 {
                     setProperty( PbsProperty::NormalSamplingFormat,
-                                 static_cast<int32>( PbsProperty::NormalBc3Unorm.mHash ) );
+                                 static_cast<int32>( PbsProperty::NormalBc3Unorm.getU32Value() ) );
                     setProperty( PbsProperty::NormalBc3Unorm,
-                                 static_cast<int32>( PbsProperty::NormalBc3Unorm.mHash ) );
+                                 static_cast<int32>( PbsProperty::NormalBc3Unorm.getU32Value() ) );
                 }
             }
         }
@@ -1627,7 +1627,7 @@ namespace Ogre
                 if( firstColourTarget->getTextureType() == TextureTypes::TypeCube )
                 {
                     setProperty( PbsProperty::TargetEnvprobeMap,
-                                 static_cast<int32>( firstColourTarget->getName().mHash ) );
+                                 static_cast<int32>( firstColourTarget->getName().getU32Value() ) );
                 }
             }
 
