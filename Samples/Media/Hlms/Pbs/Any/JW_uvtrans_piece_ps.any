@@ -4,3 +4,9 @@
 #undef UV_DIFFUSE
 #define UV_DIFFUSE( p ) mul( float4( (p), 1.0, 0.0 ), makeOgreFloat4x3( material.userValue[0], material.userValue[1], float4(0.0, 0.0, 0.0, 0.0) ) ).xy
 @end
+
+
+@piece( custom_passBuffer )
+	float	jwToonQuantization;
+	float	jwToonScale;
+@end
