@@ -29,5 +29,6 @@ float4 main
 	float oldLum = oldLumRt.Sample( samplerPoint, float( 0.0 ).xx ).x;
 
 	//Adapt luminicense based 75% per second.
-	return lerp( newLum, oldLum, pow( 0.25f, timeSinceLast ) );
+	//return lerp( newLum, oldLum, pow( 0.25f, timeSinceLast ) );
+	return newLum;	// JWWalker
 }

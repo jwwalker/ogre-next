@@ -40,5 +40,6 @@ fragment float4 main_metal
 	float oldLum = oldLumRt.read( uint2( 0, 0 ) ).x;
 
 	//Adapt luminicense based 75% per second.
-	return mix( newLum, oldLum, pow( 0.25f, p.timeSinceLast ) );
+	//return mix( newLum, oldLum, pow( 0.25f, p.timeSinceLast ) );
+	return newLum;	// JWWalker
 }
