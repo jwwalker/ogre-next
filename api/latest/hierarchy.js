@@ -860,7 +860,8 @@ var hierarchy =
         [ "Ogre::CompositorPassShadows", "class_ogre_1_1_compositor_pass_shadows.html", null ],
         [ "Ogre::CompositorPassStencil", "class_ogre_1_1_compositor_pass_stencil.html", null ],
         [ "Ogre::CompositorPassTargetBarrier", "class_ogre_1_1_compositor_pass_target_barrier.html", null ],
-        [ "Ogre::CompositorPassUav", "class_ogre_1_1_compositor_pass_uav.html", null ]
+        [ "Ogre::CompositorPassUav", "class_ogre_1_1_compositor_pass_uav.html", null ],
+        [ "Ogre::CompositorPassWarmUp", "class_ogre_1_1_compositor_pass_warm_up.html", null ]
       ] ],
       [ "Ogre::CompositorPassDef", "class_ogre_1_1_compositor_pass_def.html", [
         [ "Ogre::CompositorPassClearDef", "class_ogre_1_1_compositor_pass_clear_def.html", null ],
@@ -873,7 +874,8 @@ var hierarchy =
         [ "Ogre::CompositorPassShadowsDef", "class_ogre_1_1_compositor_pass_shadows_def.html", null ],
         [ "Ogre::CompositorPassStencilDef", "class_ogre_1_1_compositor_pass_stencil_def.html", null ],
         [ "Ogre::CompositorPassTargetBarrierDef", "class_ogre_1_1_compositor_pass_target_barrier_def.html", null ],
-        [ "Ogre::CompositorPassUavDef", "class_ogre_1_1_compositor_pass_uav_def.html", null ]
+        [ "Ogre::CompositorPassUavDef", "class_ogre_1_1_compositor_pass_uav_def.html", null ],
+        [ "Ogre::CompositorPassWarmUpDef", "class_ogre_1_1_compositor_pass_warm_up_def.html", null ]
       ] ],
       [ "Ogre::CompositorPassProvider", "class_ogre_1_1_compositor_pass_provider.html", null ],
       [ "Ogre::CompositorTargetDef", "class_ogre_1_1_compositor_target_def.html", null ],
@@ -1682,6 +1684,7 @@ var hierarchy =
       [ "Ogre::v1::OverlayManager", "class_ogre_1_1v1_1_1_overlay_manager.html", null ]
     ] ],
     [ "Ogre::ScriptToken", "struct_ogre_1_1_script_token.html", null ],
+    [ "Ogre::Semaphore", "class_ogre_1_1_semaphore.html", null ],
     [ "Ogre::ShaderParams::AutoParam", "struct_ogre_1_1_shader_params_1_1_auto_param.html", null ],
     [ "Ogre::ShaderParams::ManualParam", "struct_ogre_1_1_shader_params_1_1_manual_param.html", null ],
     [ "Ogre::ShaderParams::ManualParamEx", "struct_ogre_1_1_shader_params_1_1_manual_param_ex.html", null ],
