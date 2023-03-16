@@ -35,6 +35,9 @@
 #include "OgreHlmsDiskCache.h"
 
 #include "OgreLogManager.h"
+#include "OgreDepthBuffer.h"
+#include "OgreImage2.h"
+#include "OgreTextureBox.h"
 
 #include "OgrePlatformInformation.h"
 
@@ -58,6 +61,23 @@
 #    else
 #        include "System/OSX/OSXUtils.h"
 #    endif
+#endif
+
+#include "DumpOgreWindowColorToFile.hpp"
+#include "DumpOgreWindowDepthToFile.hpp"
+
+#if OGRE_USE_SDL2
+#include <SDL_keyboard.h>
+
+static bool IsSnapKeyPressed()
+{
+	SDL_Keymod mods = SDL_GetModState();
+	return (mods & KMOD_ALT) != 0;
+}
+#else
+
+#define		IsSnapKeyPressed()	false
+
 #endif
 
 namespace Demo
@@ -324,6 +344,9 @@ namespace Demo
         params.insert( std::make_pair( "reverse_depth", "Yes" ) );
 
         initMiscParamsListener( params );
+        
+        // JWW
+        Ogre::DepthBuffer::AvailableDepthFormats = Ogre::DepthBuffer::DFM_D32 | Ogre::DepthBuffer::DFM_D24;
 
         mRenderWindow = Ogre::Root::getSingleton().createRenderWindow(
             windowTitle,                                                      //
@@ -423,7 +446,11 @@ namespace Demo
         BaseSystem::update( timeSinceLast );
 
         if( mRenderWindow->isVisible() )
+        {
+			preRender();
             mQuit |= !mRoot->renderOneFrame();
+			postRender();
+        }
 
         mAccumTimeSinceLastLogicFrame += timeSinceLast;
 
@@ -432,6 +459,36 @@ namespace Demo
         SDL_GetDisplayBounds( 0, &rect );
         SDL_GetDisplayBounds( 0, &rect );*/
     }
+    
+    void GraphicsSystem::preRender()
+    {
+		mSnap = IsSnapKeyPressed();
+		if (mSnap)
+		{
+			getRenderWindow()->setWantsToDownload( true );
+			getRenderWindow()->setManualSwapRelease( true );
+		}
+    }
+    
+	void GraphicsSystem::postRender()
+    {
+		if (mSnap)
+		{
+			const Ogre::String& writableDirPath( getWriteAccessFolder() );
+
+			Ogre::String filePath = writableDirPath;
+			filePath += "depth-dump.pgm";
+			DumpOgreWindowDepthToFile( getRenderWindow(), filePath.c_str() );
+			
+			Ogre::String colorPath = writableDirPath;
+			colorPath += "color-dump.ppm";
+			DumpOgreWindowColorToFile( getRenderWindow(), colorPath.c_str() );
+		
+			getRenderWindow()->performManualRelease();
+			getRenderWindow()->setManualSwapRelease( false );
+		}
+    }
+   
 //-----------------------------------------------------------------------------------
 #if OGRE_USE_SDL2
     void GraphicsSystem::handleWindowEvent( const SDL_Event &evt )

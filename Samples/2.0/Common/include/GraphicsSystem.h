@@ -72,6 +72,7 @@ namespace Demo
         bool mAlwaysAskForConfig;
         bool mUseHlmsDiskCache;
         bool mUseMicrocodeCache;
+        bool mSnap;
 
         Ogre::ColourValue mBackgroundColour;
 
@@ -112,6 +113,9 @@ namespace Demo
 
         void gameEntityAdded( const GameEntityManager::CreatedGameEntity *createdGameEntity );
         void gameEntityRemoved( GameEntity *toRemove );
+        
+        virtual void preRender();
+        virtual void postRender();
 
     public:
         GraphicsSystem( GameState *gameState, Ogre::String resourcePath = Ogre::String( "" ),
