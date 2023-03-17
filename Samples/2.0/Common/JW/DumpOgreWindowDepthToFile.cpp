@@ -113,6 +113,37 @@ static void	DumpFloatDepthBuffer( const char* _Nonnull inPath,
 
 
 /*!
+	@function	RescaleDepthsForVisibility
+	@abstract	Rescale the values so that the depth image will be clearer to human eyes.
+	@discussion	This assumes the usual Ogre practice of reversing depths, so that the far plane
+				is at depth 0.  We reverse again so that the far plane will be 1 (white).
+*/
+static void RescaleDepthsForVisibility( std::vector<float>& ioDepths )
+{
+	// Find min and max
+	float minValue = INFINITY;
+	float maxValue = -INFINITY;
+	for (float x : ioDepths)
+	{
+		if (x < minValue)
+		{
+			minValue = x;
+		}
+		if (x > maxValue)
+		{
+			maxValue = x;
+		}
+	}
+	
+	float scale = (minValue < maxValue)? 1.0f / (maxValue - minValue) : 1.0f;
+	
+	for (float& x : ioDepths)
+	{
+		x = (maxValue - x) * scale;
+	}
+}
+
+/*!
 	@function	DumpOgreWindowDepthToFile
 	
 	@abstract	Download the depth data from an Ogre Window and write it to a .ppg file.
@@ -135,7 +166,7 @@ void DumpOgreWindowDepthToFile( Ogre::Window* _Nonnull inWindow,
 		Ogre::uint32 height = depthTx->getHeight();
 		std::vector<float> depthBuf( width * height );
 		CopyDepthToFloatBuffer( image, depthBuf.data(), width, height );
-		
+		RescaleDepthsForVisibility( depthBuf );
 		DumpFloatDepthBuffer( inPath, depthBuf.data(), width, height );
 	}
 }
