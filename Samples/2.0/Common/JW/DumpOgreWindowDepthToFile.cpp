@@ -24,8 +24,7 @@
 	@param		inWidth		Width of image in pixels.
 	@param		inHeight	Height of image in pixels.
 */
-static void CopyDepthToFloatBuffer( Ogre::Image2& inImage,
-							float* _Nonnull inBuffer,
+static void CopyDepthToFloatBuffer( Ogre::Image2& inImage, float *ogre_nonnull inBuffer,
 							Ogre::uint32 inWidth, Ogre::uint32 inHeight )
 {
 	Ogre::TextureBox box( inImage.getData( 0 ) );
@@ -84,8 +83,7 @@ static void CopyDepthToFloatBuffer( Ogre::Image2& inImage,
 	@param		inWidth		Width of depth map in pixels.
 	@param		inHeight	Height of depth map in pixels.
 */
-static void	DumpFloatDepthBuffer( const char* _Nonnull inPath,
-									const float* _Nonnull inDepths,
+static void DumpFloatDepthBuffer( const char *ogre_nonnull inPath, const float *ogre_nonnull inDepths,
 									Ogre::uint32 inWidth,
 									Ogre::uint32 inHeight )
 {
@@ -153,8 +151,7 @@ static void RescaleDepthsForVisibility( std::vector<float>& ioDepths )
 								setManualSwapRelease.
 	@param		inPath			Full path of the file to be saved.
 */
-void DumpOgreWindowDepthToFile( Ogre::Window* _Nonnull inWindow,
-								const char* _Nonnull inPath )
+void DumpOgreWindowDepthToFile( Ogre::Window *ogre_nonnull inWindow, const char *ogre_nonnull inPath )
 {
 	Ogre::TextureGpu* depthTx = inWindow->getDepthBuffer();
 	if (depthTx != nullptr)

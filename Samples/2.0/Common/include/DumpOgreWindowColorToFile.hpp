@@ -13,6 +13,9 @@ namespace Ogre
 	class Window;
 }
 
+#ifndef ogre_nonnull
+#        define ogre_nonnull
+#endif
 
 /*!
 	@function	DumpOgreWindowColorToFile

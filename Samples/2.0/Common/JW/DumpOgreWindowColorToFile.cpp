@@ -19,8 +19,8 @@
 	@param		inTexture		An Ogre texture. 
 	@param		inName			Full path of the file to be saved.
 */
-static void DumpOgreColorTextureToFile( Ogre::TextureGpu* _Nonnull inTexture,
-								const char* _Nonnull inName )
+static void DumpOgreColorTextureToFile( Ogre::TextureGpu* ogre_nonnull inTexture,
+                                        const char *ogre_nonnull inName )
 {
 	Ogre::Image2 img;
 	img.convertFromTexture( inTexture, inTexture->getNumMipmaps()-1,
@@ -61,8 +61,7 @@ static void DumpOgreColorTextureToFile( Ogre::TextureGpu* _Nonnull inTexture,
 								setManualSwapRelease.
 	@param		inPath			Full path of the file to be saved.
 */
-void DumpOgreWindowColorToFile( Ogre::Window* _Nonnull inWindow,
-								const char* _Nonnull  inPath )
+void DumpOgreWindowColorToFile( Ogre::Window* ogre_nonnull inWindow, const char *ogre_nonnull inPath )
 {
 	if (inWindow->canDownloadData())
 	{
