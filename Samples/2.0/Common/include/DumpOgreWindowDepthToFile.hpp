@@ -24,8 +24,7 @@ namespace Ogre
 								setManualSwapRelease.
 	@param		inPath			Full path of the file to be saved.
 */
-void DumpOgreWindowDepthToFile( Ogre::Window* _Nonnull inWindow,
-								const char* _Nonnull inPath );
+void DumpOgreWindowDepthToFile( Ogre::Window* ogre_nonnull inWindow, const char *ogre_nonnull inPath );
 
 
 #endif /* DumpOgreWindowDepthToFile_hpp */

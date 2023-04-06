@@ -24,7 +24,6 @@ namespace Ogre
 								setManualSwapRelease.
 	@param		inPath			Full path of the file to be saved.
 */
-void DumpOgreWindowColorToFile( Ogre::Window* _Nonnull inWindow,
-								const char* _Nonnull inPath );
+void DumpOgreWindowColorToFile( Ogre::Window *ogre_nonnull inWindow, const char *ogre_nonnull inPath );
 
 #endif /* DumpOgreWindowColorToFile_hpp */
