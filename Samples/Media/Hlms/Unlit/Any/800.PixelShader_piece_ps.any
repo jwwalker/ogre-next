@@ -17,9 +17,9 @@
 			#define DiffuseUV@n inPs.uv@value( uv_diffuse@n ).@insertpiece( uv_diffuse_swizzle@n )
 		@else
 			@property( hlms_forwardplus_flipY || syntax != glsl )
-				#define DiffuseUV@n gl_FragCoord.xy * passBuf.invWindowSize.xy
+				#define DiffuseUV@n float2( 1.0-gl_FragCoord.x * passBuf.invWindowSize.x, gl_FragCoord.y * passBuf.invWindowSize.y )
 			@else
-				#define DiffuseUV@n float2( gl_FragCoord.x * passBuf.invWindowSize.x, 1.0f - gl_FragCoord.y * passBuf.invWindowSize.y )
+				#define DiffuseUV@n float2( 1.0-gl_FragCoord.x * passBuf.invWindowSize.x, 1.0f - gl_FragCoord.y * passBuf.invWindowSize.y )
 			@end
 		@end
 	@end
