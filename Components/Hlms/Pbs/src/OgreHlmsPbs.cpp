@@ -298,6 +298,7 @@ namespace Ogre
         mPlanarReflectionsSamplerblock( 0 ),
         mHasPlanarReflections( false ),
         mLastBoundPlanarReflection( 0u ),
+        mPlanarReflectionSlotIdx( 0u ),
 #endif
         mAreaLightMasks( 0 ),
         mAreaLightMasksSamplerblock( 0 ),
@@ -2946,7 +2947,13 @@ namespace Ogre
 
 #ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
             if( mHasPlanarReflections )
+            {
                 mTexUnitSlotStart += 1;
+
+                mPlanarReflectionSlotIdx = static_cast<uint8>(
+                    mTexUnitSlotStart - 1u -
+                    mListener->getNumExtraPassTextures( mSetProperties, casterPass ) );
+            }
 #endif
         }
 
@@ -3545,7 +3552,7 @@ namespace Ogre
                 const uint8 activeActorIdx = queuedRenderable.renderable->mCustomParameter & 0x7F;
                 TextureGpu *planarReflTex = mPlanarReflections->getTexture( activeActorIdx );
                 *commandBuffer->addCommand<CbTexture>() = CbTexture(
-                    uint16( mTexUnitSlotStart - 1u ), planarReflTex, mPlanarReflectionsSamplerblock );
+                    uint16( mPlanarReflectionSlotIdx ), planarReflTex, mPlanarReflectionsSamplerblock );
                 mLastBoundPlanarReflection = queuedRenderable.renderable->mCustomParameter;
             }
 #endif
