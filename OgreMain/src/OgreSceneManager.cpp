@@ -1287,12 +1287,6 @@ namespace Ogre
 
             mRenderQueue->clear();
 
-            // Invert vertex winding?
-            if( cullCamera->isReflected() )
-                mDestRenderSystem->setInvertVertexWinding( true );
-            else
-                mDestRenderSystem->setInvertVertexWinding( false );
-
             {
                 // TODO: Remove this hacky listener (mostly needed by OverlayManager)
                 // Overlays REQUIRED THIS to be called before RenderQueue::renderPassPrepare.
