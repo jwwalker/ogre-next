@@ -51,7 +51,7 @@ namespace Demo
 			Ogre::SceneManager *sceneManager,
 			Ogre::Hlms *hlms) override
 		{
-			hlms->_setProperty( "accurate_non_uniform_scaled_normals", 0 );
+			hlms->_setProperty( "accurate_non_uniform_scaled_normals", 1 );
 		}
 	};
 
