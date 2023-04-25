@@ -15,6 +15,7 @@ namespace Ogre
 namespace Demo
 {
     class PlanarReflectionsWorkspaceListener;
+    class PlanarReflectionsHlmsListener;
 
     class PlanarReflectionsGameState : public TutorialGameState
     {
@@ -26,6 +27,7 @@ namespace Demo
 
         Ogre::PlanarReflections *mPlanarReflections;
         PlanarReflectionsWorkspaceListener *mWorkspaceListener;
+        PlanarReflectionsHlmsListener* mHlmsListener;
 
         void createReflectiveSurfaces();
 

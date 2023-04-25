@@ -31,6 +31,7 @@
 #include "Compositor/Pass/PassScene/OgreCompositorPassScene.h"
 #include "Compositor/Pass/PassScene/OgreCompositorPassSceneDef.h"
 
+#include "OgreHlmsListener.h"
 #include "OgreHlmsCompute.h"
 #include "OgreHlmsComputeJob.h"
 #include "Utils/MiscUtils.h"
@@ -41,6 +42,19 @@ using namespace Demo;
 
 namespace Demo
 {
+	class PlanarReflectionsHlmsListener : public Ogre::HlmsListener
+	{
+		virtual void 	preparePassHash(
+			const Ogre::CompositorShadowNode *shadowNode,
+			bool casterPass,
+			bool dualParaboloid,
+			Ogre::SceneManager *sceneManager,
+			Ogre::Hlms *hlms) override
+		{
+			hlms->_setProperty( "accurate_non_uniform_scaled_normals", 0 );
+		}
+	};
+
     class PlanarReflectionsWorkspaceListener final : public Ogre::CompositorWorkspaceListener
     {
         Ogre::PlanarReflections *mPlanarReflections;
@@ -109,6 +123,12 @@ namespace Demo
         {
             Ogre::CompositorWorkspace *workspace = mGraphicsSystem->getCompositorWorkspace();
             workspace->addListener( mWorkspaceListener );
+        }
+        
+        mHlmsListener = new PlanarReflectionsHlmsListener;
+        {
+			Ogre::Hlms *hlms = root->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
+			hlms->setListener( mHlmsListener );
         }
 
         // The perfect mirror doesn't need mipmaps.
