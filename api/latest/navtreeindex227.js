@@ -1,6 +1,5 @@
 var NAVTREEINDEX227 =
 {
-"struct_ogre_1_1_lod_config.html#a57f8dbcdf687850f01f904973cab37a9":[7,0,0,530,6],
 "struct_ogre_1_1_lod_config.html#a57f8dbcdf687850f01f904973cab37a9":[6,0,0,557,6],
 "struct_ogre_1_1_lod_config.html#a5e92bc54de6971b64807d83f41532d21":[7,0,0,530,5],
 "struct_ogre_1_1_lod_config.html#a5e92bc54de6971b64807d83f41532d21":[6,0,0,557,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX227 =
 "struct_ogre_1_1_lod_work_queue_request.html":[6,0,0,579],
 "struct_ogre_1_1_lod_work_queue_request.html":[7,0,0,552],
 "struct_ogre_1_1_lod_work_queue_request.html#a1dd4c036f38b55a48ad5178e892d164d":[6,0,0,579,0],
-"struct_ogre_1_1_lod_work_queue_request.html#a1dd4c036f38b55a48ad5178e892d164d":[7,0,0,552,0]
+"struct_ogre_1_1_lod_work_queue_request.html#a1dd4c036f38b55a48ad5178e892d164d":[7,0,0,552,0],
+"struct_ogre_1_1_lod_work_queue_request.html#a4599170ec029f39b688ea9a465d3136a":[7,0,0,552,5]
 };
