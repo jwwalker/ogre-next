@@ -2377,7 +2377,8 @@ namespace Ogre
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::debugAnnotationPush( const String &event )
     {
-#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+        // Temporarily out by JWWalker, 6/16/2023, until next Vulkan SDK update
+#if 0//OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
         if( !CmdBeginDebugUtilsLabelEXT )
             return;  // VK_EXT_debug_utils not available
         VkCommandBuffer cmdBuffer = mActiveDevice->mGraphicsQueue.mCurrentCmdBuffer;
@@ -2390,7 +2391,7 @@ namespace Ogre
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::debugAnnotationPop()
     {
-#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+#if 0//OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
         if( !CmdEndDebugUtilsLabelEXT )
             return;  // VK_EXT_debug_utils not available
         VkCommandBuffer cmdBuffer = mActiveDevice->mGraphicsQueue.mCurrentCmdBuffer;
