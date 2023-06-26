@@ -57,6 +57,9 @@ THE SOFTWARE.
 #include "OgreStringConverter.h"
 #include "OgreTimer.h"
 #include "OgreVulkanStagingTexture.h"
+#include "OgreLogManager.h"
+
+#include <sstream>
 
 #define TODO_whenImplemented_include_stagingBuffers
 #define TODO_if_memory_non_coherent_align_size
@@ -271,6 +274,8 @@ namespace Ogre
                 {
                     vkDestroyBuffer( mDevice->mDevice, itor->vkBuffer, 0 );
                     vkFreeMemory( mDevice->mDevice, itor->vboName, 0 );
+                    LogManager::getSingleton().stream()
+                        << "vkm --- vkFreeMemory " << (void *)itor->vboName;
 
                     itor->vboName = 0;
                     delete itor->dynamicBuffer;
@@ -440,6 +445,7 @@ namespace Ogre
 
                 vkDestroyBuffer( mDevice->mDevice, vbo.vkBuffer, 0 );
                 vkFreeMemory( mDevice->mDevice, vbo.vboName, 0 );
+                LogManager::getSingleton().stream() << "vkm --- vkFreeMemory " << (void *)vbo.vboName;
 
                 vbo.vboName = 0;
                 vbo.vkBuffer = 0;
@@ -1088,7 +1094,10 @@ namespace Ogre
             memAllocInfo.allocationSize = poolSize;
             memAllocInfo.memoryTypeIndex = chosenMemoryTypeIdx;
 
+            LogManager::getSingleton().stream() << "vkm +++ vkAllocateMemory " << poolSize;
             VkResult result = vkAllocateMemory( mDevice->mDevice, &memAllocInfo, NULL, &newVbo.vboName );
+            LogManager::getSingleton().stream()
+                << "vkm === vkAllocateMemory results " << result << ", " << newVbo.vboName;
             checkVkResult( result, "vkAllocateMemory" );
 
             mUsedHeapMemory[memTypes[chosenMemoryTypeIdx].heapIndex] += poolSize;

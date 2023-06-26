@@ -41,6 +41,8 @@ THE SOFTWARE.
 #include "OgreSceneManager.h"
 #include "OgreViewport.h"
 
+#include <sstream>
+
 namespace Ogre
 {
     CompositorWorkspace::CompositorWorkspace( IdType id, const CompositorWorkspaceDef *definition,
@@ -64,6 +66,7 @@ namespace Ogre
         mViewportModifierMask( viewportModifierMask ),
         mViewportModifier( vpOffsetScale )
     {
+        LogManager::getSingleton().logMessage( "CompositorWorkspace created" );
         assert( ( !defaultCam || ( defaultCam->getSceneManager() == sceneManager ) ) &&
                 "Camera was created with a different SceneManager than supplied" );
 
@@ -101,6 +104,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     CompositorWorkspace::~CompositorWorkspace()
     {
+        LogManager::getSingleton().logMessage( "CompositorWorkspace destroyed" );
         destroyAllNodes();
 
         // Destroy our global buffers

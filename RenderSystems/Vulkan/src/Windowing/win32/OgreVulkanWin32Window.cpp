@@ -71,10 +71,12 @@ namespace Ogre
         mWindowedWinStyle( 0 ),
         mFullscreenWinStyle( 0 )
     {
+        LogManager::getSingleton().stream() << "VulkanWin32Window " << this << " created";
     }
     //-------------------------------------------------------------------------
     VulkanWin32Window::~VulkanWin32Window()
     {
+        LogManager::getSingleton().stream() << "VulkanWin32Window " << this << " destroyed";
         destroy();
 
         if( mTexture )
