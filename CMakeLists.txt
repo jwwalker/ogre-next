@@ -180,7 +180,7 @@ if (MSVC)
 	# set variable to state that we are using jom makefiles
 	set(JOM TRUE)
   endif ()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast /Zc:cplusplus")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast /Zc:__cplusplus")
   if (NOT OGRE_PLATFORM_X64)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
   endif()
@@ -300,6 +300,10 @@ set(OGRE_MeshLodGenerator_LIBRARIES ${OGRE_NEXT}MeshLodGenerator)
 set(OGRE_Paging_LIBRARIES ${OGRE_NEXT}Paging)
 set(OGRE_Terrain_LIBRARIES ${OGRE_NEXT}Terrain)
 set(OGRE_Volume_LIBRARIES ${OGRE_NEXT}Volume)
+
+if( OGRE_STATIC AND UNIX AND NOT OGRE_CONFIG_UNIX_NO_X11 )
+	set( OGRE_LIBRARIES ${OGRE_LIBRARIES} xcb xcb-randr )
+endif()
 
 # Specify build paths
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OGRE_BINARY_DIR}/lib")
@@ -733,5 +737,5 @@ include(Packaging)
 
 
 # Show feature summary
-include(FeatureSummary)
+include(OgreFeatureSummary)
 
