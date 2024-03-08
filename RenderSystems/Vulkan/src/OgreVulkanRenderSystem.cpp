@@ -442,6 +442,19 @@ namespace Ogre
     //-------------------------------------------------------------------------
     size_t VulkanRenderSystem::getNumPriorityConfigOptions() const { return 1u; }
     //-------------------------------------------------------------------------
+    bool VulkanRenderSystem::supportsMultithreadedShaderCompliation() const
+    {
+#ifndef OGRE_SHADER_THREADING_BACKWARDS_COMPATIBLE_API
+        return true;
+#else
+#    ifdef OGRE_SHADER_THREADING_USE_TLS
+        return true;
+#    else
+        return false;
+#    endif
+#endif
+    }
+    //-------------------------------------------------------------------------
     String VulkanRenderSystem::validateConfigOptions()
     {
         return mVulkanSupport->validateConfigOptions();
@@ -684,6 +697,8 @@ namespace Ogre
         rsc->setCapability( RSC_ALPHA_TO_COVERAGE );
         rsc->setCapability( RSC_HW_GAMMA );
         rsc->setCapability( RSC_VERTEX_BUFFER_INSTANCE_DATA );
+        // We don't support PSO nor VkShaderModule caches yet, but we do have SPIR-V caches.
+        rsc->setCapability( RSC_CAN_GET_COMPILED_SHADER_BUFFER );
         rsc->setCapability( RSC_EXPLICIT_API );
         rsc->setMaxPointSize( 256 );
 

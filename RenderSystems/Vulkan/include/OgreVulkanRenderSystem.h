@@ -164,6 +164,7 @@ namespace Ogre
         void setConfigOption( const String &name, const String &value ) override;
         const char *getPriorityConfigOption( size_t idx ) const override;
         size_t getNumPriorityConfigOptions() const override;
+        bool supportsMultithreadedShaderCompliation() const override;
 
         HardwareOcclusionQuery *createHardwareOcclusionQuery() override;
 
@@ -272,7 +273,6 @@ namespace Ogre
                                        uint16 variabilityMask ) override;
         void bindGpuProgramPassIterationParameters( GpuProgramType gptype ) override;
 
-    protected:
         /** Low Level Materials use a params buffer to pass all uniforms. We emulate this using a large
             const buffer to which we write to and bind the regions we need.
             This is done in bindGpuProgramParameters().

@@ -813,6 +813,8 @@ namespace Ogre
             BUILD_LIGHT_LIST01,
             BUILD_LIGHT_LIST02,
             WARM_UP_SHADERS,
+            WARM_UP_SHADERS_COMPILE,
+            PARALLEL_HLMS_COMPILE,
             USER_UNIFORM_SCALABLE_TASK,
             STOP_THREADS,
             NUM_REQUESTS
@@ -1907,7 +1909,14 @@ namespace Ogre
         void cullLights( Camera *camera, Light::LightTypes startType, Light::LightTypes endType,
                          LightArray &outLights );
 
-        void _warmUpShaders( Camera *camera, uint32_t visibilityMask, uint8 firstRq, uint8 lastRq );
+        void _warmUpShadersCollect( Camera *camera, uint32_t visibilityMask, uint8 firstRq,
+                                    uint8 lastRq );
+        void _warmUpShadersTrigger();
+
+        void _fireWarmUpShadersCompile();
+
+        void _fireParallelHlmsCompile();
+        void waitForParallelHlmsCompile();
 
         /// Called when the frame has fully ended (ALL passes have been executed to all RTTs)
         void _frameEnded();

@@ -1537,8 +1537,8 @@ namespace Ogre
         mVisibleObjects.swap( mTmpVisibleObjects );
     }
     //-----------------------------------------------------------------------
-    void SceneManager::_warmUpShaders( Camera *camera, uint32_t visibilityMask, const uint8 firstRq,
-                                       const uint8 lastRq )
+    void SceneManager::_warmUpShadersCollect( Camera *camera, uint32_t visibilityMask,
+                                              const uint8 firstRq, const uint8 lastRq )
     {
         const uint32_t oldVisibilityMask = mVisibilityMask;
 
@@ -1609,7 +1609,44 @@ namespace Ogre
         }
 
         mVisibilityMask = oldVisibilityMask;
-        mRenderQueue->warmUpShaders( realFirstRq, realLastRq, casterPass );
+        mRenderQueue->warmUpShadersCollect( realFirstRq, realLastRq, casterPass );
+    }
+    //-----------------------------------------------------------------------
+    void SceneManager::_warmUpShadersTrigger()
+    {
+        mRenderQueue->warmUpShadersTrigger( mDestRenderSystem );
+    }
+    //-----------------------------------------------------------------------
+    void SceneManager::_fireWarmUpShadersCompile()
+    {
+        mRequestType = WARM_UP_SHADERS_COMPILE;
+
+        if( mForceMainThread )
+            updateWorkerThreadImpl( 0 );
+        else
+        {
+            mWorkerThreadsBarrier->sync();  // Fire threads
+            mWorkerThreadsBarrier->sync();  // Wait them to complete
+        }
+    }
+    //-----------------------------------------------------------------------
+    void SceneManager::_fireParallelHlmsCompile()
+    {
+        mRequestType = PARALLEL_HLMS_COMPILE;
+
+        if( mForceMainThread )
+            updateWorkerThreadImpl( 0 );
+        else
+            mWorkerThreadsBarrier->sync();  // Fire threads
+    }
+    //-----------------------------------------------------------------------
+    void SceneManager::waitForParallelHlmsCompile()
+    {
+        if( !mForceMainThread )
+        {
+            OGRE_ASSERT_LOW( mRequestType == PARALLEL_HLMS_COMPILE );
+            mWorkerThreadsBarrier->sync();  // Wait them to complete
+        }
     }
     //-----------------------------------------------------------------------
     void SceneManager::_frameEnded() { mRenderQueue->frameEnded(); }
@@ -2024,6 +2061,9 @@ namespace Ogre
                     ( camera->getLastViewport()->getVisibilityMask() &
                       ~VisibilityFlags::RESERVED_VISIBILITY_FLAGS ) );
 
+        CullFrustumPreparedData preparedData;
+        MovableObject::cullFrustumPrepare( camera, visibilityMask, lodCamera, preparedData );
+
         ObjectMemoryManagerVec::const_iterator it = request.objectMemManager->begin();
         ObjectMemoryManagerVec::const_iterator en = request.objectMemManager->end();
 
@@ -2043,50 +2083,56 @@ namespace Ogre
                 ObjectData objData;
                 const size_t totalObjs = memoryManager->getFirstObjectData( objData, i );
 
-                // Distribute the work evenly across all threads (not perfect), taking into
-                // account we need to distribute in multiples of ARRAY_PACKED_REALS
-                size_t numObjs = ( totalObjs + ( mNumWorkerThreads - 1 ) ) / mNumWorkerThreads;
-                numObjs =
-                    ( ( numObjs + ARRAY_PACKED_REALS - 1 ) / ARRAY_PACKED_REALS ) * ARRAY_PACKED_REALS;
-
-                const size_t toAdvance = std::min( threadIdx * numObjs, totalObjs );
-
-                // Prevent going out of bounds (usually in the last threadIdx, or
-                // when there are less entities than ARRAY_PACKED_REALS
-                numObjs = std::min( numObjs, totalObjs - toAdvance );
-                objData.advancePack( toAdvance / ARRAY_PACKED_REALS );
-
-                MovableObject::cullFrustum( numObjs, objData, camera, visibilityMask, outVisibleObjects,
-                                            lodCamera );
-
-                const uint8 currRqId = static_cast<uint8>( i );
-
-                if( mRenderQueue->getRenderQueueMode( currRqId ) == RenderQueue::FAST &&
-                    request.addToRenderQueue )
+                // Skip if totalObjs == 0u. Profiling shows there is considerable gains.
+                // Too much (255 queues, most of them empty, multiples scene passes...)
+                if( totalObjs > 0u )
                 {
-                    // V2 meshes can be added to the render queue in parallel
-                    bool casterPass = request.casterPass;
-                    MovableObject::MovableObjectArray::const_iterator itor = outVisibleObjects.begin();
-                    MovableObject::MovableObjectArray::const_iterator endt = outVisibleObjects.end();
+                    // Distribute the work evenly across all threads (not perfect), taking into
+                    // account we need to distribute in multiples of ARRAY_PACKED_REALS
+                    size_t numObjs = ( totalObjs + ( mNumWorkerThreads - 1 ) ) / mNumWorkerThreads;
+                    numObjs = ( ( numObjs + ARRAY_PACKED_REALS - 1 ) / ARRAY_PACKED_REALS ) *
+                              ARRAY_PACKED_REALS;
 
-                    while( itor != endt )
+                    const size_t toAdvance = std::min( threadIdx * numObjs, totalObjs );
+
+                    // Prevent going out of bounds (usually in the last threadIdx, or
+                    // when there are less entities than ARRAY_PACKED_REALS
+                    numObjs = std::min( numObjs, totalObjs - toAdvance );
+                    objData.advancePack( toAdvance / ARRAY_PACKED_REALS );
+
+                    MovableObject::cullFrustum( numObjs, objData, camera, outVisibleObjects,
+                                                preparedData );
+
+                    const uint8 currRqId = static_cast<uint8>( i );
+
+                    if( mRenderQueue->getRenderQueueMode( currRqId ) == RenderQueue::FAST &&
+                        request.addToRenderQueue )
                     {
-                        RenderableArray::const_iterator itRend = ( *itor )->mRenderables.begin();
-                        RenderableArray::const_iterator enRend = ( *itor )->mRenderables.end();
+                        // V2 meshes can be added to the render queue in parallel
+                        bool casterPass = request.casterPass;
+                        MovableObject::MovableObjectArray::const_iterator itor =
+                            outVisibleObjects.begin();
+                        MovableObject::MovableObjectArray::const_iterator endt = outVisibleObjects.end();
 
-                        while( itRend != enRend )
+                        while( itor != endt )
                         {
-                            if( ( *itRend )->mRenderableVisible )
-                            {
-                                mRenderQueue->addRenderableV2( threadIdx, currRqId, casterPass, *itRend,
-                                                               *itor );
-                            }
-                            ++itRend;
-                        }
-                        ++itor;
-                    }
+                            RenderableArray::const_iterator itRend = ( *itor )->mRenderables.begin();
+                            RenderableArray::const_iterator enRend = ( *itor )->mRenderables.end();
 
-                    outVisibleObjects.clear();
+                            while( itRend != enRend )
+                            {
+                                if( ( *itRend )->mRenderableVisible )
+                                {
+                                    mRenderQueue->addRenderableV2( threadIdx, currRqId, casterPass,
+                                                                   *itRend, *itor );
+                                }
+                                ++itRend;
+                            }
+                            ++itor;
+                        }
+
+                        outVisibleObjects.clear();
+                    }
                 }
             }
 
@@ -4485,6 +4531,9 @@ namespace Ogre
     //---------------------------------------------------------------------
     unsigned long updateWorkerThread( ThreadHandle *threadHandle )
     {
+        Threads::SetThreadName(
+            threadHandle, "SceneMgr#" + StringConverter::toString( threadHandle->getThreadIdx() ) );
+
         SceneManager *sceneManager = reinterpret_cast<SceneManager *>( threadHandle->getUserParam() );
         return sceneManager->_updateWorkerThread( threadHandle );
     }
@@ -4567,6 +4616,12 @@ namespace Ogre
             break;
         case WARM_UP_SHADERS:
             warmUpShaders( mCurrentCullFrustumRequest, threadIdx );
+            break;
+        case WARM_UP_SHADERS_COMPILE:
+            mRenderQueue->_warmUpShadersThread( threadIdx );
+            break;
+        case PARALLEL_HLMS_COMPILE:
+            mRenderQueue->_compileShadersThread( threadIdx );
             break;
         case USER_UNIFORM_SCALABLE_TASK:
             mUserTask->execute( threadIdx, mNumWorkerThreads );
