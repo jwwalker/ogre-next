@@ -93,6 +93,7 @@ var class_ogre_1_1_vulkan_render_system =
     [ "executeRenderPassDescriptorDelayedActions", "class_ogre_1_1_vulkan_render_system.html#a4116bee16a25b8af6185fda7408545c5", null ],
     [ "executeRenderPassDescriptorDelayedActions", "class_ogre_1_1_vulkan_render_system.html#ae99410504b2df17b864d00e6a60a0bcc", null ],
     [ "executeResourceTransition", "class_ogre_1_1_vulkan_render_system.html#a9a3f93b5d52d42509d57f6809d0f7966", null ],
+    [ "flushBoundGpuProgramParameters", "class_ogre_1_1_vulkan_render_system.html#a46d0dbe8bb52718c3093f7e71c3f1ec2", null ],
     [ "flushCommands", "class_ogre_1_1_vulkan_render_system.html#adeeab393ced10ecde6fd91b6f0e58f76", null ],
     [ "flushDescriptorState", "class_ogre_1_1_vulkan_render_system.html#ab98067e9e31da8681c6f14f6502e0f8f", null ],
     [ "flushPendingNonCoherentFlushes", "class_ogre_1_1_vulkan_render_system.html#abe27debb608870cf8f00efed74254beb", null ],
@@ -134,6 +135,7 @@ var class_ogre_1_1_vulkan_render_system =
     [ "setStencilBufferParams", "class_ogre_1_1_vulkan_render_system.html#a09ef8ec23ef96f72756915dbbf79e381", null ],
     [ "sharedVkInitialization", "class_ogre_1_1_vulkan_render_system.html#acf4ba4fa8ff3b5387cd18f617538516f", null ],
     [ "shutdown", "class_ogre_1_1_vulkan_render_system.html#a2c7caf82ac2d6d9ddb335f0ee0effb10", null ],
+    [ "supportsMultithreadedShaderCompliation", "class_ogre_1_1_vulkan_render_system.html#a926fe6f398b994c0cf1468bf8625b8a2", null ],
     [ "unregisterThread", "class_ogre_1_1_vulkan_render_system.html#a6cd050d0488813ce414f5a2bb3e99f38", null ],
     [ "validateConfigOptions", "class_ogre_1_1_vulkan_render_system.html#a20202748993a987073131d6b8ea43c6a", null ],
     [ "validateSampleDescription", "class_ogre_1_1_vulkan_render_system.html#a781d712f91d633b7f0827ec78d5ffb7d", null ]
