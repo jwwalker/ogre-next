@@ -163,8 +163,7 @@ namespace Ogre
 
         /// Retrieves an existing pass by its given index.
         CompositorTargetDef *getTargetPass( size_t passIndex ) { return &mTargetPasses[passIndex]; }
-        const CompositorTargetDef *getTargetPass( size_t passIndex ) const { return &mTargetPasses[passIndex]; }
-
+ 
         const CompositorTargetDef *getTargetPass( size_t passIndex ) const
         {
             return &mTargetPasses[passIndex];

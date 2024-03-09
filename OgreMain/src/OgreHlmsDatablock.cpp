@@ -193,7 +193,7 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    HlmsDatablock:: ()
+    HlmsDatablock::~HlmsDatablock()
     {
         assert( mLinkedRenderables.empty() &&
                 "This Datablock is still being used by some Renderables."
