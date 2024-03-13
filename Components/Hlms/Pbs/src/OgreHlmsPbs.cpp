@@ -800,17 +800,17 @@ namespace Ogre
         else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::CookTorrance )
             setProperty( kNoTid, PbsProperty::BrdfCookTorrance, 1 );
         else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::BlinnPhong )
-            setProperty( PbsProperty::BrdfBlinnPhong, 1 );
+            setProperty( kNoTid, PbsProperty::BrdfBlinnPhong, 1 );
         else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::JWToon )
         {
 			LogManager::getSingleton().stream() << "BRDF set to Toon";
-            setProperty( PbsProperty::BrdfJWToon, 1 );
+            setProperty( kNoTid, PbsProperty::BrdfJWToon, 1 );
 		}
         else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::JWToonWeak )
         {
 			LogManager::getSingleton().stream() << "BRDF set to Weak Toon";
-            setProperty( PbsProperty::BrdfJWToon, 1 );
-            setProperty( PbsProperty::WeakJWToon, 1 );
+            setProperty( kNoTid, PbsProperty::BrdfJWToon, 1 );
+            setProperty( kNoTid, PbsProperty::WeakJWToon, 1 );
 		}
 
         if( brdf & PbsBrdf::FLAG_HAS_DIFFUSE_FRESNEL )
