@@ -100,6 +100,7 @@ var class_ogre_1_1_vulkan_render_system =
     [ "flushUAVs", "class_ogre_1_1_vulkan_render_system.html#a4c6ffaba5cdab8d05338061fa8026988", null ],
     [ "getColourVertexElementType", "class_ogre_1_1_vulkan_render_system.html#af8acd37d1a08c29816e03702001169ea", null ],
     [ "getConfigOptions", "class_ogre_1_1_vulkan_render_system.html#a21a0eed7c43225ea5f3a09df2507beca", null ],
+    [ "getCustomAttribute", "class_ogre_1_1_vulkan_render_system.html#a8ca7d23ba458937f74ea5f20b758217a", null ],
     [ "getDisplayMonitorCount", "class_ogre_1_1_vulkan_render_system.html#a8b589095fc9dc86cccf5495b55d2d231", null ],
     [ "getErrorDescription", "class_ogre_1_1_vulkan_render_system.html#aed95c87112738c43ac939a17c7fd302d", null ],
     [ "getFriendlyName", "class_ogre_1_1_vulkan_render_system.html#afd7791671c174fb80da8e48295f710c4", null ],
@@ -110,6 +111,7 @@ var class_ogre_1_1_vulkan_render_system =
     [ "getNumPriorityConfigOptions", "class_ogre_1_1_vulkan_render_system.html#abbf53b80518d9e264b0582fb574db0be", null ],
     [ "getPixelFormatToShaderType", "class_ogre_1_1_vulkan_render_system.html#a230e39336c12c2b123a91ebcf9010dd3", null ],
     [ "getPriorityConfigOption", "class_ogre_1_1_vulkan_render_system.html#a40ce71469756b9785566c9a2d00ad01c", null ],
+    [ "getSwappyFramePacing", "class_ogre_1_1_vulkan_render_system.html#a25435fbf2c14e47d71329ebc60162991", null ],
     [ "getVerticalTexelOffset", "class_ogre_1_1_vulkan_render_system.html#a5d861dd78eb95245287e154893ab52d6", null ],
     [ "getVkInstance", "class_ogre_1_1_vulkan_render_system.html#a6b731c196f043148ec8f41d564d24352", null ],
     [ "getVulkanDevice", "class_ogre_1_1_vulkan_render_system.html#ac037b5fe30dd9ef06735c784b1c88863", null ],
@@ -133,10 +135,11 @@ var class_ogre_1_1_vulkan_render_system =
     [ "setClipPlanesImpl", "class_ogre_1_1_vulkan_render_system.html#a7513b77817608023432b466fe844a404", null ],
     [ "setConfigOption", "class_ogre_1_1_vulkan_render_system.html#a662adfeeae0156349100e2041fb0e69f", null ],
     [ "setStencilBufferParams", "class_ogre_1_1_vulkan_render_system.html#a09ef8ec23ef96f72756915dbbf79e381", null ],
+    [ "setSwappyFramePacing", "class_ogre_1_1_vulkan_render_system.html#a300e5b9e5f7bfab2d131a04baaed6f4f", null ],
     [ "sharedVkInitialization", "class_ogre_1_1_vulkan_render_system.html#acf4ba4fa8ff3b5387cd18f617538516f", null ],
     [ "shutdown", "class_ogre_1_1_vulkan_render_system.html#a2c7caf82ac2d6d9ddb335f0ee0effb10", null ],
     [ "supportsMultithreadedShaderCompliation", "class_ogre_1_1_vulkan_render_system.html#a926fe6f398b994c0cf1468bf8625b8a2", null ],
     [ "unregisterThread", "class_ogre_1_1_vulkan_render_system.html#a6cd050d0488813ce414f5a2bb3e99f38", null ],
     [ "validateConfigOptions", "class_ogre_1_1_vulkan_render_system.html#a20202748993a987073131d6b8ea43c6a", null ],
-    [ "validateSampleDescription", "class_ogre_1_1_vulkan_render_system.html#a781d712f91d633b7f0827ec78d5ffb7d", null ]
+    [ "validateSampleDescription", "class_ogre_1_1_vulkan_render_system.html#ac42ab52d4a6af396a79d0648a7953afa", null ]
 ];

@@ -930,6 +930,7 @@ var hierarchy =
       [ "Ogre::v1::VertexDeclaration", "class_ogre_1_1v1_1_1_vertex_declaration.html", null ],
       [ "Ogre::v1::VertexElement", "class_ogre_1_1v1_1_1_vertex_element.html", null ]
     ] ],
+    [ "Ogre::AndroidJniProvider", "class_ogre_1_1_android_jni_provider.html", null ],
     [ "Ogre::Angle", "class_ogre_1_1_angle.html", null ],
     [ "Ogre::AnimableObject", "class_ogre_1_1_animable_object.html", [
       [ "Ogre::MovableObject", "class_ogre_1_1_movable_object.html", null ]
@@ -1075,6 +1076,7 @@ var hierarchy =
     [ "Ogre::D3D11VideoMode", "class_ogre_1_1_d3_d11_video_mode.html", null ],
     [ "Ogre::D3D11VideoModeList", "class_ogre_1_1_d3_d11_video_mode_list.html", null ],
     [ "Ogre::Degree", "class_ogre_1_1_degree.html", null ],
+    [ "Ogre::DeleteOnDestructor< T >", "struct_ogre_1_1_delete_on_destructor.html", null ],
     [ "Ogre::DepthBuffer", "struct_ogre_1_1_depth_buffer.html", [
       [ "Ogre::GLES2DepthBuffer", "class_ogre_1_1_g_l_e_s2_depth_buffer.html", null ]
     ] ],
