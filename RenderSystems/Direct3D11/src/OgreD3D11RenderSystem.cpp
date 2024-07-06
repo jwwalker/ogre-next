@@ -909,6 +909,7 @@ namespace Ogre
         SAFE_DELETE( mDriverList );
         mActiveD3DDriver = D3D11Driver();
         mDevice.ReleaseAll();
+        SAFE_DELETE( mVendorExtension );
         LogManager::getSingleton().logMessage( "D3D11: Shutting down cleanly." );
         SAFE_DELETE( mHardwareBufferManager );
         SAFE_DELETE( mGpuProgramManager );
@@ -3657,8 +3658,13 @@ namespace Ogre
     }
     //---------------------------------------------------------------------
     SampleDescription D3D11RenderSystem::validateSampleDescription( const SampleDescription &sampleDesc,
-                                                                    PixelFormatGpu format )
+                                                                    PixelFormatGpu format,
+                                                                    uint32 textureFlags,
+                                                                    uint32 depthTextureFlags )
     {
+        OGRE_UNUSED_VAR( textureFlags );
+        OGRE_UNUSED_VAR( depthTextureFlags );
+
         SampleDescription res;
         DXGI_FORMAT dxgiFormat = D3D11Mappings::get( format );
         const uint8 samples = sampleDesc.getMaxSamples();

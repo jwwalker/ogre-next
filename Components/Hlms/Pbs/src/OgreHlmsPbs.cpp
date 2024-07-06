@@ -1059,7 +1059,8 @@ namespace Ogre
             setProperty( kNoTid, PbsProperty::MaterialsPerBuffer, static_cast<int>( mSlotsPerPool ) );
     }
     //-----------------------------------------------------------------------------------
-    void HlmsPbs::calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces )
+    void HlmsPbs::calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces,
+                                             const PiecesMap * )
     {
         HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock *>( renderable->getDatablock() );
         const bool hasAlphaTest = datablock->getAlphaTest() != CMPF_ALWAYS_PASS;
@@ -2817,7 +2818,7 @@ namespace Ogre
             if( mHasPlanarReflections )
             {
                 mPlanarReflections->fillConstBufferData( renderTarget, cameras.renderingCamera,
-                                                         projectionMatrix, passBufferPtr );
+                                                         passBufferPtr );
                 passBufferPtr += mPlanarReflections->getConstBufferSize() >> 2u;
             }
 #endif
@@ -3209,6 +3210,8 @@ namespace Ogre
 
 #ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
             mLastBoundPlanarReflection = 0u;
+            if( mHasPlanarReflections )
+                ++texUnit;  // We do not bind this texture now, but its slot is reserved.
 #endif
             mListener->hlmsTypeChanged( casterPass, commandBuffer, datablock, texUnit );
         }

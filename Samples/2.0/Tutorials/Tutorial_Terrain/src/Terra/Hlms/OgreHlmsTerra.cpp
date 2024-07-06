@@ -407,7 +407,8 @@ namespace Ogre
 #endif
     }
     //-----------------------------------------------------------------------------------
-    void HlmsTerra::calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces )
+    void HlmsTerra::calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces,
+                                               const PiecesMap * )
     {
         // Override, since shadow casting is very basic
         mT[kNoTid].setProperties.clear();
@@ -650,6 +651,8 @@ namespace Ogre
 
 #ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
             mLastBoundPlanarReflection = 0u;
+            if( mHasPlanarReflections )
+                ++texUnit;  // We do not bind this texture now, but its slot is reserved.
 #endif
             mListener->hlmsTypeChanged( casterPass, commandBuffer, datablock, 0u );
         }
