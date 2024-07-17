@@ -78,41 +78,46 @@ namespace Demo
         }
 
         float armsLength = 2.5f;
+        size_t idx = 0;
+        const int rowSize = 3;
 
-        for( int i = 0; i < 4; ++i )
+        for( int i = 1; i < rowSize; ++i )
         {
-            for( int j = 0; j < 4; ++j )
             {
                 Ogre::Item *item = sceneManager->createItem(
                     "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
                     Ogre::SCENE_DYNAMIC );
 
-                const size_t idx = static_cast<size_t>( i * 4 + j );
-
                 mSceneNode[idx] = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
                                       ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
 
-                mSceneNode[idx]->setPosition( ( float( i ) - 1.5f ) * armsLength, 2.0f,
-                                              ( float( j ) - 1.5f ) * armsLength );
+                mSceneNode[idx]->setPosition( ( float( i ) - 1.5f ) * armsLength,
+					1.0f, - 2.0f * float( i ) );
                 mSceneNode[idx]->setScale( 0.65f, 0.65f, 0.65f );
 
                 mSceneNode[idx]->roll( Ogre::Radian( (Ogre::Real)idx ) );
 
                 mSceneNode[idx]->attachObject( item );
+                ++idx;
             }
         }
+        mNodeCount = idx;
 
         Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode();
+        Ogre::Light *light;
+        Ogre::SceneNode *lightNode;
 
-        Ogre::Light *light = sceneManager->createLight();
-        Ogre::SceneNode *lightNode = rootNode->createChildSceneNode();
+        light = sceneManager->createLight();
+        lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( light );
         light->setPowerScale( 1.0f );
         light->setType( Ogre::Light::LT_DIRECTIONAL );
         light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
+        light->setCastShadows( false );
 
         mLightNodes[0] = lightNode;
 
+#if 0
         light = sceneManager->createLight();
         lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( light );
@@ -125,16 +130,16 @@ namespace Demo
         light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
 
         mLightNodes[1] = lightNode;
+#endif
 
         light = sceneManager->createLight();
         lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( light );
-        light->setDiffuseColour( 0.2f, 0.4f, 0.8f );  // Cold
+        light->setDiffuseColour( 1.0f, 1.0f, 1.0f );
         light->setSpecularColour( 0.2f, 0.4f, 0.8f );
         light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_SPOTLIGHT );
-        lightNode->setPosition( 10.0f, 10.0f, -10.0f );
-        light->setDirection( Ogre::Vector3( -1, -1, 1 ).normalisedCopy() );
+        light->setType( Ogre::Light::LT_POINT );
+        lightNode->setPosition( -10.0f, 5.0f, 4.0f );
         light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
 
         mLightNodes[2] = lightNode;
@@ -385,8 +390,8 @@ namespace Demo
     {
         if( mAnimateObjects )
         {
-            for( int i = 0; i < 16; ++i )
-                mSceneNode[i]->yaw( Ogre::Radian( timeSinceLast * float( i ) * 0.125f ) );
+            for( size_t i = 0; i < mNodeCount; ++i )
+                mSceneNode[i]->yaw( Ogre::Radian( timeSinceLast * float( i+1 ) * 0.125f ) );
         }
 
         TutorialGameState::update( timeSinceLast );

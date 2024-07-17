@@ -8,12 +8,13 @@
 
 #include "TutorialGameState.h"
 
-#define USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS 1
+#undef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
 
 namespace Demo
 {
     class PointLightShadowGameState : public TutorialGameState
     {
+		size_t			mNodeCount;
         Ogre::SceneNode *mSceneNode[16];
 
 #ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
