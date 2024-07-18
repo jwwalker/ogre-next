@@ -59,6 +59,8 @@ static Ogre::SceneNode* MakeCube( float x, float y, float z, float roll,
 	node->setPosition( x, 2.0f * y - minCorner.y, z );
 	bounds = item->getWorldAabbUpdated();
 	
+	Ogre::HlmsDatablock* block = item->getSubItem(0)->getDatablock();
+	
 	return node;
 }
 
@@ -133,60 +135,16 @@ namespace Demo
 
         mLightNodes[0] = lightNode;
 
-#if 0
         light = sceneManager->createLight();
         lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( light );
-        light->setDiffuseColour( 0.8f, 0.4f, 0.2f );  // Warm
-        light->setSpecularColour( 0.8f, 0.4f, 0.2f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_SPOTLIGHT );
-        lightNode->setPosition( -10.0f, 10.0f, 10.0f );
-        light->setDirection( Ogre::Vector3( 1, -1, -1 ).normalisedCopy() );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
+        light->setDiffuseColour( 0.6f, 0.6f, 0.6f );
+        light->setPowerScale( 10.0f );
+        light->setType( Ogre::Light::LT_POINT );
+        lightNode->setPosition( -0.24f, 0.12f, -2.88f );
+        light->setAttenuation( 1000.0f, 0.0f, 0.0f, 1.0f );
 
         mLightNodes[1] = lightNode;
-#endif
-
-        light = sceneManager->createLight();
-        lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( light );
-        light->setDiffuseColour( 1.0f, 1.0f, 1.0f );
-        light->setSpecularColour( 0.2f, 0.4f, 0.8f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_POINT );
-        lightNode->setPosition( -0.24f, 0.01f, -2.88f );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
-
-        mLightNodes[2] = lightNode;
-
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-        light = sceneManager->createLight();
-        lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( light );
-        light->setDiffuseColour( 0.8f, 0.0f, 0.0f );  // Red
-        light->setSpecularColour( 0.8f, 0.0f, 0.0f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_POINT );
-        lightNode->setPosition( -10.0f, -10.0f, 10.0f );
-        // light->setDirection( Ogre::Vector3( 1, -1, -1 ).normalisedCopy() );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
-
-        mLightNodes[3] = lightNode;
-
-        light = sceneManager->createLight();
-        lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( light );
-        light->setDiffuseColour( 0.0f, 0.8f, 0.0f );  // Green
-        light->setSpecularColour( 0.0f, 0.8f, 0.0f );
-        light->setPowerScale( Ogre::Math::PI );
-        light->setType( Ogre::Light::LT_POINT );
-        lightNode->setPosition( -10.0f, 10.0f, -10.0f );
-        // light->setDirection( Ogre::Vector3( -1, -1, 1 ).normalisedCopy() );
-        light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
-
-        mLightNodes[4] = lightNode;
-#endif
 
         mCameraController = new CameraController( mGraphicsSystem, false );
 
