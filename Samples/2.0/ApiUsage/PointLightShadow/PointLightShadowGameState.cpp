@@ -41,16 +41,23 @@ static Ogre::SceneNode* MakeCube( float x, float y, float z, float roll,
 	Ogre::Item *item = sceneManager->createItem(
 		"Sphere1000.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 		Ogre::SCENE_DYNAMIC );
-
+	
 	Ogre::SceneNode* node = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
 						  ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
 
 	node->setPosition( x, y, z );
-	node->setScale( 0.3f, 0.3f, 0.3f );
+	node->setScale( 0.32f, 0.32f, 0.32f );
+	
+	
 
 	node->roll( Ogre::Radian( (Ogre::Real) roll ) );
 
 	node->attachObject( item );
+	
+	Ogre::Aabb bounds( item->getWorldAabbUpdated() );
+	Ogre::Vector3 minCorner( bounds.getMinimum() );
+	node->setPosition( x, 2.0f * y - minCorner.y, z );
+	bounds = item->getWorldAabbUpdated();
 	
 	return node;
 }
@@ -201,8 +208,6 @@ namespace Demo
         macroblock.mDepthCheck = false;
         Ogre::HlmsBlendblock blendblock;
 
-        bool isUsingEsm = false;
-
         const Ogre::String shadowNodeName = "PointLightShadowShadowNode";
 
         Ogre::CompositorShadowNode *shadowNode = workspace->findShadowNode( shadowNodeName );
@@ -304,12 +309,6 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void PointLightShadowGameState::update( float timeSinceLast )
     {
-        if( mAnimateObjects )
-        {
-            for( size_t i = 0; i < mNodeCount; ++i )
-                mSceneNode[i]->yaw( Ogre::Radian( timeSinceLast * float( i+1 ) * 0.25f ) );
-        }
-
         TutorialGameState::update( timeSinceLast );
     }
     //-----------------------------------------------------------------------------------
@@ -329,48 +328,93 @@ namespace Demo
         outText += mDebugOverlaySpotlights->getVisible() ? "[On]" : "[Off]";
         outText += "\nPress F5 to switch filter. [" + c_shadowMapFilters[pbs->getShadowFilter()] + "]";
     }
+    
+    void PointLightShadowGameState::moveNode( Ogre::Real x, Ogre::Real y, Ogre::Real z )
+    {
+		Ogre::Vector3 position( mSceneNode[0]->getPosition() );
+		position.x += x;
+		position.y += y;
+		position.z += z;
+		mSceneNode[0]->setPosition( position );
+    }
+    
     //-----------------------------------------------------------------------------------
     void PointLightShadowGameState::keyReleased( const SDL_KeyboardEvent &arg )
     {
-        if( ( arg.keysym.mod & ~( KMOD_NUM | KMOD_CAPS ) ) != 0 )
-        {
-            TutorialGameState::keyReleased( arg );
-            return;
-        }
+		if( ( arg.keysym.mod & ~( KMOD_NUM | KMOD_CAPS ) ) != 0 )
+		{
+			TutorialGameState::keyReleased( arg );
+			return;
+		}
 
-        if( arg.keysym.sym == SDLK_F2 )
-        {
-            mAnimateObjects = !mAnimateObjects;
-        }
-        else if( arg.keysym.sym == SDLK_F3 )
-        {
-            if( mDebugOverlayPSSM->getVisible() )
-                mDebugOverlayPSSM->hide();
-            else
-                mDebugOverlayPSSM->show();
-        }
-        else if( arg.keysym.sym == SDLK_F4 )
-        {
-            if( mDebugOverlaySpotlights->getVisible() )
-                mDebugOverlaySpotlights->hide();
-            else
-                mDebugOverlaySpotlights->show();
-        }
-        else if( arg.keysym.sym == SDLK_F5 )
-        {
-            Ogre::Hlms *hlms = mGraphicsSystem->getRoot()->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
+		if( arg.keysym.sym == SDLK_F2 )
+		{
+			mAnimateObjects = !mAnimateObjects;
+		}
+		else if( arg.keysym.sym == SDLK_F3 )
+		{
+			if( mDebugOverlayPSSM->getVisible() )
+				mDebugOverlayPSSM->hide();
+			else
+				mDebugOverlayPSSM->show();
+		}
+		else if( arg.keysym.sym == SDLK_F4 )
+		{
+			if( mDebugOverlaySpotlights->getVisible() )
+				mDebugOverlaySpotlights->hide();
+			else
+				mDebugOverlaySpotlights->show();
+		}
+		else if( arg.keysym.sym == SDLK_F5 )
+		{
+			Ogre::Hlms *hlms = mGraphicsSystem->getRoot()->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
 
-            assert( dynamic_cast<Ogre::HlmsPbs *>( hlms ) );
-            Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs *>( hlms );
+			assert( dynamic_cast<Ogre::HlmsPbs *>( hlms ) );
+			Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs *>( hlms );
 
-            Ogre::HlmsPbs::ShadowFilter nextFilter = static_cast<Ogre::HlmsPbs::ShadowFilter>(
-                ( pbs->getShadowFilter() + 1u ) % Ogre::HlmsPbs::ExponentialShadowMaps );
+			Ogre::HlmsPbs::ShadowFilter nextFilter = static_cast<Ogre::HlmsPbs::ShadowFilter>(
+				( pbs->getShadowFilter() + 1u ) % Ogre::HlmsPbs::ExponentialShadowMaps );
 
-            pbs->setShadowSettings( nextFilter );
-       }
-        else
-        {
-            TutorialGameState::keyReleased( arg );
-        }
+			pbs->setShadowSettings( nextFilter );
+		}
+		else
+		{
+			bool handled = true;
+			const Ogre::Real delta = 0.03f;
+			
+			switch (arg.keysym.sym)
+			{
+				case SDLK_x:
+					moveNode( delta, 0.0f, 0.0f );
+					break;
+				
+				case SDLK_c:
+					moveNode( -delta, 0.0f, 0.0f );
+					break;
+					
+				case SDLK_y:
+					moveNode( 0.0f, delta, 0.0f );
+					break;
+				
+				case SDLK_u:
+					moveNode( 0.0f, -delta, 0.0f );
+					break;
+				
+				case SDLK_n:
+					moveNode( 0.0f, 0.0f, delta );
+					break;
+				
+				case SDLK_m:
+					moveNode( 0.0f, 0.0f, -delta );
+					break;
+				
+				default:
+					handled = false;
+					break;
+			}
+		
+			if (!handled)
+				TutorialGameState::keyReleased( arg );
+		}
     }
 }  // namespace Demo

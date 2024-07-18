@@ -42,6 +42,8 @@ namespace Demo
         void update( float timeSinceLast ) override;
 
         void keyReleased( const SDL_KeyboardEvent &arg ) override;
+        
+        void moveNode( Ogre::Real x, Ogre::Real y, Ogre::Real z );
     };
 }  // namespace Demo
 
