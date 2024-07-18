@@ -35,6 +35,26 @@
 
 using namespace Demo;
 
+static Ogre::SceneNode* MakeCube( float x, float y, float z, float roll,
+									Ogre::SceneManager* sceneManager )
+{
+	Ogre::Item *item = sceneManager->createItem(
+		"Sphere1000.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
+		Ogre::SCENE_DYNAMIC );
+
+	Ogre::SceneNode* node = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
+						  ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
+
+	node->setPosition( x, y, z );
+	node->setScale( 0.3f, 0.3f, 0.3f );
+
+	node->roll( Ogre::Radian( (Ogre::Real) roll ) );
+
+	node->attachObject( item );
+	
+	return node;
+}
+
 namespace Demo
 {
     const Ogre::String c_shadowMapFilters[Ogre::HlmsPbs::NumShadowFilter] = {  //
@@ -58,6 +78,10 @@ namespace Demo
     void PointLightShadowGameState::createScene01()
     {
         Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        
+        Ogre::Camera* camera = mGraphicsSystem->getCamera();
+        camera->setPosition( 0.0f, 0.5f, 0.0f );
+        camera->lookAt( 0.0f, 0.0f, -10.0f );
 
         Ogre::v1::MeshPtr planeMeshV1 = Ogre::v1::MeshManager::getSingleton().createPlane(
             "Plane v1", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -69,38 +93,23 @@ namespace Demo
             "Plane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, planeMeshV1.get(), true,
             true, true );
 
+#if 1
         {
             Ogre::Item *item = sceneManager->createItem( planeMesh, Ogre::SCENE_DYNAMIC );
             Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
                                              ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
-            sceneNode->setPosition( 0, -1, 0 );
+            sceneNode->setPosition( 0, -2, 0 );
             sceneNode->attachObject( item );
         }
+#endif
 
-        float armsLength = 2.5f;
-        size_t idx = 0;
-        const int rowSize = 3;
+		size_t idx = 0;
+		mSceneNode[idx] = MakeCube( 0.37f, 0.04f, -3.42f, 0.0f, sceneManager );
+		++idx;
 
-        for( int i = 1; i < rowSize; ++i )
-        {
-            {
-                Ogre::Item *item = sceneManager->createItem(
-                    "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
-                    Ogre::SCENE_DYNAMIC );
+		mSceneNode[idx] = MakeCube( 1.05f, 0.18f, -3.94f, 2.0f, sceneManager );
+		++idx;
 
-                mSceneNode[idx] = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
-                                      ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
-
-                mSceneNode[idx]->setPosition( ( float( i ) - 1.5f ) * armsLength,
-					1.0f, - 2.0f * float( i ) );
-                mSceneNode[idx]->setScale( 0.65f, 0.65f, 0.65f );
-
-                mSceneNode[idx]->roll( Ogre::Radian( (Ogre::Real)idx ) );
-
-                mSceneNode[idx]->attachObject( item );
-                ++idx;
-            }
-        }
         mNodeCount = idx;
 
         Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode();
@@ -139,7 +148,7 @@ namespace Demo
         light->setSpecularColour( 0.2f, 0.4f, 0.8f );
         light->setPowerScale( Ogre::Math::PI );
         light->setType( Ogre::Light::LT_POINT );
-        lightNode->setPosition( -10.0f, 5.0f, 4.0f );
+        lightNode->setPosition( -0.24f, 0.01f, -2.88f );
         light->setAttenuationBasedOnRadius( 10.0f, 0.01f );
 
         mLightNodes[2] = lightNode;
@@ -176,94 +185,8 @@ namespace Demo
 
         createShadowMapDebugOverlays();
 
-#if !OGRE_NO_JSON
-        // For ESM, setup the filter settings (radius and gaussian deviation).
-        // It controls how blurry the shadows will look.
-        Ogre::HlmsManager *hlmsManager = Ogre::Root::getSingleton().getHlmsManager();
-        Ogre::HlmsCompute *hlmsCompute = hlmsManager->getComputeHlms();
-
-        Ogre::uint8 kernelRadius = 8;
-        float gaussianDeviationFactor = 0.5f;
-        Ogre::uint16 K = 80;
-        Ogre::HlmsComputeJob *job = 0;
-
-        // Setup compute shader filter (faster for large kernels; but
-        // beware of mobile hardware where compute shaders are slow)
-        // For reference large kernels means kernelRadius > 2 (approx)
-        job = hlmsCompute->findComputeJob( "ESM/GaussianLogFilterH" );
-        MiscUtils::setGaussianLogFilterParams( job, kernelRadius, gaussianDeviationFactor, K );
-        job = hlmsCompute->findComputeJob( "ESM/GaussianLogFilterV" );
-        MiscUtils::setGaussianLogFilterParams( job, kernelRadius, gaussianDeviationFactor, K );
-
-        // Setup pixel shader filter (faster for small kernels, also to use as a fallback
-        // on GPUs that don't support compute shaders, or where compute shaders are slow).
-        MiscUtils::setGaussianLogFilterParams( "ESM/GaussianLogFilterH", kernelRadius,
-                                               gaussianDeviationFactor, K );
-        MiscUtils::setGaussianLogFilterParams( "ESM/GaussianLogFilterV", kernelRadius,
-                                               gaussianDeviationFactor, K );
-#endif
 
         TutorialGameState::createScene01();
-    }
-    //-----------------------------------------------------------------------------------
-    const char *PointLightShadowGameState::chooseEsmShadowNode()
-    {
-        Ogre::Root *root = mGraphicsSystem->getRoot();
-        Ogre::RenderSystem *renderSystem = root->getRenderSystem();
-
-        const Ogre::RenderSystemCapabilities *capabilities = renderSystem->getCapabilities();
-        bool hasCompute = capabilities->hasCapability( Ogre::RSC_COMPUTE_PROGRAM );
-
-        if( !hasCompute )
-        {
-            // There's no choice.
-            return "PointLightShadowEsmShadowNodePixelShader";
-        }
-        else
-        {
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-            // On iOS, the A7 GPUs have slow compute shaders.
-            Ogre::DriverVersion driverVersion = capabilities->getDriverVersion();
-            if( driverVersion.major == 1 )
-                ;
-            return "PointLightShadowEsmShadowNodePixelShader";
-#endif
-            return "PointLightShadowEsmShadowNodeCompute";
-        }
-    }
-    //-----------------------------------------------------------------------------------
-    void PointLightShadowGameState::setupShadowNode( bool forEsm )
-    {
-        Ogre::Root *root = mGraphicsSystem->getRoot();
-        Ogre::CompositorManager2 *compositorManager = root->getCompositorManager2();
-
-        const Ogre::String nodeDefName =
-            "AutoGen " + Ogre::IdString( "PointLightShadowWorkspace/Node" ).getReleaseText();
-        Ogre::CompositorNodeDef *nodeDef = compositorManager->getNodeDefinitionNonConst( nodeDefName );
-
-        Ogre::CompositorTargetDef *targetDef = nodeDef->getTargetPass( 0 );
-        const Ogre::CompositorPassDefVec &passes = targetDef->getCompositorPasses();
-
-        assert( dynamic_cast<Ogre::CompositorPassSceneDef *>( passes[0] ) );
-        Ogre::CompositorPassSceneDef *passSceneDef =
-            static_cast<Ogre::CompositorPassSceneDef *>( passes[0] );
-
-        if( forEsm && passSceneDef->mShadowNode == "PointLightShadowShadowNode" )
-        {
-            destroyShadowMapDebugOverlays();
-            mGraphicsSystem->stopCompositor();
-            passSceneDef->mShadowNode = chooseEsmShadowNode();
-            mGraphicsSystem->restartCompositor();
-            createShadowMapDebugOverlays();
-        }
-        else if( !forEsm && passSceneDef->mShadowNode != "PointLightShadowShadowNode" )
-        {
-            destroyShadowMapDebugOverlays();
-            mGraphicsSystem->stopCompositor();
-            passSceneDef->mShadowNode = "PointLightShadowShadowNode";
-            mGraphicsSystem->restartCompositor();
-            createShadowMapDebugOverlays();
-        }
     }
     //-----------------------------------------------------------------------------------
     void PointLightShadowGameState::createShadowMapDebugOverlays()
@@ -279,20 +202,13 @@ namespace Demo
         Ogre::HlmsBlendblock blendblock;
 
         bool isUsingEsm = false;
-        {
-            Ogre::Hlms *hlms = root->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
-            assert( dynamic_cast<Ogre::HlmsPbs *>( hlms ) );
-            Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs *>( hlms );
-            isUsingEsm = pbs->getShadowFilter() == Ogre::HlmsPbs::ExponentialShadowMaps;
-        }
 
-        const Ogre::String shadowNodeName =
-            isUsingEsm ? chooseEsmShadowNode() : "PointLightShadowShadowNode";
+        const Ogre::String shadowNodeName = "PointLightShadowShadowNode";
 
         Ogre::CompositorShadowNode *shadowNode = workspace->findShadowNode( shadowNodeName );
         const Ogre::CompositorShadowNodeDef *shadowNodeDef = shadowNode->getDefinition();
 
-        for( size_t i = 0u; i < 5u; ++i )
+        for( size_t i = 0u; i < 4u; ++i )
         {
             const Ogre::String datablockName( "depthShadow" + Ogre::StringConverter::toString( i ) );
             Ogre::HlmsUnlitDatablock *depthShadow =
@@ -338,7 +254,7 @@ namespace Demo
             mDebugOverlayPSSM->add2D( panel );
         }
 
-        for( int i = 3; i < 5; ++i )
+        for( int i = 3; i < 4; ++i )
         {
             // Create a panel
             Ogre::v1::OverlayContainer *panel =
@@ -391,7 +307,7 @@ namespace Demo
         if( mAnimateObjects )
         {
             for( size_t i = 0; i < mNodeCount; ++i )
-                mSceneNode[i]->yaw( Ogre::Radian( timeSinceLast * float( i+1 ) * 0.125f ) );
+                mSceneNode[i]->yaw( Ogre::Radian( timeSinceLast * float( i+1 ) * 0.25f ) );
         }
 
         TutorialGameState::update( timeSinceLast );
@@ -448,23 +364,10 @@ namespace Demo
             Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs *>( hlms );
 
             Ogre::HlmsPbs::ShadowFilter nextFilter = static_cast<Ogre::HlmsPbs::ShadowFilter>(
-                ( pbs->getShadowFilter() + 1u ) % Ogre::HlmsPbs::NumShadowFilter );
-
-#if OGRE_NO_JSON
-            if( nextFilter == Ogre::HlmsPbs::ExponentialShadowMaps )
-            {
-                nextFilter = static_cast<Ogre::HlmsPbs::ShadowFilter>( ( nextFilter + 1u ) %
-                                                                       Ogre::HlmsPbs::NumShadowFilter );
-            }
-#endif
+                ( pbs->getShadowFilter() + 1u ) % Ogre::HlmsPbs::ExponentialShadowMaps );
 
             pbs->setShadowSettings( nextFilter );
-
-            if( nextFilter == Ogre::HlmsPbs::ExponentialShadowMaps )
-                setupShadowNode( true );
-            else
-                setupShadowNode( false );
-        }
+       }
         else
         {
             TutorialGameState::keyReleased( arg );

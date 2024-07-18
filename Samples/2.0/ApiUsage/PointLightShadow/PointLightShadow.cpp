@@ -61,131 +61,23 @@ namespace Demo
             shadowParams.push_back( shadowParam );
 
             // Second light, directional, spot or point
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            shadowParam.atlasId = 1;
-#endif
             shadowParam.technique = Ogre::SHADOWMAP_FOCUSED;
             shadowParam.resolution[0].x = 2048u;
             shadowParam.resolution[0].y = 2048u;
             shadowParam.atlasStart[0].x = 0u;
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            shadowParam.atlasStart[0].y = 0u;
-#else
             shadowParam.atlasStart[0].y = 2048u + 1024u;
-#endif
 
             shadowParam.supportedLightTypes = 0u;
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-#endif
             shadowParam.addLightType( Ogre::Light::LT_POINT );
             shadowParam.addLightType( Ogre::Light::LT_SPOTLIGHT );
             shadowParams.push_back( shadowParam );
 
-            // Third light, directional, spot or point
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            shadowParam.atlasStart[0].y = 2048u;
-#else
-            shadowParam.atlasStart[0].y = 2048u + 1024u + 2048u;
-#endif
-            shadowParams.push_back( shadowParam );
-
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            // Fourth light
-            shadowParam.atlasStart[0].x = 2048u;
-            shadowParam.atlasStart[0].y = 0u;
-            shadowParams.push_back( shadowParam );
-
-            // Fifth light
-            shadowParam.atlasStart[0].x = 2048u;
-            shadowParam.atlasStart[0].y = 2048u;
-            shadowParams.push_back( shadowParam );
-#endif
-
             Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
-                compositorManager, renderSystem->getCapabilities(), "PointLightShadowShadowNode",
-                shadowParams, false );
+                compositorManager, renderSystem->getCapabilities(),
+                "PointLightShadowShadowNode",
+                shadowParams, false, 4096u );
         }
 
-        void createEsmShadowNodes()
-        {
-            Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
-            Ogre::RenderSystem *renderSystem = mRoot->getRenderSystem();
-
-            Ogre::ShadowNodeHelper::ShadowParamVec shadowParams;
-
-            Ogre::ShadowNodeHelper::ShadowParam shadowParam;
-            silent_memset( &shadowParam, 0, sizeof( shadowParam ) );
-
-            // First light, directional
-            shadowParam.technique = Ogre::SHADOWMAP_PSSM;
-            shadowParam.numPssmSplits = 3u;
-            shadowParam.resolution[0].x = 1024u;
-            shadowParam.resolution[0].y = 1024u;
-            shadowParam.resolution[1].x = 2048u;
-            shadowParam.resolution[1].y = 2048u;
-            shadowParam.resolution[2].x = 1024u;
-            shadowParam.resolution[2].y = 1024u;
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 0u;
-            shadowParam.atlasStart[1].x = 0u;
-            shadowParam.atlasStart[1].y = 1024u;
-            shadowParam.atlasStart[2].x = 1024u;
-            shadowParam.atlasStart[2].y = 0u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParams.push_back( shadowParam );
-
-            // Second light, directional, spot or point
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            shadowParam.atlasId = 1;
-#endif
-            shadowParam.technique = Ogre::SHADOWMAP_FOCUSED;
-            shadowParam.resolution[0].x = 1024u;
-            shadowParam.resolution[0].y = 1024u;
-            shadowParam.atlasStart[0].x = 0u;
-            shadowParam.atlasStart[0].y = 2048u + 1024u;
-
-            shadowParam.supportedLightTypes = 0u;
-            shadowParam.addLightType( Ogre::Light::LT_DIRECTIONAL );
-            shadowParam.addLightType( Ogre::Light::LT_POINT );
-            shadowParam.addLightType( Ogre::Light::LT_SPOTLIGHT );
-            shadowParams.push_back( shadowParam );
-
-            // Third light, directional, spot or point
-            shadowParam.atlasStart[0].x = 1024u;
-            shadowParams.push_back( shadowParam );
-
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-            // Fourth light
-            shadowParam.atlasStart[0].x = 1024u;
-            shadowParam.atlasStart[0].y = 0u;
-            shadowParams.push_back( shadowParam );
-
-            // Fifth light
-            shadowParam.atlasStart[0].x = 1024u;
-            shadowParam.atlasStart[0].y = 1024u;
-            shadowParams.push_back( shadowParam );
-#endif
-
-            const Ogre::RenderSystemCapabilities *capabilities = renderSystem->getCapabilities();
-            Ogre::RenderSystemCapabilities capsCopy = *capabilities;
-
-            // Force the utility to create ESM shadow node with compute filters.
-            // Otherwise it'd create using what's supported by the current GPU.
-            capsCopy.setCapability( Ogre::RSC_COMPUTE_PROGRAM );
-            Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
-                compositorManager, &capsCopy, "PointLightShadowEsmShadowNodeCompute", shadowParams,
-                true );
-
-            // Force the utility to create ESM shadow node with graphics filters.
-            // Otherwise it'd create using what's supported by the current GPU.
-            capsCopy.unsetCapability( Ogre::RSC_COMPUTE_PROGRAM );
-            Ogre::ShadowNodeHelper::createShadowNodeWithSettings(
-                compositorManager, &capsCopy, "PointLightShadowEsmShadowNodePixelShader", shadowParams,
-                true );
-        }
 
         Ogre::CompositorWorkspace *setupCompositor() override
         {
@@ -211,26 +103,12 @@ namespace Demo
                 passSceneDef->mShadowNode = "PointLightShadowShadowNode";
 
                 createPcfShadowNode();
-                createEsmShadowNodes();
             }
 
             mWorkspace = compositorManager->addWorkspace( mSceneManager, mRenderWindow->getTexture(),
                                                           mCamera, "PointLightShadowWorkspace", true );
             return mWorkspace;
         }
-
-#ifdef USE_STATIC_BRANCHING_FOR_SHADOWMAP_LIGHTS
-        void registerHlms() override
-        {
-            GraphicsSystem::registerHlms();
-            Ogre::Root *root = getRoot();
-            Ogre::Hlms *hlms = root->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
-            assert( dynamic_cast<Ogre::HlmsPbs *>( hlms ) );
-            Ogre::HlmsPbs *pbs = static_cast<Ogre::HlmsPbs *>( hlms );
-            if( pbs )
-                pbs->setStaticBranchingLights( true );
-        }
-#endif
 
     public:
         PointLightShadowGraphicsSystem( GameState *gameState ) : GraphicsSystem( gameState ) {}
