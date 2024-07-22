@@ -35,31 +35,33 @@
 
 using namespace Demo;
 
-static Ogre::SceneNode* MakeCube( float x, float y, float z, float roll,
+static Ogre::SceneNode* MakeBall( float x, float y, float z,
 									Ogre::SceneManager* sceneManager )
 {
 	Ogre::Item *item = sceneManager->createItem(
-		"Sphere1000.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
+		"FFSphere.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 		Ogre::SCENE_DYNAMIC );
 	
 	Ogre::SceneNode* node = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
 						  ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
 
-	node->setPosition( x, y, z );
-	node->setScale( 0.32f, 0.32f, 0.32f );
-	
-	
-
-	node->roll( Ogre::Radian( (Ogre::Real) roll ) );
+	Ogre::Vector3 desiredCenter( x, y, z );
+	node->setPosition( desiredCenter );
+	node->setScale( 1.0f, 1.0f, 1.0f );
 
 	node->attachObject( item );
 	
 	Ogre::Aabb bounds( item->getWorldAabbUpdated() );
-	Ogre::Vector3 minCorner( bounds.getMinimum() );
-	node->setPosition( x, 2.0f * y - minCorner.y, z );
-	bounds = item->getWorldAabbUpdated();
+	Ogre::Vector3 currentCenter( bounds.mCenter );
+	Ogre::Vector3 delta = desiredCenter - currentCenter;
+	Ogre::Vector3 adjustedPosition = desiredCenter + delta;
+	node->setPosition( adjustedPosition );
 	
-	Ogre::HlmsDatablock* block = item->getSubItem(0)->getDatablock();
+	// Check whether the center is now where we want
+	bounds = item->getWorldAabbUpdated();
+	float rad = bounds.getRadius();
+	
+	//Ogre::HlmsDatablock* block = item->getSubItem(0)->getDatablock();
 	
 	return node;
 }
@@ -113,10 +115,10 @@ namespace Demo
 #endif
 
 		size_t idx = 0;
-		mSceneNode[idx] = MakeCube( 0.37f, 0.04f, -3.42f, 0.0f, sceneManager );
+		mSceneNode[idx] = MakeBall( 0.369f, 0.195f, -3.423f, sceneManager );
 		++idx;
 
-		mSceneNode[idx] = MakeCube( 1.05f, 0.18f, -3.94f, 2.0f, sceneManager );
+		mSceneNode[idx] = MakeBall( 1.052f, 0.337f, -3.940f, sceneManager );
 		++idx;
 
         mNodeCount = idx;
@@ -139,10 +141,13 @@ namespace Demo
         lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( light );
         light->setDiffuseColour( 0.6f, 0.6f, 0.6f );
+        light->setSpecularColour( 0.0f, 0.0f, 0.0f );
         light->setPowerScale( 10.0f );
         light->setType( Ogre::Light::LT_POINT );
         lightNode->setPosition( -0.24f, 0.12f, -2.88f );
         light->setAttenuation( 1000.0f, 0.0f, 0.0f, 1.0f );
+        light->setShadowNearClipDistance( 0.1f );
+        light->setShadowFarClipDistance( 1000.0f );
 
         mLightNodes[1] = lightNode;
 
