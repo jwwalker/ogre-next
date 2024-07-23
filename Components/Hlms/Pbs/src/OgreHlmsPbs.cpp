@@ -183,6 +183,7 @@ namespace Ogre
     const IdString PbsProperty::LtcTextureAvailable = IdString( "ltc_texture_available" );
     const IdString PbsProperty::AmbientFixed = IdString( "ambient_fixed" );
     const IdString PbsProperty::AmbientHemisphere = IdString( "ambient_hemisphere" );
+    const IdString PbsProperty::AmbientHemisphereInverted = IdString( "ambient_hemisphere_inverted" );
     const IdString PbsProperty::AmbientSh = IdString( "ambient_sh" );
     const IdString PbsProperty::AmbientShMonochrome = IdString( "ambient_sh_monochrome" );
     const IdString PbsProperty::TargetEnvprobeMap = IdString( "target_envprobe_map" );
@@ -335,12 +336,16 @@ namespace Ogre
         mDefaultBrdfWithDiffuseFresnel( false ),
         mShadowFilter( PCF_3x3 ),
         mEsmK( 600u ),
-        mAmbientLightMode( AmbientAuto )
+        mAmbientLightMode( AmbientAutoNormal )
     {
         memset( mDecalsTextures, 0, sizeof( mDecalsTextures ) );
 
         // Override defaults
         mLightGatheringMode = LightGatherForwardPlus;
+
+        // It is always 0.
+        // (0 is world matrix, we don't need it for particles. 1 is animation matrix)
+        mParticleSystemSlot = 0u;
     }
     //-----------------------------------------------------------------------------------
     HlmsPbs::~HlmsPbs() { destroyAllBuffers(); }
@@ -961,7 +966,8 @@ namespace Ogre
         setProperty(  kNoTid,HlmsBaseProp::DiffuseMap, (bool)datablock->getTexture( PBSM_DETAIL1 ) );*/
         bool normalMapCanBeSupported = ( getProperty( kNoTid, HlmsBaseProp::Normal ) &&
                                          getProperty( kNoTid, HlmsBaseProp::Tangent ) ) ||
-                                       getProperty( kNoTid, HlmsBaseProp::QTangent );
+                                       getProperty( kNoTid, HlmsBaseProp::QTangent ) ||
+                                       getProperty( kNoTid, HlmsBaseProp::ParticleSystem );
 
         if( !normalMapCanBeSupported && !datablockNormalMaps.empty() )
         {
@@ -1029,7 +1035,8 @@ namespace Ogre
         if( datablock->mUseAlphaFromTextures &&
             ( datablock->getAlphaTest() != CMPF_ALWAYS_PASS ||
               datablock->mBlendblock[0]->isAutoTransparent() ||
-              datablock->mBlendblock[0]->mAlphaToCoverageEnabled ||
+              datablock->mBlendblock[0]->mAlphaToCoverage != HlmsBlendblock::A2cDisabled ||  //
+              datablock->mAlphaHashing ||
               datablock->mTransparencyMode == HlmsPbsDatablock::Refractive ) &&
             ( getProperty( kNoTid, PbsProperty::DiffuseMap ) ||  //
               getProperty( kNoTid, PbsProperty::DetailMapsDiffuse ) ) )
@@ -1063,7 +1070,8 @@ namespace Ogre
                                              const PiecesMap * )
     {
         HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock *>( renderable->getDatablock() );
-        const bool hasAlphaTest = datablock->getAlphaTest() != CMPF_ALWAYS_PASS;
+        const bool hasAlphaTestOrHash =
+            datablock->getAlphaTest() != CMPF_ALWAYS_PASS || datablock->getAlphaHashing();
 
         HlmsPropertyVec::iterator itor = mT[kNoTid].setProperties.begin();
         HlmsPropertyVec::iterator endt = mT[kNoTid].setProperties.end();
@@ -1083,9 +1091,7 @@ namespace Ogre
                      itor->keyName != HlmsBaseProp::PoseNormals &&
                      itor->keyName != HlmsBaseProp::BonesPerVertex &&
                      itor->keyName != HlmsBaseProp::DualParaboloidMapping &&
-                     itor->keyName != HlmsBaseProp::AlphaTest &&
-                     itor->keyName != HlmsBaseProp::AlphaBlend &&
-                     ( !hasAlphaTest || !requiredPropertyByAlphaTest( itor->keyName ) ) )
+                     ( !hasAlphaTestOrHash || !requiredPropertyByAlphaTest( itor->keyName ) ) )
             {
                 itor = mT[kNoTid].setProperties.erase( itor );
                 endt = mT[kNoTid].setProperties.end();
@@ -1096,7 +1102,9 @@ namespace Ogre
             }
         }
 
-        if( hasAlphaTest && getProperty( kNoTid, PbsProperty::UseTextureAlpha ) )
+        setupSharedBasicProperties( renderable );
+
+        if( hasAlphaTestOrHash && getProperty( kNoTid, PbsProperty::UseTextureAlpha ) )
         {
             if( datablock->mTexturesDescSet )
                 setDetailMapProperties( kNoTid, datablock, inOutPieces, true );
@@ -1133,6 +1141,8 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void HlmsPbs::notifyPropertiesMergedPreGenerationStep( const size_t tid )
     {
+        Hlms::notifyPropertiesMergedPreGenerationStep( tid );
+
         const int32 numVctProbes = getProperty( tid, PbsProperty::VctNumProbes );
         const bool hasVct = numVctProbes > 0;
         if( getProperty( tid, HlmsBaseProp::DecalsNormals ) || hasVct )
@@ -1340,6 +1350,9 @@ namespace Ogre
         if( parallaxCorrectCubemaps )
             cubemapTexUnit = texUnit++;
 
+        if( getProperty( tid, HlmsBaseProp::BlueNoise ) )
+            setTextureReg( tid, PixelShader, "blueNoiseTex", texUnit++ );
+
         const int32 hasPlanarReflections = getProperty( tid, PbsProperty::HasPlanarReflections );
         if( hasPlanarReflections )
         {
@@ -1388,6 +1401,22 @@ namespace Ogre
 
         // This is a regular property!
         setProperty( tid, "samplerStateStart", samplerStateStart );
+
+        if( getProperty( HlmsBaseProp::ParticleSystem ) )
+        {
+            setProperty( tid, "particleSystemConstSlot", mParticleSystemConstSlot );
+            if( mVaoManager->readOnlyIsTexBuffer() )
+                setTextureReg( tid, VertexShader, "particleSystemGpuData", mParticleSystemSlot );
+            else
+                setProperty( tid, "particleSystemGpuData", mParticleSystemSlot );
+
+            if( !casterPass )
+            {
+                setProperty( kNoTid, HlmsBaseProp::Normal, 1 );
+                setProperty( kNoTid, HlmsBaseProp::Tangent, 1 );
+            }
+            setProperty( kNoTid, HlmsBaseProp::UvCount, 1 );
+        }
     }
     //-----------------------------------------------------------------------------------
     bool HlmsPbs::requiredPropertyByAlphaTest( IdString keyName )
@@ -1602,6 +1631,9 @@ namespace Ogre
 
         mAtmosphere = sceneManager->getAtmosphere();
 
+        if( mHlmsManager->getBlueNoiseTexture() )
+            setProperty( kNoTid, HlmsBaseProp::BlueNoise, 1 );
+
         if( !casterPass )
         {
             if( mIndustryCompatible )
@@ -1613,7 +1645,7 @@ namespace Ogre
             if( mLtcMatrixTexture )
                 setProperty( kNoTid, PbsProperty::LtcTextureAvailable, 1 );
 
-            if( mAmbientLightMode == AmbientAuto )
+            if( mAmbientLightMode == AmbientAutoNormal || mAmbientLightMode == AmbientAutoInverted )
             {
                 if( upperHemisphere == lowerHemisphere )
                 {
@@ -1624,14 +1656,21 @@ namespace Ogre
                 }
                 else
                 {
-                    ambientMode = AmbientHemisphere;
+                    if( mAmbientLightMode == AmbientAutoInverted )
+                        ambientMode = AmbientHemisphereNormal;
+                    else
+                        ambientMode = AmbientHemisphereInverted;
                 }
             }
 
             if( ambientMode == AmbientFixed )
                 setProperty( kNoTid, PbsProperty::AmbientFixed, 1 );
-            if( ambientMode == AmbientHemisphere )
+            if( ambientMode == AmbientHemisphereNormal || ambientMode == AmbientHemisphereInverted )
+            {
                 setProperty( kNoTid, PbsProperty::AmbientHemisphere, 1 );
+                if( ambientMode == AmbientHemisphereInverted )
+                    setProperty( kNoTid, PbsProperty::AmbientHemisphereInverted, 1 );
+            }
             if( ambientMode == AmbientSh || ambientMode == AmbientShMonochrome )
             {
                 setProperty( kNoTid, PbsProperty::AmbientSh, 1 );
@@ -1727,6 +1766,8 @@ namespace Ogre
 #endif
         }
 
+        const bool bNeedsViewMatrix = msHasParticleFX2Plugin;
+
         {
             uint32 numPassConstBuffers = 3u;
             if( !casterPass )
@@ -1734,6 +1775,13 @@ namespace Ogre
                 if( mUseLightBuffers )
                     numPassConstBuffers += 3u;
                 numPassConstBuffers += mAtmosphere->preparePassHash( this, numPassConstBuffers );
+            }
+
+            if( msHasParticleFX2Plugin )
+            {
+                setProperty( kNoTid, HlmsBaseProp::ViewMatrix, 1 );
+                mParticleSystemConstSlot = static_cast<uint8>( numPassConstBuffers );
+                ++numPassConstBuffers;
             }
 
             mNumPassConstBuffers = numPassConstBuffers;
@@ -1875,14 +1923,15 @@ namespace Ogre
                 mapSize += 4u * 4u;
 
             // vec3 ambientUpperHemi + float envMapScale
-            if( ambientMode == AmbientFixed || ambientMode == AmbientHemisphere || envMapScale != 1.0f ||
-                vctNeedsAmbientHemi )
+            if( ( ambientMode >= AmbientFixed && ambientMode <= AmbientHemisphereInverted ) ||
+                envMapScale != 1.0f || vctNeedsAmbientHemi )
             {
                 mapSize += 4 * 4;
             }
 
             // vec3 ambientLowerHemi + padding + vec3 ambientHemisphereDir + padding
-            if( ambientMode == AmbientHemisphere || vctNeedsAmbientHemi )
+            if( ambientMode == AmbientHemisphereNormal || ambientMode == AmbientHemisphereInverted ||
+                vctNeedsAmbientHemi )
             {
                 mapSize += 8 * 4;
             }
@@ -1942,6 +1991,9 @@ namespace Ogre
         }
         else
         {
+            // float4x4 view
+            if( bNeedsViewMatrix )
+                mapSize += 16u * 4u;
             isShadowCastingPointLight = getProperty( kNoTid, HlmsBaseProp::ShadowCasterPoint ) != 0;
             // vec4 cameraPosWS
             if( isShadowCastingPointLight )
@@ -2273,8 +2325,8 @@ namespace Ogre
             }
 
             // vec3 ambientUpperHemi + padding
-            if( ambientMode == AmbientFixed || ambientMode == AmbientHemisphere || envMapScale != 1.0f ||
-                vctNeedsAmbientHemi )
+            if( ( ambientMode >= AmbientFixed && ambientMode <= AmbientHemisphereInverted ) ||
+                envMapScale != 1.0f || vctNeedsAmbientHemi )
             {
                 *passBufferPtr++ = static_cast<float>( upperHemisphere.r );
                 *passBufferPtr++ = static_cast<float>( upperHemisphere.g );
@@ -2283,7 +2335,8 @@ namespace Ogre
             }
 
             // vec3 ambientLowerHemi + padding + vec3 ambientHemisphereDir + padding
-            if( ambientMode == AmbientHemisphere || vctNeedsAmbientHemi )
+            if( ambientMode == AmbientHemisphereNormal || ambientMode == AmbientHemisphereInverted ||
+                vctNeedsAmbientHemi )
             {
                 *passBufferPtr++ = static_cast<float>( lowerHemisphere.r );
                 *passBufferPtr++ = static_cast<float>( lowerHemisphere.g );
@@ -2842,6 +2895,12 @@ namespace Ogre
         }
         else
         {
+            if( bNeedsViewMatrix )
+            {
+                for( size_t i = 0u; i < 16u; ++i )
+                    *passBufferPtr++ = (float)viewMatrix[0][i];
+            }
+
             // vec4 viewZRow
             if( mShadowFilter == ExponentialShadowMaps )
             {
@@ -2969,6 +3028,16 @@ namespace Ogre
                     mTexUnitSlotStart - 1u -
                     mListener->getNumExtraPassTextures( mT[kNoTid].setProperties, casterPass ) );
             }
+#endif
+        }
+
+        if( mHlmsManager->getBlueNoiseTexture() )
+        {
+            // Blue Noise is bound with shadow casters too
+            ++mTexUnitSlotStart;
+#ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
+            // Planar reflections did not account for our slot. Correct it.
+            ++mPlanarReflectionSlotIdx;
 #endif
         }
 
@@ -3191,6 +3260,13 @@ namespace Ogre
                 }
             }
 
+            if( mHlmsManager->getBlueNoiseTexture() )
+            {
+                *commandBuffer->addCommand<CbTexture>() =
+                    CbTexture( (uint16)texUnit, mHlmsManager->getBlueNoiseTexture(), 0 );
+                ++texUnit;
+            }
+
             mLastDescTexture = 0;
             mLastDescSampler = 0;
             mLastBoundPool = 0;
@@ -3219,7 +3295,8 @@ namespace Ogre
         // Don't bind the material buffer on caster passes (important to keep
         // MDI & auto-instancing running on shadow map passes)
         if( mLastBoundPool != datablock->getAssignedPool() &&
-            ( !casterPass || datablock->getAlphaTest() != CMPF_ALWAYS_PASS ) )
+            ( !casterPass || datablock->getAlphaTest() != CMPF_ALWAYS_PASS ||
+              datablock->getAlphaHashing() ) )
         {
             // layout(binding = 1) uniform MaterialBuf {} materialArray
             const ConstBufferPool::BufferPool *newPool = datablock->getAssignedPool();
@@ -3558,7 +3635,8 @@ namespace Ogre
         //                          ---- PIXEL SHADER ----
         //---------------------------------------------------------------------------
 
-        if( !casterPass || datablock->getAlphaTest() != CMPF_ALWAYS_PASS )
+        if( !casterPass || datablock->getAlphaTest() != CMPF_ALWAYS_PASS ||
+            datablock->getAlphaHashing() )
         {
 #ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
             if( !casterPass && mHasPlanarReflections &&
@@ -3758,7 +3836,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void HlmsPbs::loadLtcMatrix()
     {
-        const uint32 poolId = 992044u;
+        const uint32 poolId = 992044u;  // Same as BlueNoise (BlueNoise has different pixel format)
 
         TextureGpuManager *textureGpuManager = mRenderSystem->getTextureGpuManager();
         if( !textureGpuManager->hasPoolId( poolId, 64u, 64u, 1u, PFG_RGBA16_FLOAT ) )
@@ -3801,9 +3879,7 @@ namespace Ogre
         // name of the compatible shading language is part of the path
         Ogre::RenderSystem *renderSystem = Ogre::Root::getSingleton().getRenderSystem();
         Ogre::String shaderSyntax = "GLSL";
-        if( renderSystem->getName() == "OpenGL ES 2.x Rendering Subsystem" )
-            shaderSyntax = "GLSLES";
-        else if( renderSystem->getName() == "Direct3D11 Rendering Subsystem" )
+        if( renderSystem->getName() == "Direct3D11 Rendering Subsystem" )
             shaderSyntax = "HLSL";
         else if( renderSystem->getName() == "Metal Rendering Subsystem" )
             shaderSyntax = "Metal";

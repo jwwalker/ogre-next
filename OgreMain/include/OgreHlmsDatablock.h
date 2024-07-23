@@ -169,7 +169,17 @@ namespace Ogre
             BlendChannelForceDisabled = 0x10
         };
 
-        bool mAlphaToCoverageEnabled;
+        enum A2CSetting
+        {
+            /// Alpha to Coverage is always disabled.
+            A2cDisabled,
+            /// Alpha to Coverage is always enabled.
+            A2cEnabled,
+            /// Alpha to Coverage is enabled only if RenderTarget uses MSAA.
+            A2cEnabledMsaaOnly
+        };
+
+        uint8 mAlphaToCoverage;  /// See A2CSetting
 
         /// Masks which colour channels will be writing to. Default: BlendChannelAll
         /// For some advanced effects, you may wish to turn off the writing of certain colour
@@ -222,6 +232,21 @@ namespace Ogre
         bool isAutoTransparent() const { return ( mIsTransparent & 0x01u ) != 0u; }
         bool isForcedTransparent() const { return ( mIsTransparent & 0x02u ) != 0u; }
 
+        bool isAlphaToCoverage( const SampleDescription &sd ) const
+        {
+            switch( static_cast<HlmsBlendblock::A2CSetting>( mAlphaToCoverage ) )
+            {
+            case HlmsBlendblock::A2cDisabled:
+                return false;
+            case HlmsBlendblock::A2cEnabled:
+                return true;
+            case HlmsBlendblock::A2cEnabledMsaaOnly:
+                return sd.isMultisample();
+            }
+
+            return false;
+        }
+
         bool operator==( const HlmsBlendblock &_r ) const { return !( *this != _r ); }
 
         bool operator!=( const HlmsBlendblock &_r ) const
@@ -239,7 +264,7 @@ namespace Ogre
                        mDestBlendFactorAlpha != _r.mDestBlendFactorAlpha ) ) ||  //
                    mBlendOperation != _r.mBlendOperation ||                      //
                    mBlendOperationAlpha != _r.mBlendOperationAlpha ||            //
-                   mAlphaToCoverageEnabled != _r.mAlphaToCoverageEnabled ||      //
+                   mAlphaToCoverage != _r.mAlphaToCoverage ||                    //
                    mBlendChannelMask != _r.mBlendChannelMask ||                  //
                    ( mIsTransparent & 0x02u ) != ( _r.mIsTransparent & 0x02u );
         }
@@ -261,7 +286,7 @@ namespace Ogre
             + A const pointer to an HlmsBlendblock we do not own and may be shared by other datablocks.
             + The original properties from which this datablock was constructed.
             + This type may be derived to contain additional information.
-                 
+
         Derived types can cache information present in mOriginalProperties as strings, like diffuse
         colour values, etc.
 
@@ -290,6 +315,8 @@ namespace Ogre
         // it's better if mShadowConstantBias is together with the derived type's variables
         /// List of renderables currently using this datablock
         vector<Renderable *>::type mLinkedRenderables;
+
+        int32 mCustomPieceFileIdHash[NumShaderTypes];
 
         Hlms    *mCreator;
         IdString mName;
@@ -327,6 +354,7 @@ namespace Ogre
 
     protected:
         bool  mIgnoreFlushRenderables;
+        bool  mAlphaHashing;
         uint8 mAlphaTestCmp;  ///< @see CompareFunction
         bool  mAlphaTestShadowCasterOnly;
         float mAlphaTestThreshold;
@@ -350,6 +378,46 @@ namespace Ogre
 
         IdString getName() const { return mName; }
         Hlms    *getCreator() const { return mCreator; }
+
+        /** Same as setCustomPieceFile() but sources the code from memory instead of from disk.
+
+            Calling this function triggers HlmsDatablock::flushRenderables.
+        @remarks
+            HlmsDiskCache cannot cache shaders generated from memory as it
+            cannot guarantee the cache isn't out of date.
+        @param filename
+            "Filename" to identify it. It must be unique. Empty to disable.
+            If the filename has already been previously provided, the contents must be an exact match.
+        @param shaderCode
+            Shader source code.
+        @param shaderType
+            Shader stage to be used.
+        */
+        void setCustomPieceCodeFromMemory( const String &filename, const String &shaderCode,
+                                           ShaderType shaderType );
+
+        /** Sets the filename of a piece file to be parsed from disk. First, before all other files.
+
+            Calling this function triggers HlmsDatablock::flushRenderables.
+        @remarks
+            HlmsDiskCache can cache shaders generated with setCustomPieceFile().
+        @param filename
+            Filename of the piece file. Must be unique. Empty to disable.
+            If the filename has already been previously provided, the contents must be an exact match.
+        @param resourceGroup
+        @param shaderType
+            Shader stage to be used.
+        */
+        void setCustomPieceFile( const String &filename, const String &resourceGroup,
+                                 ShaderType shaderType );
+
+        /// Returns the internal ID generated by setCustomPieceFile() and setCustomPieceCodeFromMemory().
+        /// All calls with the same filename share the same ID. This ID is a deterministic hash.
+        /// Returns 0 if unset.
+        int32 getCustomPieceFileIdHash( ShaderType shaderType ) const;
+
+        /// Returns the filename argument set to setCustomPieceFile() and setCustomPieceCodeFromMemory().
+        const String &getCustomPieceFileStr( ShaderType shaderType ) const;
 
         /** Sets a new macroblock that matches the same parameter as the input.
             Decreases the reference count of the previously set one.
@@ -409,6 +477,29 @@ namespace Ogre
         {
             return mBlendblock[casterBlock];
         }
+
+        /** Uses a trick to *mimic* true Order Independent Transparency alpha blending.
+            The advantage of this method is that it is compatible with depth buffer writes
+            and is order independent.
+
+            Calling this function triggers a HlmsDatablock::flushRenderables
+        @remarks
+            For best results:
+
+                // Disable alpha test (default)
+                datablock->setAlphaTest( CMPF_ALWAYS_PASS );
+                // Do NOT enable alpha blending in the HlmsBlendblock (default)
+                HlmsBlendblock blendblock;
+                blendblock.setBlendType( SBT_REPLACE );
+                datablock->setBlendblock( &blendblock );
+
+                datablock->setAlphaHashing( true );
+        @param bAlphaHashing
+            True to enable alpha hashing.
+        */
+        void setAlphaHashing( bool bAlphaHashing );
+
+        bool getAlphaHashing() const { return mAlphaHashing; }
 
         /** Sets the alpha test to the given compare function. CMPF_ALWAYS_PASS means disabled.
             @see mAlphaTestThreshold.
