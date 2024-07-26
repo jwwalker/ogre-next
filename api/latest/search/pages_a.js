@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['pbr_20_2f_20pbs_20changes_20in_203_2e0_28275',['PBR / PBS Changes in 3.0',['../_p_b_s_changes_in30.html',1,'manual']]],
-  ['performance_20hints_28276',['Performance Hints',['../performance.html',1,'manual']]]
+  ['ogre_20next_20samples_20_28feature_20demonstrations_29_30445',['Ogre Next Samples (Feature demonstrations)',['../_samples.html',1,'manual']]],
+  ['overlays_30446',['Overlays',['../v1__overlays.html',1,'Scripts']]]
 ];

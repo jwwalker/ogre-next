@@ -11,9 +11,9 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
-<g id="a_node1"><a xlink:href="struct_ogre_1_1_hlms_base_prop.html" target="_top" xlink:title="These are &quot;default&quot; or &quot;Base&quot; properties common to many implementations and thus defined here.">
+<g id="a_node1"><a xlink:href="class_ogre_1_1_g_l_e_s2_pixel_util.html" target="_top" xlink:title="Class to do pixel format mapping between GL and OGRE.">
 <polygon fill="none" stroke="black" points="0,-0.5 0,-19.5 117,-19.5 117,-0.5 0,-0.5"/>
-<text text-anchor="middle" x="58.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">Ogre::HlmsBaseProp</text>
+<text text-anchor="middle" x="58.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">Ogre::GLES2PixelUtil</text>
 </a>
 </g>
 </g>
