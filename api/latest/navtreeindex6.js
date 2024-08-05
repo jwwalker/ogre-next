@@ -1,5 +1,12 @@
 var NAVTREEINDEX6 =
 {
+"_ogre_image_downsampler_8h.html#ga1f6e323de3864229c9127de13850d0a1":[9,0,455,91],
+"_ogre_image_downsampler_8h.html#ga218621b5e993ad6aca5e6f29437eadf7":[9,0,455,59],
+"_ogre_image_downsampler_8h.html#ga259c4f95766ac7da8dabe09a1ae287b0":[9,0,455,33],
+"_ogre_image_downsampler_8h.html#ga27456ac2af6b8e8d0c8de23a33b44177":[9,0,455,83],
+"_ogre_image_downsampler_8h.html#ga2b610eba504b4f771ec32eb216d92605":[9,0,455,36],
+"_ogre_image_downsampler_8h.html#ga2b87f3a4b46b19b6b021e54b2bac5ba6":[9,0,455,71],
+"_ogre_image_downsampler_8h.html#ga2e41eb294858b620a717ce6095d6d85b":[9,0,455,46],
 "_ogre_image_downsampler_8h.html#ga2f1e986053309255779ec7b4a5002c7f":[9,0,455,51],
 "_ogre_image_downsampler_8h.html#ga3036e4b6a08174b34b97a0d6c8376cc6":[9,0,455,37],
 "_ogre_image_downsampler_8h.html#ga333bfacdac4e811ae5a0b4fdfb8aac5b":[9,0,455,38],
@@ -242,12 +249,5 @@ var NAVTREEINDEX6 =
 "_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a2ea0d2c7c324fa5745b325a9e1c4cbb8":[9,0,529,0,3],
 "_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a30cabc71be6eab8d761e73fe005ee2c6":[9,0,529,0,10],
 "_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a36e136a0ae3018f1bdb14cb8ee355b2a":[9,0,529,0,4],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a414003e813f3a5e14f779f936de27794":[9,0,529,0,7],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a4227a01f9308f161b1dff36d37bfca1f":[9,0,529,0,26],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a47ebdc0a3d866f96d1272b53c956d60a":[9,0,529,0,22],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a529e87421877a2c003b001e99a2a1ec3":[9,0,529,0,32],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a53de3dbb8a1fb4199fecfcc13b99a780":[9,0,529,0,14],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a54917f44014273a7c01045bfc1f5c511":[9,0,529,0,8],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a57ce1f8065af27bbbe84c1525b2541cb":[9,0,529,0,18],
-"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a58218cd1e08c38d3081465bb5238f466":[9,0,529,0,11]
+"_ogre_mesh_file_format_8h.html#gga7b904fc5463a8ef1e61f6de39b603fc4a414003e813f3a5e14f779f936de27794":[9,0,529,0,7]
 };
