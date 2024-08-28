@@ -1102,7 +1102,7 @@ namespace Ogre
             }
         }
 
-        setupSharedBasicProperties( renderable );
+        setupSharedBasicProperties( renderable, true );
 
         if( hasAlphaTestOrHash && getProperty( kNoTid, PbsProperty::UseTextureAlpha ) )
         {
