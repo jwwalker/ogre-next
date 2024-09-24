@@ -142,7 +142,8 @@ namespace Ogre
             sprintf(message, "INFORMATION: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
         }
 
-        LogManager::getSingleton().logMessage( message );
+        LogManager::getSingleton().logMessage( message,
+            msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT ? LML_CRITICAL : LML_NORMAL );
 
         free(message);
 
@@ -1294,7 +1295,8 @@ namespace Ogre
                 {
                     // Loader version < 1.1.114 is blacklisted as it will just crash.
                     // See https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/258
-                    bAllow_VK_EXT_debug_utils = true;
+                    bAllow_VK_EXT_debug_utils =
+                        VulkanDevice::hasInstanceExtension( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
                 }
             }
         }
