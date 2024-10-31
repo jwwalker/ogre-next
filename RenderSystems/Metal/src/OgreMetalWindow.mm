@@ -511,8 +511,8 @@ namespace Ogre
         // We create our MSAA buffer and it is not accessible, thus NotTexture.
         // Same for our depth buffer.
         mSampleDescription = textureManager->getRenderSystem()->validateSampleDescription(
-            mRequestedSampleDescription, mTexture->getPixelFormat(), TextureFlags::NotTexture,
-            TextureFlags::NotTexture );
+            mRequestedSampleDescription, mTexture->getPixelFormat(),
+            TextureFlags::NotTexture | TextureFlags::RenderWindowSpecific );
         mTexture->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
         if( mDepthBuffer )
             mDepthBuffer->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );

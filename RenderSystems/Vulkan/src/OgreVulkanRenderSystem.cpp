@@ -516,11 +516,18 @@ namespace Ogre
                 result = vkCreatePipelineCache( mActiveDevice->mDevice, &pipelineCacheCreateInfo,
                                                 nullptr, &pipelineCache );
                 if( VK_SUCCESS == result && pipelineCache != 0 )
+                {
                     std::swap( mActiveDevice->mPipelineCache, pipelineCache );
+                    LogManager::getSingleton().logMessage( "[Vulkan] Pipeline cache loaded, " +
+                                                           StringConverter::toString( buf.size() ) +
+                                                           " bytes." );
+                }
                 else
+                {
                     LogManager::getSingleton().logMessage(
                         "[Vulkan] Pipeline cache loading failed. VkResult = " +
                         vkResultToString( result ) );
+                }
                 if( pipelineCache != 0 )
                     vkDestroyPipelineCache( mActiveDevice->mDevice, pipelineCache, nullptr );
             }
@@ -567,7 +574,9 @@ namespace Ogre
                     hdr.dataHash = hashResult[0];
 
                     stream->write( buf.data(), buf.size() );
-                    LogManager::getSingleton().logMessage( "[Vulkan] Pipeline cache saved." );
+                    LogManager::getSingleton().logMessage( "[Vulkan] Pipeline cache saved, " +
+                                                           StringConverter::toString( buf.size() ) +
+                                                           " bytes." );
                 }
             }
             if( result != VK_SUCCESS )
@@ -3878,8 +3887,7 @@ namespace Ogre
     inline bool isPowerOf2( uint32 x ) { return ( x & ( x - 1u ) ) == 0u; }
     SampleDescription VulkanRenderSystem::validateSampleDescription( const SampleDescription &sampleDesc,
                                                                      PixelFormatGpu format,
-                                                                     uint32 textureFlags,
-                                                                     uint32 depthTextureFlags )
+                                                                     uint32 textureFlags )
     {
         if( !mDevice )
         {
@@ -3899,90 +3907,58 @@ namespace Ogre
             // TODO: Support VK_AMD_mixed_attachment_samples & VK_NV_framebuffer_mixed_samples.
             return validateSampleDescription(
                 SampleDescription( sampleDesc.getMaxSamples(), sampleDesc.getMsaaPattern() ), format,
-                textureFlags, depthTextureFlags );
+                textureFlags );
         }
         else
         {
             // MSAA.
-            VkSampleCountFlags supportedSampleCounts = 0u;
+            VkSampleCountFlags supportedSampleCounts = ( VK_SAMPLE_COUNT_64_BIT << 1 ) - 1;
 
-            if( PixelFormatGpuUtils::isDepth( format ) )
-            {
-                // Not an if-else typo: storageImageSampleCounts is AND'ed against *DepthSampleCounts.
-                if( textureFlags & TextureFlags::Uav )
-                    supportedSampleCounts = deviceLimits.storageImageSampleCounts;
-
-                if( textureFlags & TextureFlags::NotTexture )
-                    supportedSampleCounts = deviceLimits.framebufferDepthSampleCounts;
-                else
-                    supportedSampleCounts = deviceLimits.sampledImageDepthSampleCounts;
-
-                if( PixelFormatGpuUtils::isStencil( format ) )
-                {
-                    // Not a typo: storageImageSampleCounts is AND'ed against *StencilSampleCounts.
-                    if( textureFlags & TextureFlags::Uav )
-                        supportedSampleCounts &= deviceLimits.storageImageSampleCounts;
-
-                    if( textureFlags & TextureFlags::NotTexture )
-                        supportedSampleCounts &= deviceLimits.framebufferStencilSampleCounts;
-                    else
-                        supportedSampleCounts &= deviceLimits.sampledImageStencilSampleCounts;
-                }
-            }
-            else if( PixelFormatGpuUtils::isStencil( format ) )
-            {
-                // Not an if-else typo: storageImageSampleCounts is AND'ed against *StencilSampleCounts.
-                if( textureFlags & TextureFlags::Uav )
-                    supportedSampleCounts = deviceLimits.storageImageSampleCounts;
-
-                if( textureFlags & TextureFlags::NotTexture )
-                    supportedSampleCounts = deviceLimits.framebufferStencilSampleCounts;
-                else
-                    supportedSampleCounts = deviceLimits.sampledImageStencilSampleCounts;
-            }
-            else if( format == PFG_NULL )
+            if( format == PFG_NULL )
             {
                 // PFG_NULL is always NotTexture and can't be Uav,
                 // let's just return to the user what they intended to ask.
                 supportedSampleCounts = deviceLimits.framebufferNoAttachmentsSampleCounts;
             }
-            else if( PixelFormatGpuUtils::isInteger( format ) )
+            else if( textureFlags & TextureFlags::Uav )
             {
-                // TODO: Query Vulkan 1.2 / extensions to get framebufferIntegerColorSampleCounts.
-                // supportedSampleCounts = deviceLimits.framebufferIntegerColorSampleCounts;
-                supportedSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+                supportedSampleCounts &= deviceLimits.storageImageSampleCounts;
             }
             else
             {
-                if( textureFlags & TextureFlags::Uav )
-                    supportedSampleCounts = deviceLimits.storageImageSampleCounts;
-                else if( textureFlags & TextureFlags::NotTexture )
-                    supportedSampleCounts = deviceLimits.framebufferColorSampleCounts;
-                else
-                    supportedSampleCounts = deviceLimits.sampledImageColorSampleCounts;
+                const bool isDepth = PixelFormatGpuUtils::isDepth( format );
+                const bool isStencil = PixelFormatGpuUtils::isStencil( format );
+                const bool isInteger = PixelFormatGpuUtils::isInteger( format );
 
-                if( PixelFormatGpuUtils::isDepth( format ) )
+                if( textureFlags & ( TextureFlags::NotTexture | TextureFlags::RenderToTexture |
+                                     TextureFlags::RenderWindowSpecific ) )
                 {
-                    // Not an if-else typo: storageImage... is AND'ed against *DepthSampleCounts.
-                    if( depthTextureFlags & TextureFlags::Uav )
-                        supportedSampleCounts &= deviceLimits.storageImageSampleCounts;
-
-                    if( depthTextureFlags & TextureFlags::NotTexture )
+                    // frame buffer
+                    if( !isDepth && !isStencil && !isInteger )
+                        supportedSampleCounts &= deviceLimits.framebufferColorSampleCounts;
+                    if( isDepth || ( textureFlags & TextureFlags::RenderWindowSpecific ) )
                         supportedSampleCounts &= deviceLimits.framebufferDepthSampleCounts;
-                    else
-                        supportedSampleCounts &= deviceLimits.sampledImageDepthSampleCounts;
-
-                    if( PixelFormatGpuUtils::isStencil( format ) )
+                    if( isStencil || ( textureFlags & TextureFlags::RenderWindowSpecific ) )
+                        supportedSampleCounts &= deviceLimits.framebufferStencilSampleCounts;
+                    if( isInteger )
                     {
-                        // Not a typo: storageImageSampleCounts is AND'ed against *StencilSampleCounts.
-                        if( depthTextureFlags & TextureFlags::Uav )
-                            supportedSampleCounts &= deviceLimits.storageImageSampleCounts;
-
-                        if( depthTextureFlags & TextureFlags::NotTexture )
-                            supportedSampleCounts &= deviceLimits.framebufferStencilSampleCounts;
-                        else
-                            supportedSampleCounts &= deviceLimits.sampledImageStencilSampleCounts;
+                        // TODO: Query Vulkan 1.2 / extensions to get
+                        // framebufferIntegerColorSampleCounts.
+                        supportedSampleCounts &= VK_SAMPLE_COUNT_1_BIT;
                     }
+                }
+
+                if( 0 == ( textureFlags & TextureFlags::NotTexture ) )
+                {
+                    // sampled image
+                    if( !isDepth && !isStencil && !isInteger )
+                        supportedSampleCounts &= deviceLimits.sampledImageColorSampleCounts;
+                    if( isDepth || ( textureFlags & TextureFlags::RenderWindowSpecific ) )
+                        supportedSampleCounts &= deviceLimits.sampledImageDepthSampleCounts;
+                    if( isStencil || ( textureFlags & TextureFlags::RenderWindowSpecific ) )
+                        supportedSampleCounts &= deviceLimits.sampledImageStencilSampleCounts;
+                    if( isInteger )
+                        supportedSampleCounts &= deviceLimits.sampledImageIntegerSampleCounts;
                 }
             }
 
