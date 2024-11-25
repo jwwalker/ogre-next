@@ -81,6 +81,7 @@ var hierarchy =
     [ "Ogre::FastArray< BoneTransform >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< bool >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< BuildLightListRequest >", "class_ogre_1_1_fast_array.html", null ],
+    [ "Ogre::FastArray< const char * >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< const Ogre::HlmsSamplerblock * >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< const Ogre::TextureGpu * >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< DescriptorSetTexture2::Slot >", "class_ogre_1_1_fast_array.html", null ],
@@ -128,6 +129,7 @@ var hierarchy =
     [ "Ogre::FastArray< Ogre::VctLighting * >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< Ogre::Vector4 >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< Ogre::VulkanDescriptorPool * >", "class_ogre_1_1_fast_array.html", null ],
+    [ "Ogre::FastArray< Ogre::VulkanPhysicalDevice >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< Ogre::VulkanQueue >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< Ogre::VulkanQueue::PerFrameData >", "class_ogre_1_1_fast_array.html", null ],
     [ "Ogre::FastArray< Ogre::VulkanWindowSwapChainBased * >", "class_ogre_1_1_fast_array.html", null ],
@@ -1708,6 +1710,7 @@ var hierarchy =
       [ "Ogre::v1::OverlaySystem", "class_ogre_1_1v1_1_1_overlay_system.html", null ]
     ] ],
     [ "Ogre::RenderSystem::Listener", "class_ogre_1_1_render_system_1_1_listener.html", [
+      [ "Ogre::AtmosphereNpr", "class_ogre_1_1_atmosphere_npr.html", null ],
       [ "Ogre::D3D11RenderPassDescriptor", "class_ogre_1_1_d3_d11_render_pass_descriptor.html", null ],
       [ "Ogre::ParallaxCorrectedCubemapBase", "class_ogre_1_1_parallax_corrected_cubemap_base.html", null ],
       [ "Ogre::v1::OverlaySystem", "class_ogre_1_1v1_1_1_overlay_system.html", null ]
@@ -1978,6 +1981,10 @@ var hierarchy =
     [ "Ogre::VulkanDevice", "struct_ogre_1_1_vulkan_device.html", null ],
     [ "Ogre::VulkanDevice::ExtraVkFeatures", "struct_ogre_1_1_vulkan_device_1_1_extra_vk_features.html", null ],
     [ "Ogre::VulkanDevice::SelectedQueue", "struct_ogre_1_1_vulkan_device_1_1_selected_queue.html", null ],
+    [ "Ogre::VulkanDeviceResource", "class_ogre_1_1_vulkan_device_resource.html", null ],
+    [ "Ogre::VulkanDeviceResourceManager", "class_ogre_1_1_vulkan_device_resource_manager.html", [
+      [ "Ogre::VulkanRenderSystem", "class_ogre_1_1_vulkan_render_system.html", null ]
+    ] ],
     [ "Ogre::VulkanDynamicBuffer", "class_ogre_1_1_vulkan_dynamic_buffer.html", null ],
     [ "Ogre::VulkanExternalDevice", "struct_ogre_1_1_vulkan_external_device.html", null ],
     [ "Ogre::VulkanExternalInstance", "struct_ogre_1_1_vulkan_external_instance.html", null ],
@@ -1985,7 +1992,9 @@ var hierarchy =
     [ "Ogre::VulkanFrameBufferDescValue", "struct_ogre_1_1_vulkan_frame_buffer_desc_value.html", null ],
     [ "Ogre::VulkanGlobalBindingTable", "struct_ogre_1_1_vulkan_global_binding_table.html", null ],
     [ "Ogre::VulkanHlmsPso", "struct_ogre_1_1_vulkan_hlms_pso.html", null ],
+    [ "Ogre::VulkanInstance", "class_ogre_1_1_vulkan_instance.html", null ],
     [ "Ogre::VulkanMappings", "class_ogre_1_1_vulkan_mappings.html", null ],
+    [ "Ogre::VulkanPhysicalDevice", "struct_ogre_1_1_vulkan_physical_device.html", null ],
     [ "Ogre::VulkanQueue", "class_ogre_1_1_vulkan_queue.html", null ],
     [ "Ogre::VulkanQueue::PerFrameData", "struct_ogre_1_1_vulkan_queue_1_1_per_frame_data.html", null ],
     [ "Ogre::VulkanRawBuffer", "struct_ogre_1_1_vulkan_raw_buffer.html", null ],

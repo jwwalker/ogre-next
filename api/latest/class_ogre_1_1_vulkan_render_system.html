@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('class_ogre_1_1_vulkan_render_system.ht
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_ogre_1_1_vulkan_render_system__inherit__graph.svg" width="210" height="187"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_ogre_1_1_vulkan_render_system__inherit__graph.svg" width="400" height="202"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -278,8 +278,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae1f574dc26828de4066e835fa9d1cca9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#ae1f574dc26828de4066e835fa9d1cca9">beginRenderPassDescriptor</a> (<a class="el" href="class_ogre_1_1_render_pass_descriptor.html">RenderPassDescriptor</a> *desc, <a class="el" href="class_ogre_1_1_texture_gpu.html">TextureGpu</a> *anyTarget, <a class="el" href="namespace_ogre.html#a9212e2b4c7d29d6fae3a004ac7ad137e">uint8</a> mipLevel, const <a class="el" href="class_ogre_1_1_vector4.html">Vector4</a> *viewportSizes, const <a class="el" href="class_ogre_1_1_vector4.html">Vector4</a> *scissors, <a class="el" href="namespace_ogre.html#a5a7c15d68e8c7d585c410bc5a93682f4">uint32</a> numViewports, bool overlaysEnabled, bool warnIfRtvWasFlushed) override</td></tr>
 <tr class="memdesc:ae1f574dc26828de4066e835fa9d1cca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the descriptor is set to Load clear, two possible things may happen:  <a href="class_ogre_1_1_vulkan_render_system.html#ae1f574dc26828de4066e835fa9d1cca9">More...</a><br /></td></tr>
 <tr class="separator:ae1f574dc26828de4066e835fa9d1cca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5085e90192021453cacd9d48c92c13a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a5085e90192021453cacd9d48c92c13a3">bindDescriptorSet</a> (<a class="el" href="class_ogre_1_1_vulkan_vao_manager.html">VulkanVaoManager</a> *&amp;vaoManager)</td></tr>
-<tr class="separator:a5085e90192021453cacd9d48c92c13a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbe2abdee42d588e25345a420b76e35b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#adbe2abdee42d588e25345a420b76e35b">bindGpuProgramParameters</a> (<a class="el" href="group___resources.html#gad08e89fa63e81d061ea9e2f37664976e">GpuProgramType</a> gptype, <a class="el" href="namespace_ogre.html#aebab7cecf3f3ae81a1fbfa08ab36f2b5">GpuProgramParametersSharedPtr</a> params, <a class="el" href="namespace_ogre.html#a64f3c3e34647277a00b67ae0dfa1a528">uint16</a> variabilityMask) override</td></tr>
 <tr class="memdesc:adbe2abdee42d588e25345a420b76e35b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind Gpu program parameters.  <a href="class_ogre_1_1_vulkan_render_system.html#adbe2abdee42d588e25345a420b76e35b">More...</a><br /></td></tr>
 <tr class="separator:adbe2abdee42d588e25345a420b76e35b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -335,8 +333,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a46d0dbe8bb52718c3093f7e71c3f1ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adeeab393ced10ecde6fd91b6f0e58f76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#adeeab393ced10ecde6fd91b6f0e58f76">flushCommands</a> () override</td></tr>
 <tr class="separator:adeeab393ced10ecde6fd91b6f0e58f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab98067e9e31da8681c6f14f6502e0f8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#ab98067e9e31da8681c6f14f6502e0f8f">flushDescriptorState</a> (VkPipelineBindPoint pipeline_bind_point, const <a class="el" href="class_ogre_1_1_vulkan_const_buffer_packed.html">VulkanConstBufferPacked</a> &amp;constBuffer, const size_t bindOffset, const size_t bytesToWrite, const unordered_map&lt; unsigned, <a class="el" href="struct_ogre_1_1_vulkan_constant_definition_binding_param.html">VulkanConstantDefinitionBindingParam</a> &gt;::type &amp;shaderBindings)</td></tr>
-<tr class="separator:ab98067e9e31da8681c6f14f6502e0f8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe27debb608870cf8f00efed74254beb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#abe27debb608870cf8f00efed74254beb">flushPendingNonCoherentFlushes</a> (const <a class="el" href="namespace_ogre_1_1_submission_type.html#a119342ed453a2c317a310c790104831e">SubmissionType::SubmissionType</a> submissionType)</td></tr>
 <tr class="memdesc:abe27debb608870cf8f00efed74254beb"><td class="mdescLeft">&#160;</td><td class="mdescRight">All pending or queued buffer flushes (i.e.  <a href="class_ogre_1_1_vulkan_render_system.html#abe27debb608870cf8f00efed74254beb">More...</a><br /></td></tr>
 <tr class="separator:abe27debb608870cf8f00efed74254beb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -386,10 +382,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5d861dd78eb95245287e154893ab52d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_ogre.html#aa3a7b6dfb905e6572d62f0dfa3d4274d">Real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a5d861dd78eb95245287e154893ab52d6">getVerticalTexelOffset</a> () override</td></tr>
 <tr class="memdesc:a5d861dd78eb95245287e154893ab52d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the vertical texel offset value required for mapping texel origins to pixel origins in this rendersystem.  <a href="class_ogre_1_1_vulkan_render_system.html#a5d861dd78eb95245287e154893ab52d6">More...</a><br /></td></tr>
 <tr class="separator:a5d861dd78eb95245287e154893ab52d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b731c196f043148ec8f41d564d24352"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_ogre_vulkan_prerequisites_8h.html#a6d9f7e27148712f2c97db45ca6991547">VkInstance</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a6b731c196f043148ec8f41d564d24352">getVkInstance</a> () const</td></tr>
-<tr class="separator:a6b731c196f043148ec8f41d564d24352"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac037b5fe30dd9ef06735c784b1c88863"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_ogre_1_1_vulkan_device.html">VulkanDevice</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#ac037b5fe30dd9ef06735c784b1c88863">getVulkanDevice</a> () const</td></tr>
 <tr class="separator:ac037b5fe30dd9ef06735c784b1c88863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75b6c8828f64c69d46def1d2608d6535"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_ogre_1_1_fast_array.html">FastArray</a>&lt; <a class="el" href="struct_ogre_1_1_vulkan_physical_device.html">VulkanPhysicalDevice</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a75b6c8828f64c69d46def1d2608d6535">getVulkanPhysicalDevices</a> () const</td></tr>
+<tr class="separator:a75b6c8828f64c69d46def1d2608d6535"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ee0fc5d4e7e816d8f979d10369752b3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a0ee0fc5d4e7e816d8f979d10369752b3">hasAnisotropicMipMapFilter</a> () const override</td></tr>
 <tr class="memdesc:a0ee0fc5d4e7e816d8f979d10369752b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if the system has anisotropic mip map filter support.  <a href="class_ogre_1_1_vulkan_render_system.html#a0ee0fc5d4e7e816d8f979d10369752b3">More...</a><br /></td></tr>
 <tr class="separator:a0ee0fc5d4e7e816d8f979d10369752b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -400,10 +396,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7f28018141da0116ab351701d159530f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a7f28018141da0116ab351701d159530f">initialiseFromRenderSystemCapabilities</a> (<a class="el" href="class_ogre_1_1_render_system_capabilities.html">RenderSystemCapabilities</a> *caps, <a class="el" href="class_ogre_1_1_window.html">Window</a> *primary) override</td></tr>
 <tr class="memdesc:a7f28018141da0116ab351701d159530f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the render system from the capabilities.  <a href="class_ogre_1_1_vulkan_render_system.html#a7f28018141da0116ab351701d159530f">More...</a><br /></td></tr>
 <tr class="separator:a7f28018141da0116ab351701d159530f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f785531abac2dfbb3c8db20471281e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a8f785531abac2dfbb3c8db20471281e9">initializeExternalVkInstance</a> (<a class="el" href="struct_ogre_1_1_vulkan_external_instance.html">VulkanExternalInstance</a> *externalInstance)</td></tr>
-<tr class="separator:a8f785531abac2dfbb3c8db20471281e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ec2b18d19494341bde265021a25b523"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a3ec2b18d19494341bde265021a25b523">initializeVkInstance</a> ()</td></tr>
-<tr class="separator:a3ec2b18d19494341bde265021a25b523"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad31de78889d42552467cdf2ee49cada3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#ad31de78889d42552467cdf2ee49cada3">isSameLayout</a> (<a class="el" href="namespace_ogre_1_1_resource_layout.html#a7ce11be54143fb01a34d6b7529ba3dc7">ResourceLayout::Layout</a> a, <a class="el" href="namespace_ogre_1_1_resource_layout.html#a7ce11be54143fb01a34d6b7529ba3dc7">ResourceLayout::Layout</a> b, const <a class="el" href="class_ogre_1_1_texture_gpu.html">TextureGpu</a> *texture, bool bIsDebugCheck) const override</td></tr>
 <tr class="memdesc:ad31de78889d42552467cdf2ee49cada3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if 'a' and 'b' internally map to the same layout and should be considered equivalent for a given texture.  <a href="class_ogre_1_1_vulkan_render_system.html#ad31de78889d42552467cdf2ee49cada3">More...</a><br /></td></tr>
 <tr class="separator:ad31de78889d42552467cdf2ee49cada3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -424,8 +416,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1540231c41b84839bc871475aa083c2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a1540231c41b84839bc871475aa083c2e">preExtraThreadsStarted</a> () override</td></tr>
 <tr class="memdesc:a1540231c41b84839bc871475aa083c2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tell the rendersystem to perform any prep tasks it needs to directly before other threads which might access the rendering API are registered.  <a href="class_ogre_1_1_vulkan_render_system.html#a1540231c41b84839bc871475aa083c2e">More...</a><br /></td></tr>
 <tr class="separator:a1540231c41b84839bc871475aa083c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91c92d4e83797e670adf672c3f0de1ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a91c92d4e83797e670adf672c3f0de1ab">refreshConfig</a> ()</td></tr>
-<tr class="separator:a91c92d4e83797e670adf672c3f0de1ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa90991259edc9daf71debd34b73e3ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#aaa90991259edc9daf71debd34b73e3ae">registerThread</a> () override</td></tr>
 <tr class="memdesc:aaa90991259edc9daf71debd34b73e3ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the an additional thread which may make calls to rendersystem-related objects.  <a href="class_ogre_1_1_vulkan_render_system.html#aaa90991259edc9daf71debd34b73e3ae">More...</a><br /></td></tr>
 <tr class="separator:aaa90991259edc9daf71debd34b73e3ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -449,8 +439,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a300e5b9e5f7bfab2d131a04baaed6f4f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a300e5b9e5f7bfab2d131a04baaed6f4f">setSwappyFramePacing</a> (bool bEnable, <a class="el" href="class_ogre_1_1_window.html">Window</a> *callingWindow=0)</td></tr>
 <tr class="memdesc:a300e5b9e5f7bfab2d131a04baaed6f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ANDROID ONLY: Whether to enable/disable Swappy frame pacing.  <a href="class_ogre_1_1_vulkan_render_system.html#a300e5b9e5f7bfab2d131a04baaed6f4f">More...</a><br /></td></tr>
 <tr class="separator:a300e5b9e5f7bfab2d131a04baaed6f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf4ba4fa8ff3b5387cd18f617538516f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#acf4ba4fa8ff3b5387cd18f617538516f">sharedVkInitialization</a> ()</td></tr>
-<tr class="separator:acf4ba4fa8ff3b5387cd18f617538516f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c7caf82ac2d6d9ddb335f0ee0effb10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ogre_1_1_vulkan_render_system.html#a2c7caf82ac2d6d9ddb335f0ee0effb10">shutdown</a> () override</td></tr>
 <tr class="memdesc:a2c7caf82ac2d6d9ddb335f0ee0effb10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown the renderer and cleanup resources.  <a href="class_ogre_1_1_vulkan_render_system.html#a2c7caf82ac2d6d9ddb335f0ee0effb10">More...</a><br /></td></tr>
 <tr class="separator:a2c7caf82ac2d6d9ddb335f0ee0effb10"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3242,24 +3230,6 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a5085e90192021453cacd9d48c92c13a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5085e90192021453cacd9d48c92c13a3">&#9670;&nbsp;</a></span>bindDescriptorSet()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::bindDescriptorSet </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_ogre_1_1_vulkan_vao_manager.html">VulkanVaoManager</a> *&amp;&#160;</td>
-          <td class="paramname"><em>vaoManager</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="adbe2abdee42d588e25345a420b76e35b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adbe2abdee42d588e25345a420b76e35b">&#9670;&nbsp;</a></span>bindGpuProgramParameters()</h2>
 
@@ -3957,52 +3927,6 @@ However <a class="el" href="class_ogre_1_1_vao_manager.html">VaoManager</a> cann
 
 </div>
 </div>
-<a id="ab98067e9e31da8681c6f14f6502e0f8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab98067e9e31da8681c6f14f6502e0f8f">&#9670;&nbsp;</a></span>flushDescriptorState()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::flushDescriptorState </td>
-          <td>(</td>
-          <td class="paramtype">VkPipelineBindPoint&#160;</td>
-          <td class="paramname"><em>pipeline_bind_point</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_ogre_1_1_vulkan_const_buffer_packed.html">VulkanConstBufferPacked</a> &amp;&#160;</td>
-          <td class="paramname"><em>constBuffer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t&#160;</td>
-          <td class="paramname"><em>bindOffset</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t&#160;</td>
-          <td class="paramname"><em>bytesToWrite</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unordered_map&lt; unsigned, <a class="el" href="struct_ogre_1_1_vulkan_constant_definition_binding_param.html">VulkanConstantDefinitionBindingParam</a> &gt;::type &amp;&#160;</td>
-          <td class="paramname"><em>shaderBindings</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="abe27debb608870cf8f00efed74254beb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe27debb608870cf8f00efed74254beb">&#9670;&nbsp;</a></span>flushPendingNonCoherentFlushes()</h2>
 
@@ -4519,31 +4443,6 @@ However <a class="el" href="class_ogre_1_1_vao_manager.html">VaoManager</a> cann
 
 </div>
 </div>
-<a id="a6b731c196f043148ec8f41d564d24352"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b731c196f043148ec8f41d564d24352">&#9670;&nbsp;</a></span>getVkInstance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_ogre_vulkan_prerequisites_8h.html#a6d9f7e27148712f2c97db45ca6991547">VkInstance</a> Ogre::VulkanRenderSystem::getVkInstance </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ac037b5fe30dd9ef06735c784b1c88863"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac037b5fe30dd9ef06735c784b1c88863">&#9670;&nbsp;</a></span>getVulkanDevice()</h2>
 
@@ -4565,6 +4464,23 @@ However <a class="el" href="class_ogre_1_1_vao_manager.html">VaoManager</a> cann
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a75b6c8828f64c69d46def1d2608d6535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75b6c8828f64c69d46def1d2608d6535">&#9670;&nbsp;</a></span>getVulkanPhysicalDevices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_ogre_1_1_fast_array.html">FastArray</a>&lt;<a class="el" href="struct_ogre_1_1_vulkan_physical_device.html">VulkanPhysicalDevice</a>&gt;&amp; Ogre::VulkanRenderSystem::getVulkanPhysicalDevices </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -4679,41 +4595,6 @@ However <a class="el" href="class_ogre_1_1_vao_manager.html">VaoManager</a> cann
 <p>Initialize the render system from the capabilities. </p>
 
 <p>Implements <a class="el" href="class_ogre_1_1_render_system.html">Ogre::RenderSystem</a>.</p>
-
-</div>
-</div>
-<a id="a8f785531abac2dfbb3c8db20471281e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f785531abac2dfbb3c8db20471281e9">&#9670;&nbsp;</a></span>initializeExternalVkInstance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::initializeExternalVkInstance </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_ogre_1_1_vulkan_external_instance.html">VulkanExternalInstance</a> *&#160;</td>
-          <td class="paramname"><em>externalInstance</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3ec2b18d19494341bde265021a25b523"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ec2b18d19494341bde265021a25b523">&#9670;&nbsp;</a></span>initializeVkInstance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::initializeVkInstance </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -4960,23 +4841,6 @@ However <a class="el" href="class_ogre_1_1_vao_manager.html">VaoManager</a> cann
 Once this init sequence is completed the threads are independent but this startup sequence must be respected. </dd></dl>
 
 <p>Implements <a class="el" href="class_ogre_1_1_render_system.html#a77766da49c29112c390fde51069f543a">Ogre::RenderSystem</a>.</p>
-
-</div>
-</div>
-<a id="a91c92d4e83797e670adf672c3f0de1ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91c92d4e83797e670adf672c3f0de1ab">&#9670;&nbsp;</a></span>refreshConfig()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::refreshConfig </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -5258,23 +5122,6 @@ Once this init sequence is completed the threads are independent but this startu
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="acf4ba4fa8ff3b5387cd18f617538516f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf4ba4fa8ff3b5387cd18f617538516f">&#9670;&nbsp;</a></span>sharedVkInitialization()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Ogre::VulkanRenderSystem::sharedVkInitialization </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>

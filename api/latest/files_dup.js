@@ -1922,6 +1922,10 @@ var files_dup =
       [ "VulkanDescriptorSetUav", "struct_ogre_1_1_vulkan_descriptor_set_uav.html", "struct_ogre_1_1_vulkan_descriptor_set_uav" ]
     ] ],
     [ "OgreVulkanDevice.h", "_ogre_vulkan_device_8h.html", "_ogre_vulkan_device_8h" ],
+    [ "OgreVulkanDeviceResource.h", "_ogre_vulkan_device_resource_8h.html", [
+      [ "VulkanDeviceResource", "class_ogre_1_1_vulkan_device_resource.html", "class_ogre_1_1_vulkan_device_resource" ],
+      [ "VulkanDeviceResourceManager", "class_ogre_1_1_vulkan_device_resource_manager.html", "class_ogre_1_1_vulkan_device_resource_manager" ]
+    ] ],
     [ "OgreVulkanDiscardBufferManager.h", "_ogre_vulkan_discard_buffer_manager_8h.html", "_ogre_vulkan_discard_buffer_manager_8h" ],
     [ "OgreVulkanDynamicBuffer.h", "_ogre_vulkan_dynamic_buffer_8h.html", [
       [ "VulkanDynamicBuffer", "class_ogre_1_1_vulkan_dynamic_buffer.html", "class_ogre_1_1_vulkan_dynamic_buffer" ]
@@ -1966,6 +1970,7 @@ var files_dup =
     ] ],
     [ "OgreVulkanRenderPassDescriptor.h", "_ogre_vulkan_render_pass_descriptor_8h.html", "_ogre_vulkan_render_pass_descriptor_8h" ],
     [ "OgreVulkanRenderSystem.h", "_ogre_vulkan_render_system_8h.html", [
+      [ "VulkanPhysicalDevice", "struct_ogre_1_1_vulkan_physical_device.html", "struct_ogre_1_1_vulkan_physical_device" ],
       [ "VulkanRenderSystem", "class_ogre_1_1_vulkan_render_system.html", "class_ogre_1_1_vulkan_render_system" ]
     ] ],
     [ "OgreVulkanResourceTransition.h", "_ogre_vulkan_resource_transition_8h.html", [

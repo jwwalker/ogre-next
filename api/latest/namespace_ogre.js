@@ -312,7 +312,8 @@ var namespace_ogre =
         [ "ManualTexture", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434af3d439b1fb1b1aedfbea2c633da4e2b1", null ],
         [ "AutomaticBatching", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434a2f298fbaec7db976ba6616430b1f52a3", null ],
         [ "PoolOwner", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434aeb8acf9388488f12f4edd8de80b5dcf9", null ],
-        [ "DiscardableContent", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434ab642f1ba2bbf902301791a2b6f976ac2", null ]
+        [ "DiscardableContent", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434ab642f1ba2bbf902301791a2b6f976ac2", null ],
+        [ "TilerMemoryless", "namespace_ogre_1_1_texture_flags.html#a59b71e36a14465bd82595d6d467e1434a26dd876274f4a4e96dbaef4216b7cb29", null ]
       ] ]
     ] ],
     [ "TextureSourceType", "namespace_ogre_1_1_texture_source_type.html", [
@@ -1353,6 +1354,8 @@ var namespace_ogre =
     [ "VulkanDescriptorSetTexture2", "struct_ogre_1_1_vulkan_descriptor_set_texture2.html", "struct_ogre_1_1_vulkan_descriptor_set_texture2" ],
     [ "VulkanDescriptorSetUav", "struct_ogre_1_1_vulkan_descriptor_set_uav.html", "struct_ogre_1_1_vulkan_descriptor_set_uav" ],
     [ "VulkanDevice", "struct_ogre_1_1_vulkan_device.html", "struct_ogre_1_1_vulkan_device" ],
+    [ "VulkanDeviceResource", "class_ogre_1_1_vulkan_device_resource.html", "class_ogre_1_1_vulkan_device_resource" ],
+    [ "VulkanDeviceResourceManager", "class_ogre_1_1_vulkan_device_resource_manager.html", "class_ogre_1_1_vulkan_device_resource_manager" ],
     [ "VulkanDiscardBuffer", "class_ogre_1_1_vulkan_discard_buffer.html", "class_ogre_1_1_vulkan_discard_buffer" ],
     [ "VulkanDiscardBufferManager", "class_ogre_1_1_vulkan_discard_buffer_manager.html", "class_ogre_1_1_vulkan_discard_buffer_manager" ],
     [ "VulkanDynamicBuffer", "class_ogre_1_1_vulkan_dynamic_buffer.html", "class_ogre_1_1_vulkan_dynamic_buffer" ],
@@ -1364,7 +1367,9 @@ var namespace_ogre =
     [ "VulkanGlobalBindingTable", "struct_ogre_1_1_vulkan_global_binding_table.html", "struct_ogre_1_1_vulkan_global_binding_table" ],
     [ "VulkanGpuProgramManager", "class_ogre_1_1_vulkan_gpu_program_manager.html", "class_ogre_1_1_vulkan_gpu_program_manager" ],
     [ "VulkanHlmsPso", "struct_ogre_1_1_vulkan_hlms_pso.html", "struct_ogre_1_1_vulkan_hlms_pso" ],
+    [ "VulkanInstance", "class_ogre_1_1_vulkan_instance.html", "class_ogre_1_1_vulkan_instance" ],
     [ "VulkanMappings", "class_ogre_1_1_vulkan_mappings.html", "class_ogre_1_1_vulkan_mappings" ],
+    [ "VulkanPhysicalDevice", "struct_ogre_1_1_vulkan_physical_device.html", "struct_ogre_1_1_vulkan_physical_device" ],
     [ "VulkanPixelFormatToShaderType", "class_ogre_1_1_vulkan_pixel_format_to_shader_type.html", "class_ogre_1_1_vulkan_pixel_format_to_shader_type" ],
     [ "VulkanPlugin", "class_ogre_1_1_vulkan_plugin.html", "class_ogre_1_1_vulkan_plugin" ],
     [ "VulkanProgram", "class_ogre_1_1_vulkan_program.html", "class_ogre_1_1_vulkan_program" ],

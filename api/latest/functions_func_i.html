@@ -211,6 +211,9 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 , <a class="el" href="class_ogre_1_1_lod_input_provider_buffer.html#a99588a042ce72f9a2499460a535139f0">Ogre::LodInputProviderBuffer</a>
 , <a class="el" href="class_ogre_1_1_lod_input_provider_mesh.html#a860220df6636e6092e7619f197e47139">Ogre::LodInputProviderMesh</a>
 </li>
+<li>initDebugFeatures()
+: <a class="el" href="class_ogre_1_1_vulkan_instance.html#a5c51e780dc01cb85d1c15c1f68621068">Ogre::VulkanInstance</a>
+</li>
 <li>initDrawIdVertexBuffer()
 : <a class="el" href="class_ogre_1_1_vulkan_vao_manager.html#a7de6fa004417e3ea56cfa925cbb12287">Ogre::VulkanVaoManager</a>
 </li>
@@ -291,9 +294,6 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 <li>initializeExtension()
 : <a class="el" href="class_ogre_1_1_d3_d11_vendor_extension.html#ae1d5639c06374bca665ea42b051623af">Ogre::D3D11VendorExtension</a>
 </li>
-<li>initializeExternalVkInstance()
-: <a class="el" href="class_ogre_1_1_vulkan_render_system.html#a8f785531abac2dfbb3c8db20471281e9">Ogre::VulkanRenderSystem</a>
-</li>
 <li>initializeMemoryManager()
 : <a class="el" href="struct_ogre_1_1_by_skeleton_def.html#ac44f65096394c185d48dcb1baad1e95d">Ogre::BySkeletonDef</a>
 </li>
@@ -301,8 +301,8 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 : <a class="el" href="class_ogre_1_1_profile_session_listener.html#a2a55689ef0b65d011ecbe5e618ec6061">Ogre::ProfileSessionListener</a>
 , <a class="el" href="group___overlays.html#gad9caa5abfbee70dc91c40963c7204186">Ogre::v1::OverlayProfileSessionListener</a>
 </li>
-<li>initializeVkInstance()
-: <a class="el" href="class_ogre_1_1_vulkan_render_system.html#a3ec2b18d19494341bde265021a25b523">Ogre::VulkanRenderSystem</a>
+<li>initPhysicalDeviceList()
+: <a class="el" href="class_ogre_1_1_vulkan_instance.html#aa5f36216fddc3aac615b3780f3f1bd09">Ogre::VulkanInstance</a>
 </li>
 <li>initQueues()
 : <a class="el" href="struct_ogre_1_1_vulkan_device.html#a0369aa624f9b0d76521077b89699f49f">Ogre::VulkanDevice</a>
@@ -392,7 +392,7 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 : <a class="el" href="class_ogre_1_1_internal_error_exception.html#a5bc4d45afee8370b1688b13dd6099cb2">Ogre::InternalErrorException</a>
 </li>
 <li>interpolate()
-: <a class="el" href="class_ogre_1_1_rotational_spline.html#a4fd498ecda341877bed16614f99513f3">Ogre::RotationalSpline</a>
+: <a class="el" href="class_ogre_1_1_rotational_spline.html#a50e4fac029abebe1f318a80da015f544">Ogre::RotationalSpline</a>
 , <a class="el" href="class_ogre_1_1_simple_spline.html#a11afeab4c4889cbfb34a439b9415b09f">Ogre::SimpleSpline</a>
 </li>
 <li>intersect()
@@ -410,10 +410,10 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 : <a class="el" href="struct_ogre_1_1_aabb.html#a2c3aeed24c6109e4cd3bcce489a094fc">Ogre::Aabb</a>
 , <a class="el" href="class_ogre_1_1_array_aabb.html#a5fcf5aac4c93a3795b9ac306c5ca6ebe">Ogre::ArrayAabb</a>
 , <a class="el" href="class_ogre_1_1_array_ray.html#a1e8cbbda73ce427f9c5418b2552f819e">Ogre::ArrayRay</a>
-, <a class="el" href="class_ogre_1_1_array_sphere.html#ac3feba6d323cd711fca881f94a314e2a">Ogre::ArraySphere</a>
+, <a class="el" href="class_ogre_1_1_array_sphere.html#a7670729740e21cdd1d5ae3e554ba3cf5">Ogre::ArraySphere</a>
 , <a class="el" href="class_ogre_1_1_axis_aligned_box.html#aa248737509768d1016c0fa36313b310c">Ogre::AxisAlignedBox</a>
-, <a class="el" href="class_ogre_1_1_math.html#a11664bfebecca73dbb42c0959d3d9ff7">Ogre::Math</a>
-, <a class="el" href="class_ogre_1_1_plane_bounded_volume.html#ac92a3d627da4cadbc9ebe7331b368e6e">Ogre::PlaneBoundedVolume</a>
+, <a class="el" href="class_ogre_1_1_math.html#a6297525bcf134fc00bcf347d0bb15ac0">Ogre::Math</a>
+, <a class="el" href="class_ogre_1_1_plane_bounded_volume.html#ae4528e95f68402ad6fea0ff6414dbeb7">Ogre::PlaneBoundedVolume</a>
 , <a class="el" href="class_ogre_1_1_ray.html#a86730586582f0c93d42ab79e6ba23409">Ogre::Ray</a>
 , <a class="el" href="class_ogre_1_1_sphere.html#a01e832a0542bde80df107ab6b26b56f9">Ogre::Sphere</a>
 </li>
@@ -530,7 +530,7 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 : <a class="el" href="class_ogre_1_1_root.html#ab5b391ac4b40774d1d77a339140bc954">Ogre::Root</a>
 </li>
 <li>isBool()
-: <a class="el" href="struct_ogre_1_1_gpu_constant_definition.html#ad36eaae8146204ee76bf97e5ca432aaf">Ogre::GpuConstantDefinition</a>
+: <a class="el" href="struct_ogre_1_1_gpu_constant_definition.html#ad53ec6eedaf695a41ba9773112256ab7">Ogre::GpuConstantDefinition</a>
 </li>
 <li>isBorderBack()
 : <a class="el" href="class_ogre_1_1_volume_1_1_octree_node.html#af33370f4466b6f75c9235c99acafc764">Ogre::Volume::OctreeNode</a>
@@ -592,7 +592,7 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 : <a class="el" href="class_ogre_1_1_cocoa_window.html#a89b0171ad7aef44999144de65d223522">Ogre::CocoaWindow</a>
 , <a class="el" href="class_ogre_1_1_d3_d11_window.html#a0e5545d29513c7fab989e10eb258a906">Ogre::D3D11Window</a>
 , <a class="el" href="class_ogre_1_1_egl_p_buffer_window.html#af426cb1660249bd2688eb24b2329ba99">Ogre::EglPBufferWindow</a>
-, <a class="el" href="class_ogre_1_1_e_g_l_window.html#a5a9d4f84277198cc56246a6f4711c8eb">Ogre::EGLWindow</a>
+, <a class="el" href="class_ogre_1_1_e_g_l_window.html#a1416378728db43c188efaeaaad56e583">Ogre::EGLWindow</a>
 , <a class="el" href="class_ogre_1_1_g_l_x_window.html#a80465cc5bfc2e6c6b04e67fbb91766d8">Ogre::GLXWindow</a>
 , <a class="el" href="class_ogre_1_1_metal_window.html#a3e9feb79763c38038594ba8e2288bb3a">Ogre::MetalWindow</a>
 , <a class="el" href="class_ogre_1_1_n_u_l_l_window.html#a8f9787b59f18d11aed89e81bd801b94a">Ogre::NULLWindow</a>
@@ -1125,6 +1125,9 @@ $(document).ready(function(){initNavTree('functions_func_i.html',''); initResiza
 </li>
 <li>isTextureLoadFailing()
 : <a class="el" href="class_ogre_1_1_texture_unit_state.html#a8a15351e7f8c7a47e26633f1d6f15abd">Ogre::TextureUnitState</a>
+</li>
+<li>isTilerMemoryless()
+: <a class="el" href="class_ogre_1_1_texture_gpu.html#a67a7e79bbd4ff468fd69b9737888810e">Ogre::TextureGpu</a>
 </li>
 <li>isTimeStampEnabled()
 : <a class="el" href="class_ogre_1_1_log.html#a8adb9e21b32bf07e67dd5d6b8b9b504e">Ogre::Log</a>
