@@ -479,7 +479,8 @@ namespace Ogre
 
         VkSurfaceKHR surface;
 
-        VkResult result = vkCreateWin32SurfaceKHR( mDevice->mInstance, &createInfo, 0, &surface );
+        VkResult result =
+            vkCreateWin32SurfaceKHR( mDevice->mInstance->mVkInstance, &createInfo, 0, &surface );
         checkVkResult( result, "vkCreateWin32SurfaceKHR" );
 
         mSurfaceKHR = surface;
@@ -539,7 +540,10 @@ namespace Ogre
 
         mTexture = textureManager->createTextureGpuWindow( this );
         if( DepthBuffer::DefaultDepthBufferFormat != PFG_NULL )
-            mDepthBuffer = textureManager->createWindowDepthBuffer();
+        {
+            const bool bMemoryLess = requestedMemoryless( miscParams );
+            mDepthBuffer = textureManager->createWindowDepthBuffer( bMemoryLess );
+        }
 
         setFinalResolution( mRequestedWidth, mRequestedHeight );
 
@@ -563,8 +567,10 @@ namespace Ogre
 
         if( mDepthBuffer )
         {
-            mTexture->_setDepthBufferDefaults( DepthBuffer::NO_POOL_EXPLICIT_RTV, false,
-                                               mDepthBuffer->getPixelFormat() );
+            mTexture->_setDepthBufferDefaults( mDepthBuffer->isTilerMemoryless()
+                                                   ? DepthBuffer::POOL_MEMORYLESS
+                                                   : DepthBuffer::NO_POOL_EXPLICIT_RTV,
+                                               false, mDepthBuffer->getPixelFormat() );
         }
         else
         {

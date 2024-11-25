@@ -63,13 +63,6 @@ namespace Ogre
         mDevice = device;
     }
     //-------------------------------------------------------------------------
-    void VulkanWindow::_initialize( TextureGpuManager *textureGpuManager )
-    {
-        OGRE_EXCEPT( Exception::ERR_INVALID_CALL,
-                     "Call _initialize( TextureGpuManager*, const NameValuePairList * ) instead",
-                     "VulkanWindow::_initialize" );
-    }
-    //-------------------------------------------------------------------------
     VulkanWindowNull::VulkanWindowNull( const String &title, uint32 width, uint32 height,
                                         bool fullscreenMode ) :
         VulkanWindow( title, width, height, fullscreenMode )
@@ -571,7 +564,7 @@ namespace Ogre
         destroySwapchain();
         if( mSurfaceKHR )
         {
-            vkDestroySurfaceKHR( mDevice->mInstance, mSurfaceKHR, 0 );
+            vkDestroySurfaceKHR( mDevice->mInstance->mVkInstance, mSurfaceKHR, 0 );
             mSurfaceKHR = 0;
         }
     }
@@ -726,7 +719,7 @@ namespace Ogre
     {
         if( name == "RENDERDOC_DEVICE" )
         {
-            *static_cast<VkInstance *>( pData ) = mDevice->mInstance;
+            *static_cast<VkInstance *>( pData ) = mDevice->mInstance->mVkInstance;
             return;
         }
         else

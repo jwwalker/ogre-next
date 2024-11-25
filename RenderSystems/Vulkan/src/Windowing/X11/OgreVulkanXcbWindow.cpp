@@ -202,9 +202,9 @@ namespace Ogre
 
         PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR get_xcb_presentation_support =
             (PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR)vkGetInstanceProcAddr(
-                mDevice->mInstance, "vkGetPhysicalDeviceXcbPresentationSupportKHR" );
+                mDevice->mInstance->mVkInstance, "vkGetPhysicalDeviceXcbPresentationSupportKHR" );
         PFN_vkCreateXcbSurfaceKHR create_xcb_surface = (PFN_vkCreateXcbSurfaceKHR)vkGetInstanceProcAddr(
-            mDevice->mInstance, "vkCreateXcbSurfaceKHR" );
+            mDevice->mInstance->mVkInstance, "vkCreateXcbSurfaceKHR" );
 
         if( !get_xcb_presentation_support( mDevice->mPhysicalDevice, mDevice->mGraphicsQueue.mFamilyIdx,
                                            mConnection, mScreen->root_visual ) )
@@ -218,14 +218,17 @@ namespace Ogre
         xcbSurfCreateInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
         xcbSurfCreateInfo.connection = mConnection;
         xcbSurfCreateInfo.window = mXcbWindow;
-        create_xcb_surface( mDevice->mInstance, &xcbSurfCreateInfo, 0, &mSurfaceKHR );
+        create_xcb_surface( mDevice->mInstance->mVkInstance, &xcbSurfCreateInfo, 0, &mSurfaceKHR );
 
         VulkanTextureGpuManager *textureManager =
             static_cast<VulkanTextureGpuManager *>( textureGpuManager );
 
         mTexture = textureManager->createTextureGpuWindow( this );
         if( DepthBuffer::DefaultDepthBufferFormat != PFG_NULL )
-            mDepthBuffer = textureManager->createWindowDepthBuffer();
+        {
+            const bool bMemoryLess = requestedMemoryless( miscParams );
+            mDepthBuffer = textureManager->createWindowDepthBuffer( bMemoryLess );
+        }
         mStencilBuffer = 0;
 
         setFinalResolution( mRequestedWidth, mRequestedHeight );
@@ -246,8 +249,10 @@ namespace Ogre
 
         if( mDepthBuffer )
         {
-            mTexture->_setDepthBufferDefaults( DepthBuffer::NO_POOL_EXPLICIT_RTV, false,
-                                               mDepthBuffer->getPixelFormat() );
+            mTexture->_setDepthBufferDefaults( mDepthBuffer->isTilerMemoryless()
+                                                   ? DepthBuffer::POOL_MEMORYLESS
+                                                   : DepthBuffer::NO_POOL_EXPLICIT_RTV,
+                                               false, mDepthBuffer->getPixelFormat() );
         }
         else
         {

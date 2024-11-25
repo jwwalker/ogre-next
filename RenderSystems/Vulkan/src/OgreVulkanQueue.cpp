@@ -41,7 +41,7 @@ THE SOFTWARE.
 
 #include "OgreVulkanUtils.h"
 
-#include <vulkan/vulkan.h>
+#include "vulkan/vulkan_core.h"
 
 #define TODO_findRealPresentQueue
 #define TODO_we_assume_has_stencil
@@ -68,7 +68,9 @@ namespace Ogre
     {
     }
     //-------------------------------------------------------------------------
-    VulkanQueue::~VulkanQueue()
+    VulkanQueue::~VulkanQueue() { destroy(); }
+    //-------------------------------------------------------------------------
+    void VulkanQueue::destroy()
     {
         if( mDevice )
         {
@@ -115,6 +117,8 @@ namespace Ogre
                 vkDestroyFence( mDevice, *itor++, 0 );
 
             mAvailableFences.clear();
+
+            mDevice = 0;
         }
     }
     //-------------------------------------------------------------------------
@@ -293,9 +297,6 @@ namespace Ogre
 
         newCommandBuffer();
     }
-
-    void VulkanQueue::destroy() {}
-
     //-------------------------------------------------------------------------
     void VulkanQueue::newCommandBuffer()
     {

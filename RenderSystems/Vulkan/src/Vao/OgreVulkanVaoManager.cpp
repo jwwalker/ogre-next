@@ -503,7 +503,7 @@ namespace Ogre
 
             char tmpBuffer[256];
             LwString text( LwString::FromEmptyPointer( tmpBuffer, sizeof( tmpBuffer ) ) );
-            text.a( "[Vulkan] Flushing all mDelayedBlocks(", bytesToMegabytes( mDelayedBlocksSize ),
+            text.a( "Vulkan: Flushing all mDelayedBlocks(", bytesToMegabytes( mDelayedBlocksSize ),
                     " MB) because mDelayedBlocksFlushThreshold(",
                     bytesToMegabytes( mDelayedBlocksFlushThreshold ),
                     " MB) was exceeded. This prevents async operations (e.g. async compute)",
@@ -711,6 +711,11 @@ namespace Ogre
                                           const VkPhysicalDeviceMemoryProperties &memProperties,
                                           const uint32 memoryTypeIdx )
     {
+        // Skip zero size heaps, as in https://vulkan.gpuinfo.org/displayreport.php?id=34174#memory
+        // on Vulkan Compatibility Pack for Arm64 Windows over Parallels Display Adapter (WDDM)
+        if( memProperties.memoryHeaps[memProperties.memoryTypes[memoryTypeIdx].heapIndex].size == 0 )
+            return;
+
         FastArray<uint32>::iterator itor = mBestVkMemoryTypeIndex[vboFlag].begin();
         FastArray<uint32>::iterator endt = mBestVkMemoryTypeIndex[vboFlag].end();
 
@@ -775,9 +780,9 @@ namespace Ogre
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT );
 
         LogManager &logManager = LogManager::getSingleton();
-        logManager.logMessage( "Supported memory types for general buffer usage: " +
+        logManager.logMessage( "Vulkan: Supported memory types for general buffer usage: " +
                                StringConverter::toString( supportedMemoryTypesBuffer ) );
-        logManager.logMessage( "Supported memory types for reading: " +
+        logManager.logMessage( "Vulkan: Supported memory types for reading: " +
                                StringConverter::toString( supportedMemoryTypesRead ) );
 
         const VkPhysicalDeviceMemoryProperties &memProperties = mDevice->mDeviceMemoryProperties;
@@ -823,7 +828,7 @@ namespace Ogre
         {
             // This is BS. No heap is device-local. Sigh, just pick any and try to get the best score
             logManager.logMessage(
-                "VkDevice: No heap found with DEVICE_LOCAL bit set. This should be impossible",
+                "Vulkan: No heap found with DEVICE_LOCAL bit set. This should be impossible",
                 LML_CRITICAL );
             for( uint32 i = 0u; i < numMemoryTypes; ++i )
                 addMemoryType( CPU_INACCESSIBLE, memProperties, i );
@@ -869,17 +874,17 @@ namespace Ogre
             }
         }
 
-        logManager.logMessage( "VkDevice will use coherent memory buffers: " +
+        logManager.logMessage( "Vulkan: VkDevice will use coherent memory buffers: " +
                                StringConverter::toString( mSupportsCoherentMemory ) );
-        logManager.logMessage( "VkDevice will use non-coherent memory buffers: " +
+        logManager.logMessage( "Vulkan: VkDevice will use non-coherent memory buffers: " +
                                StringConverter::toString( mSupportsNonCoherentMemory ) );
-        logManager.logMessage( "VkDevice will prefer coherent memory buffers: " +
+        logManager.logMessage( "Vulkan: VkDevice will prefer coherent memory buffers: " +
                                StringConverter::toString( mPreferCoherentMemory ) );
 
         if( mBestVkMemoryTypeIndex[CPU_READ_WRITE].empty() )
         {
             logManager.logMessage(
-                "VkDevice: could not find cached host-visible memory. GPU -> CPU transfers could be "
+                "Vulkan: could not find cached host-visible memory. GPU -> CPU transfers could be "
                 "slow",
                 LML_CRITICAL );
 
@@ -910,7 +915,7 @@ namespace Ogre
         if( mDevice->mDeviceProperties.limits.bufferImageGranularity != 1u )
             mBestVkMemoryTypeIndex[TEXTURES_OPTIMAL] = mBestVkMemoryTypeIndex[CPU_INACCESSIBLE];
 
-        logManager.logMessage( "VkDevice will use coherent memory for reading: " +
+        logManager.logMessage( "Vulkan: VkDevice will use coherent memory for reading: " +
                                StringConverter::toString( mReadMemoryIsCoherent ) );
 
         // Fill mMemoryTypesInUse
@@ -928,7 +933,7 @@ namespace Ogre
             }
         }
 
-        logManager.logMessage( "VkDevice read memory is coherent: " +
+        logManager.logMessage( "Vulkan: VkDevice read memory is coherent: " +
                                StringConverter::toString( mReadMemoryIsCoherent ) );
     }
     //-----------------------------------------------------------------------------------
@@ -2150,7 +2155,7 @@ namespace Ogre
     }
     //-----------------------------------------------------------------------------------
     void VulkanVaoManager::getAvailableSemaphores( VkSemaphoreArray &semaphoreArray,
-                                                    size_t numSemaphores )
+                                                   size_t numSemaphores )
     {
         semaphoreArray.reserve( semaphoreArray.size() + numSemaphores );
 
