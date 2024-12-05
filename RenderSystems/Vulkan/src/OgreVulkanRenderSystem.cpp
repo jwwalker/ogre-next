@@ -48,6 +48,7 @@ THE SOFTWARE.
 #include "Vao/OgreVertexArrayObject.h"
 
 #include "CommandBuffer/OgreCbDrawCall.h"
+#include "Compositor/OgreCompositorManager2.h"
 
 #include "OgreVulkanHlmsPso.h"
 #include "Vao/OgreIndirectBufferPacked.h"
@@ -67,7 +68,10 @@ THE SOFTWARE.
 #include "Vao/OgreVulkanUavBufferPacked.h"
 
 #include "OgreDepthBuffer.h"
+#include "OgreMeshManager.h"
+#include "OgreMeshManager2.h"
 #include "OgreRoot.h"
+#include "OgreTimer.h"
 
 #ifdef OGRE_VULKAN_WINDOW_WIN32
 #    include "Windowing/win32/OgreVulkanWin32Window.h"
@@ -122,6 +126,26 @@ namespace Ogre
                                             uint64_t srcObject, size_t location, int32_t msgCode,
                                             const char *pLayerPrefix, const char *pMsg, void *pUserData )
     {
+        VulkanRenderSystem *renderSystem = static_cast<VulkanRenderSystem *>( pUserData );
+
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+        if( renderSystem->getActiveVulkanPhysicalDevice().driverID == 23 /* VK_DRIVER_ID_MESA_DOZEN */
+            && ( msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT ) )
+        {
+            // According to VkQueueFamilyProperties, graphics and compute capable queues must be declared
+            // with a minImageTransferGranularity of (1,1,1). Currently, dozen is hardcoded to a value of
+            // (0,0,0). https://gitlab.freedesktop.org/mesa/mesa/-/issues/10617
+            static String ignoredFalsePositiveErrors[] = {
+                "Validation Error: [ VUID-vkCmdCopyImage-srcOffset-01783 ]",
+                "Validation Error: [ VUID-vkCmdCopyImage-dstOffset-01784 ]",
+                "Validation Error: [ VUID-vkCmdCopyBufferToImage-imageOffset-07738 ]"
+            };
+            for( auto &err : ignoredFalsePositiveErrors )
+                if( 0 == strncmp( pMsg, err.c_str(), err.size() ) )
+                    return false;
+        }
+#endif
+
         // clang-format off
         char *message = (char *)malloc(strlen(pMsg) + 100);
 
@@ -135,7 +159,7 @@ namespace Ogre
             sprintf(message, "PERFORMANCE WARNING: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
         } else if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
             sprintf(message, "ERROR: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
-            static_cast<VulkanRenderSystem*>( pUserData )->debugCallback();
+            renderSystem->debugCallback();
         } else if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
             sprintf(message, "DEBUG: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
         } else {
@@ -173,7 +197,7 @@ namespace Ogre
         mVulkanProgramFactory1( 0 ),
         mVulkanProgramFactory2( 0 ),
         mVulkanProgramFactory3( 0 ),
-        mActiveDevice( { 0, 0, String() } ),
+        mActiveDevice( {} ),
         mFirstUnflushedAutoParamsBuffer( 0 ),
         mAutoParamsBufferIdx( 0 ),
         mCurrentAutoParamsBufferPtr( 0 ),
@@ -252,19 +276,7 @@ namespace Ogre
         if( !mDevice )
             return;
 
-        for( ConstBufferPacked *constBuffer : mAutoParamsBuffer )
-        {
-            if( constBuffer->getMappingState() != MS_UNMAPPED )
-                constBuffer->unmap( UO_UNMAP_ALL );
-            mVaoManager->destroyConstBuffer( constBuffer );
-        }
-        mAutoParamsBuffer.clear();
-        mFirstUnflushedAutoParamsBuffer = 0u;
-        mAutoParamsBufferIdx = 0u;
-        mCurrentAutoParamsBufferPtr = 0;
-        mCurrentAutoParamsBufferSpaceLeft = 0;
-
-        mDevice->stall();
+        destroyVkResources0();
 
         {
             // Remove all windows.
@@ -294,29 +306,7 @@ namespace Ogre
                          "emptied mSharedDepthBufferRefs. Please report this bug to "
                          "https://github.com/OGRECave/ogre-next/issues/" );
 
-        if( mDummySampler )
-        {
-            vkDestroySampler( mDevice->mDevice, mDummySampler, 0 );
-            mDummySampler = 0;
-        }
-
-        if( mDummyTextureView )
-        {
-            vkDestroyImageView( mDevice->mDevice, mDummyTextureView, 0 );
-            mDummyTextureView = 0;
-        }
-
-        if( mDummyTexBuffer )
-        {
-            mVaoManager->destroyTexBuffer( mDummyTexBuffer );
-            mDummyTexBuffer = 0;
-        }
-
-        if( mDummyBuffer )
-        {
-            mVaoManager->destroyConstBuffer( mDummyBuffer );
-            mDummyBuffer = 0;
-        }
+        destroyVkResources1();
 
         OGRE_DELETE mHardwareBufferManager;
         mHardwareBufferManager = 0;
@@ -343,6 +333,89 @@ namespace Ogre
 
         delete mDevice;
         mDevice = 0;
+    }
+    //-------------------------------------------------------------------------
+    void VulkanRenderSystem::createVkResources()
+    {
+        uint32 dummyData = 0u;
+        mDummyBuffer = mVaoManager->createConstBuffer( 4u, BT_IMMUTABLE, &dummyData, false );
+        mDummyTexBuffer =
+            mVaoManager->createTexBuffer( PFG_RGBA8_UNORM, 4u, BT_IMMUTABLE, &dummyData, false );
+
+        {
+            VkImage dummyImage = static_cast<VulkanTextureGpuManager *>( mTextureGpuManager )
+                                     ->getBlankTextureVulkanName( TextureTypes::Type2D );
+
+            VkImageViewCreateInfo imageViewCi;
+            makeVkStruct( imageViewCi, VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO );
+            imageViewCi.image = dummyImage;
+            imageViewCi.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            imageViewCi.format = VK_FORMAT_R8G8B8A8_UNORM;
+            imageViewCi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageViewCi.subresourceRange.levelCount = 1u;
+            imageViewCi.subresourceRange.layerCount = 1u;
+
+            VkResult result = vkCreateImageView( mDevice->mDevice, &imageViewCi, 0, &mDummyTextureView );
+            checkVkResult( result, "vkCreateImageView" );
+        }
+
+        {
+            VkSamplerCreateInfo samplerDescriptor;
+            makeVkStruct( samplerDescriptor, VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO );
+            float maxAllowedAnisotropy = mDevice->mDeviceProperties.limits.maxSamplerAnisotropy;
+            samplerDescriptor.maxAnisotropy = maxAllowedAnisotropy;
+            samplerDescriptor.anisotropyEnable = VK_FALSE;
+            samplerDescriptor.minLod = -std::numeric_limits<float>::max();
+            samplerDescriptor.maxLod = std::numeric_limits<float>::max();
+            VkResult result = vkCreateSampler( mDevice->mDevice, &samplerDescriptor, 0, &mDummySampler );
+            checkVkResult( result, "vkCreateSampler" );
+        }
+
+        resetAllBindings();
+    }
+    //-------------------------------------------------------------------------
+    void VulkanRenderSystem::destroyVkResources0()
+    {
+        for( ConstBufferPacked *constBuffer : mAutoParamsBuffer )
+        {
+            if( constBuffer->getMappingState() != MS_UNMAPPED )
+                constBuffer->unmap( UO_UNMAP_ALL );
+            mVaoManager->destroyConstBuffer( constBuffer );
+        }
+        mAutoParamsBuffer.clear();
+        mFirstUnflushedAutoParamsBuffer = 0u;
+        mAutoParamsBufferIdx = 0u;
+        mCurrentAutoParamsBufferPtr = 0;
+        mCurrentAutoParamsBufferSpaceLeft = 0;
+
+        mDevice->stall();
+    }
+    //-------------------------------------------------------------------------
+    void VulkanRenderSystem::destroyVkResources1()
+    {
+        if( mDummySampler )
+        {
+            vkDestroySampler( mDevice->mDevice, mDummySampler, 0 );
+            mDummySampler = 0;
+        }
+
+        if( mDummyTextureView )
+        {
+            vkDestroyImageView( mDevice->mDevice, mDummyTextureView, 0 );
+            mDummyTextureView = 0;
+        }
+
+        if( mDummyTexBuffer )
+        {
+            mVaoManager->destroyTexBuffer( mDummyTexBuffer );
+            mDummyTexBuffer = 0;
+        }
+
+        if( mDummyBuffer )
+        {
+            mVaoManager->destroyConstBuffer( mDummyBuffer );
+            mDummyBuffer = 0;
+        }
     }
     //-------------------------------------------------------------------------
     const String &VulkanRenderSystem::getName() const
@@ -609,11 +682,7 @@ namespace Ogre
 
         // We would like to save the device properties for the device capabilities limits.
         // These limits are needed for buffers' binding alignments.
-        VkPhysicalDeviceProperties *vkProperties =
-            const_cast<VkPhysicalDeviceProperties *>( &mDevice->mDeviceProperties );
-        vkGetPhysicalDeviceProperties( mDevice->mPhysicalDevice, vkProperties );
-
-        VkPhysicalDeviceProperties &properties = mDevice->mDeviceProperties;
+        const VkPhysicalDeviceProperties &properties = mDevice->mDeviceProperties;
 
         LogManager::getSingleton().logMessage(
             "Vulkan: API Version: " +
@@ -1092,24 +1161,24 @@ namespace Ogre
             }
 
             mActiveDevice = externalDevice
-                                ? VulkanPhysicalDevice( { externalDevice->physicalDevice, 0, String() } )
+                                ? VulkanPhysicalDevice( { externalDevice->physicalDevice } )
                                 : *mInstance->findByName( mVulkanSupport->getSelectedDeviceName() );
 
             mDevice = new VulkanDevice( this );
+            VulkanVaoManager *vaoManager = OGRE_NEW VulkanVaoManager( mDevice, this, miscParams );
+            mVaoManager = vaoManager;
+            mDevice->mVaoManager = vaoManager;
+
             mDevice->setPhysicalDevice( mInstance, mActiveDevice, externalDevice );
 
             mRealCapabilities = createRenderSystemCapabilities();
             mCurrentCapabilities = mRealCapabilities;
 
+            vaoManager->createVkResources();
+
             initialiseFromRenderSystemCapabilities( mCurrentCapabilities, 0 );
 
-            VulkanVaoManager *vaoManager = OGRE_NEW VulkanVaoManager( mDevice, this, miscParams );
-            mVaoManager = vaoManager;
             mHardwareBufferManager = OGRE_NEW v1::VulkanHardwareBufferManager( mDevice, mVaoManager );
-
-            mDevice->mVaoManager = vaoManager;
-            mDevice->initQueues();
-            vaoManager->initDrawIdVertexBuffer();
 
             FastArray<PixelFormatGpu> depthFormatCandidates( 5u );
             if( DepthBuffer::AvailableDepthFormats & DepthBuffer::DFM_S8 )
@@ -1173,43 +1242,7 @@ namespace Ogre
                 }
             }
 
-            uint32 dummyData = 0u;
-            mDummyBuffer = vaoManager->createConstBuffer( 4u, BT_IMMUTABLE, &dummyData, false );
-            mDummyTexBuffer =
-                vaoManager->createTexBuffer( PFG_RGBA8_UNORM, 4u, BT_IMMUTABLE, &dummyData, false );
-
-            {
-                VkImage dummyImage =
-                    textureGpuManager->getBlankTextureVulkanName( TextureTypes::Type2D );
-
-                VkImageViewCreateInfo imageViewCi;
-                makeVkStruct( imageViewCi, VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO );
-                imageViewCi.image = dummyImage;
-                imageViewCi.viewType = VK_IMAGE_VIEW_TYPE_2D;
-                imageViewCi.format = VK_FORMAT_R8G8B8A8_UNORM;
-                imageViewCi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-                imageViewCi.subresourceRange.levelCount = 1u;
-                imageViewCi.subresourceRange.layerCount = 1u;
-
-                VkResult result =
-                    vkCreateImageView( mDevice->mDevice, &imageViewCi, 0, &mDummyTextureView );
-                checkVkResult( result, "vkCreateImageView" );
-            }
-
-            {
-                VkSamplerCreateInfo samplerDescriptor;
-                makeVkStruct( samplerDescriptor, VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO );
-                float maxAllowedAnisotropy = mDevice->mDeviceProperties.limits.maxSamplerAnisotropy;
-                samplerDescriptor.maxAnisotropy = maxAllowedAnisotropy;
-                samplerDescriptor.anisotropyEnable = VK_FALSE;
-                samplerDescriptor.minLod = -std::numeric_limits<float>::max();
-                samplerDescriptor.maxLod = std::numeric_limits<float>::max();
-                VkResult result =
-                    vkCreateSampler( mDevice->mDevice, &samplerDescriptor, 0, &mDummySampler );
-                checkVkResult( result, "vkCreateSampler" );
-            }
-
-            resetAllBindings();
+            createVkResources();
 
             String workaroundsStr;
             Workarounds::dump( workaroundsStr );
@@ -1231,6 +1264,108 @@ namespace Ogre
     const FastArray<VulkanPhysicalDevice> &VulkanRenderSystem::getVulkanPhysicalDevices() const
     {
         return mInstance->mVulkanPhysicalDevices;
+    }
+    //-------------------------------------------------------------------------
+    bool VulkanRenderSystem::validateDevice( bool forceDeviceElection )
+    {
+        if( mDevice == nullptr || mDevice->mIsExternal || mInstance->mVkInstanceIsExternal )
+            return false;
+
+        bool anotherIsElected = false;
+        if( forceDeviceElection )
+        {
+            // elect new physical device
+            LogManager::getSingleton().logMessage( "Vulkan: Create new instance for device detection" );
+            std::shared_ptr<VulkanInstance> freshInstance = std::make_shared<VulkanInstance>(
+                Root::getSingleton().getAppName(), nullptr, dbgFunc, this );
+            auto device = freshInstance->findByName( mVulkanSupport->getSelectedDeviceName() );
+            if( device == nullptr )
+                return false;
+
+            anotherIsElected = device->physicalDeviceID[0] != mActiveDevice.physicalDeviceID[0] ||
+                               device->physicalDeviceID[1] != mActiveDevice.physicalDeviceID[1];
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
+            anotherIsElected = true;  // simulate switching instance and physical device
+#endif
+            if( anotherIsElected )
+            {
+                LogManager::getSingleton().logMessage(
+                    "Vulkan: Another device was elected, switching VkInstance and active device" );
+                mInstance = freshInstance;
+                mActiveDevice = *device;
+            }
+        }
+
+        // recreate logical device with all resources
+        if( anotherIsElected || mDevice->mIsDeviceLost )
+        {
+            handleDeviceLost();
+
+            return !mDevice->mIsDeviceLost;
+        }
+
+        return true;
+    }
+    //-------------------------------------------------------------------------
+    void VulkanRenderSystem::handleDeviceLost()
+    {
+        // recreate logical device with all resources
+        LogManager::getSingleton().logMessage( "Vulkan: Device was lost, recreating." );
+
+        Timer timer;
+        uint64 startTime = timer.getMicroseconds();
+
+        destroyVkResources0();
+
+        // release device depended resources
+        fireEvent( "DeviceLost" );
+
+        Root::getSingleton().getCompositorManager2()->_releaseManualHardwareResources();
+        SceneManagerEnumerator::SceneManagerIterator scnIt =
+            SceneManagerEnumerator::getSingleton().getSceneManagerIterator();
+        while( scnIt.hasMoreElements() )
+            scnIt.getNext()->_releaseManualHardwareResources();
+
+        Root::getSingleton().getHlmsManager()->_changeRenderSystem( (RenderSystem *)0 );
+
+        MeshManager::getSingleton().unloadAll( Resource::LF_MARKED_FOR_RELOAD );
+
+        notifyDeviceLost();
+
+        destroyVkResources1();
+        static_cast<VulkanTextureGpuManager *>( mTextureGpuManager )->destroyVkResources();
+        static_cast<VulkanVaoManager *>( mVaoManager )->destroyVkResources();
+
+        // Release all automatic temporary buffers and free unused
+        // temporary buffers, so we doesn't need to recreate them,
+        // and they will reallocate on demand.
+        v1::HardwareBufferManager::getSingleton()._releaseBufferCopies( true );
+
+        // recreate device
+        mDevice->setPhysicalDevice( mInstance, mActiveDevice, nullptr );
+
+        static_cast<VulkanVaoManager *>( mVaoManager )->createVkResources();
+        static_cast<VulkanTextureGpuManager *>( mTextureGpuManager )->createVkResources();
+        createVkResources();
+
+        // recreate device depended resources
+        notifyDeviceRestored();
+
+        Root::getSingleton().getHlmsManager()->_changeRenderSystem( this );
+
+        v1::MeshManager::getSingleton().reloadAll( Resource::LF_PRESERVE_STATE );
+        MeshManager::getSingleton().reloadAll( Resource::LF_MARKED_FOR_RELOAD );
+
+        Root::getSingleton().getCompositorManager2()->_restoreManualHardwareResources();
+        scnIt = SceneManagerEnumerator::getSingleton().getSceneManagerIterator();
+        while( scnIt.hasMoreElements() )
+            scnIt.getNext()->_restoreManualHardwareResources();
+
+        fireEvent( "DeviceRestored" );
+
+        uint64 passedTime = ( timer.getMicroseconds() - startTime ) / 1000;
+        LogManager::getSingleton().logMessage( "Vulkan: Device was restored in " +
+                                               StringConverter::toString( passedTime ) + "ms" );
     }
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::_notifyDeviceStalled()

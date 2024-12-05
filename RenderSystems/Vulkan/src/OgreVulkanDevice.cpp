@@ -424,6 +424,11 @@ namespace Ogre
                          "VulkanRenderSystem::getVkPhysicalDevices" );
         }
 
+        PFN_vkGetPhysicalDeviceProperties2KHR GetPhysicalDeviceProperties2 = 0;
+        if( hasExtension( VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME ) )
+            GetPhysicalDeviceProperties2 = (PFN_vkGetPhysicalDeviceProperties2KHR)vkGetInstanceProcAddr(
+                mVkInstance, "vkGetPhysicalDeviceProperties2KHR" );
+
         // assign unique names, allowing reordering/inserting/removing
         map<String, unsigned>::type sameNameCounter;
         mVulkanPhysicalDevices.clear();
@@ -438,13 +443,35 @@ namespace Ogre
             if( sameNameIndex != 0 )
                 name += " (" + Ogre::StringConverter::toString( sameNameIndex + 1 ) + ")";
 
-            // TODO: use deviceLUID or deviceUUID if available
-            uint64 hashResult[2] = {};
-            OGRE_HASH128_FUNC( name.c_str(), (int)name.size(), IdString::Seed, hashResult );
-            long long deviceLUID = hashResult[0];
+            // { deviceLUID, 0 } on Windows, deviceUUID or name hash otherwise
+            uint64 uid[2] = {};
+            VkDriverId driverID = VkDriverId( 0 );
+            if( GetPhysicalDeviceProperties2 && deviceProps.apiVersion >= VK_API_VERSION_1_2 )
+            {
+                // VkPhysicalDeviceIDProperties requires enabled VK_KHR_EXTERNAL_xxx extensions
+                VkPhysicalDeviceProperties2 deviceProps2;
+                VkPhysicalDeviceVulkan11Properties vulkan11Props;  // requires VK_API_VERSION_1_2
+                VkPhysicalDeviceDriverProperties driverProps;      // requires VK_API_VERSION_1_2
+                makeVkStruct( deviceProps2, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2 );
+                makeVkStruct( vulkan11Props, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES );
+                makeVkStruct( driverProps, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES );
+                deviceProps2.pNext = &vulkan11Props;
+                vulkan11Props.pNext = &driverProps;
+                GetPhysicalDeviceProperties2( device, &deviceProps2 );
+                if( vulkan11Props.deviceLUIDValid )
+                    memcpy( uid, vulkan11Props.deviceLUID, VK_LUID_SIZE );
+                else
+                    memcpy( uid, vulkan11Props.deviceUUID, VK_UUID_SIZE );
+                driverID = driverProps.driverID;
+            }
+            else
+            {
+                OGRE_HASH128_FUNC( name.c_str(), (int)name.size(), IdString::Seed, uid );
+            }
 
             LogManager::getSingleton().logMessage( "Vulkan: \"" + name + "\"" );
-            mVulkanPhysicalDevices.push_back( { device, deviceLUID, name } );
+            mVulkanPhysicalDevices.push_back(
+                { device, { uid[0], uid[1] }, driverID, deviceProps.apiVersion, name } );
         }
 
         LogManager::getSingleton().logMessage( "Vulkan: Device detection ends" );
@@ -480,6 +507,7 @@ namespace Ogre
         mVaoManager( 0 ),
         mRenderSystem( renderSystem ),
         mSupportedStages( 0xFFFFFFFF ),
+        mIsDeviceLost( false ),
         mIsExternal( false )
     {
     }
@@ -740,6 +768,10 @@ namespace Ogre
             fillDeviceFeatures2( deviceFeatures2, device16BitStorageFeatures,
                                  deviceShaderFloat16Int8Features );
         }
+
+        vkGetPhysicalDeviceProperties( mPhysicalDevice, &mDeviceProperties );
+
+        initQueues();
 
         // initial pipeline cache
         VkPipelineCacheCreateInfo pipelineCacheCreateInfo;

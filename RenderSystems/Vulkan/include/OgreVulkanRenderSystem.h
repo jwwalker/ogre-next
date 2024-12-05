@@ -56,7 +56,9 @@ namespace Ogre
     struct VulkanPhysicalDevice
     {
         VkPhysicalDevice physicalDevice;
-        long long physicalDeviceID;
+        uint64 physicalDeviceID[2];
+        VkDriverId driverID;
+        uint32 apiVersion;
         String title;
     };
 
@@ -143,12 +145,19 @@ namespace Ogre
         void flushRootLayout();
         void flushRootLayoutCS();
 
+        void createVkResources();
+        void destroyVkResources0();
+        void destroyVkResources1();
+
     public:
         VulkanRenderSystem( const NameValuePairList *options );
         ~VulkanRenderSystem() override;
 
         void shutdown() override;
         const FastArray<VulkanPhysicalDevice> &getVulkanPhysicalDevices() const;
+        const VulkanPhysicalDevice &getActiveVulkanPhysicalDevice() const { return mActiveDevice; }
+        bool validateDevice( bool forceDeviceElection = false ) override;
+        void handleDeviceLost();
 
         const String &getName() const override;
         const String &getFriendlyName() const override;

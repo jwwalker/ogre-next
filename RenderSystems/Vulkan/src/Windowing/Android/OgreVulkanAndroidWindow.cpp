@@ -74,30 +74,7 @@ namespace Ogre
     {
     }
     //-------------------------------------------------------------------------
-    VulkanAndroidWindow::~VulkanAndroidWindow()
-    {
-        destroy();
-
-        if( mTexture )
-        {
-            mTexture->notifyAllListenersTextureChanged( TextureGpuListener::Deleted );
-            OGRE_DELETE mTexture;
-            mTexture = 0;
-        }
-        if( mStencilBuffer && mStencilBuffer != mDepthBuffer )
-        {
-            mStencilBuffer->notifyAllListenersTextureChanged( TextureGpuListener::Deleted );
-            OGRE_DELETE mStencilBuffer;
-            mStencilBuffer = 0;
-        }
-        if( mDepthBuffer )
-        {
-            mDepthBuffer->notifyAllListenersTextureChanged( TextureGpuListener::Deleted );
-            OGRE_DELETE mDepthBuffer;
-            mDepthBuffer = 0;
-            mStencilBuffer = 0;
-        }
-    }
+    VulkanAndroidWindow::~VulkanAndroidWindow() { destroy(); }
     //-----------------------------------------------------------------------------------
     const char *VulkanAndroidWindow::getRequiredExtensionName()
     {
@@ -283,18 +260,7 @@ namespace Ogre
 #endif
 
         destroySwapchain();
-
-        // Depth & Stencil buffer are normal textures; thus they need to be reeinitialized normally
-        if( mDepthBuffer && mDepthBuffer->getResidencyStatus() != GpuResidency::OnStorage )
-            mDepthBuffer->_transitionTo( GpuResidency::OnStorage, (uint8 *)0 );
-        if( mStencilBuffer && mStencilBuffer != mDepthBuffer &&
-            mStencilBuffer->getResidencyStatus() != GpuResidency::OnStorage )
-        {
-            mStencilBuffer->_transitionTo( GpuResidency::OnStorage, (uint8 *)0 );
-        }
-
         setFinalResolution( newWidth, newHeight );
-
         createSwapchain();
     }
     //-------------------------------------------------------------------------
@@ -370,7 +336,8 @@ namespace Ogre
     //-------------------------------------------------------------------------
     void VulkanAndroidWindow::setNativeWindow( ANativeWindow *nativeWindow )
     {
-        destroy();
+        destroySwapchain();
+        destroySurface();
 
         // Depth & Stencil buffer are normal textures; thus they need to be reeinitialized normally
         if( mDepthBuffer && mDepthBuffer->getResidencyStatus() != GpuResidency::OnStorage )
@@ -397,12 +364,7 @@ namespace Ogre
         mFocused = true;
         // WindowEventUtilities::_addRenderWindow( this );
 
-        VkAndroidSurfaceCreateInfoKHR andrSurfCreateInfo;
-        makeVkStruct( andrSurfCreateInfo, VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR );
-        andrSurfCreateInfo.window = mNativeWindow;
-        VkResult result = vkCreateAndroidSurfaceKHR( mDevice->mInstance->mVkInstance,
-                                                     &andrSurfCreateInfo, 0, &mSurfaceKHR );
-        checkVkResult( result, "vkCreateAndroidSurfaceKHR" );
+        createSurface();
 
         const uint32 newWidth = static_cast<uint32>( ANativeWindow_getWidth( mNativeWindow ) );
         const uint32 newHeight = static_cast<uint32>( ANativeWindow_getHeight( mNativeWindow ) );
@@ -444,6 +406,16 @@ namespace Ogre
         }
 
         createSwapchain();
+    }
+    //-------------------------------------------------------------------------
+    void VulkanAndroidWindow::createSurface()
+    {
+        VkAndroidSurfaceCreateInfoKHR andrSurfCreateInfo;
+        makeVkStruct( andrSurfCreateInfo, VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR );
+        andrSurfCreateInfo.window = mNativeWindow;
+        VkResult result = vkCreateAndroidSurfaceKHR( mDevice->mInstance->mVkInstance,
+                                                     &andrSurfCreateInfo, 0, &mSurfaceKHR );
+        checkVkResult( result, "vkCreateAndroidSurfaceKHR" );
     }
     //-------------------------------------------------------------------------
     void VulkanAndroidWindow::setJniProvider( AndroidJniProvider *provider )
@@ -527,7 +499,7 @@ namespace Ogre
 #endif
     }
     //-------------------------------------------------------------------------
-    void VulkanAndroidWindow::destroySwapchain()
+    void VulkanAndroidWindow::destroySwapchain( bool finalDestruction )
     {
 #ifdef OGRE_VULKAN_USE_SWAPPY
         // Swappy has a bug where calling SwappyVk_destroySwapchain will leak the mNativeWindow.
@@ -536,7 +508,7 @@ namespace Ogre
             SwappyVk_setWindow( mDevice->mDevice, mSwapchain, mNativeWindow );
         SwappyVk_destroySwapchain( mDevice->mDevice, mSwapchain );
 #endif
-        VulkanWindowSwapChainBased::destroySwapchain();
+        VulkanWindowSwapChainBased::destroySwapchain( finalDestruction );
     }
     //-------------------------------------------------------------------------
     void VulkanAndroidWindow::getCustomAttribute( IdString name, void *pData )
