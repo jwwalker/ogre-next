@@ -294,8 +294,8 @@ compositor_node HdrRenderUi
 			load
 			{
 				colour load
-				depth clear
-				stencil clear
+				depth dont_care
+				stencil dont_care
 			}
 			store
 			{
