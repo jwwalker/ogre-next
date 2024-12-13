@@ -1028,6 +1028,10 @@ namespace Ogre
         if( reflectMatrix )
         {
             viewMatrix = viewMatrix * ( *reflectMatrix );
+            viewMatrix[0][0] *= -1.0f;
+            viewMatrix[0][1] *= -1.0f;
+            viewMatrix[0][2] *= -1.0f;
+            viewMatrix[0][3] *= -1.0f;
         }
 
         return viewMatrix;

@@ -53,6 +53,7 @@ THE SOFTWARE.
 #include "OgreHighLevelGpuProgram.h"
 #include "OgreHighLevelGpuProgramManager.h"
 #include "OgreIrradianceVolume.h"
+#include "OgreLogManager.h"
 #include "OgrePixelFormatGpuUtils.h"
 #include "OgreRenderQueue.h"
 #include "OgreRootLayout.h"
@@ -73,6 +74,8 @@ THE SOFTWARE.
 #include "OgreLogManager.h"
 #include "OgreProfiler.h"
 #include "OgreStackVector.h"
+
+#include <sstream>
 
 #define TODO_irradianceField_samplerblock
 
@@ -206,6 +209,8 @@ namespace Ogre
     const IdString PbsProperty::BrdfDefault = IdString( "BRDF_Default" );
     const IdString PbsProperty::BrdfCookTorrance = IdString( "BRDF_CookTorrance" );
     const IdString PbsProperty::BrdfBlinnPhong = IdString( "BRDF_BlinnPhong" );
+    const IdString PbsProperty::BrdfJWToon = IdString( "BRDF_JWToon" );
+    const IdString PbsProperty::WeakJWToon = IdString( "JWToon_weak" );
     const IdString PbsProperty::FresnelHasDiffuse = IdString( "fresnel_has_diffuse" );
     const IdString PbsProperty::FresnelSeparateDiffuse = IdString( "fresnel_separate_diffuse" );
     const IdString PbsProperty::GgxHeightCorrelated = IdString( "GGX_height_correlated" );
@@ -801,6 +806,17 @@ namespace Ogre
             setProperty( kNoTid, PbsProperty::BrdfCookTorrance, 1 );
         else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::BlinnPhong )
             setProperty( kNoTid, PbsProperty::BrdfBlinnPhong, 1 );
+        else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::JWToon )
+        {
+			LogManager::getSingleton().stream() << "BRDF set to Toon";
+            setProperty( kNoTid, PbsProperty::BrdfJWToon, 1 );
+		}
+        else if( ( brdf & PbsBrdf::BRDF_MASK ) == PbsBrdf::JWToonWeak )
+        {
+			LogManager::getSingleton().stream() << "BRDF set to Weak Toon";
+            setProperty( kNoTid, PbsProperty::BrdfJWToon, 1 );
+            setProperty( kNoTid, PbsProperty::WeakJWToon, 1 );
+		}
 
         if( brdf & PbsBrdf::FLAG_HAS_DIFFUSE_FRESNEL )
         {

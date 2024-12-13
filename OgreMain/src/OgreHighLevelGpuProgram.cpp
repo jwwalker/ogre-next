@@ -277,6 +277,17 @@ namespace Ogre
 
                 String file = source.substr( pos, endPos - pos );
 
+                if (file == "metal_stdlib")
+                {
+					// This always leads to an exception on startup when using
+					// Metal, which would be caught and handled harmlessly,
+					// but it just an annoyance when the debugger is catching
+					// all exceptions.  -- JWWalker 9 Nov 2021
+					startPos = endPos;
+                }
+                else
+                {
+
                 try
                 {
                     DataStreamPtr includeStream =
@@ -290,6 +301,7 @@ namespace Ogre
                     // Leave the included header, fallback to the compiler
                     //(e.g. Metal can include system headers)
                     startPos = endPos;
+                }
                 }
             }
             else

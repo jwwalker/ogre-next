@@ -71,6 +71,35 @@ INLINE midf3 BRDF( midf3 lightDir, midf3 lightDiffuse, midf3 lightSpecular, Pixe
 @end
 @end
 
+@property( BRDF_JWToon )
+@piece( DeclareBRDF )
+INLINE midf3 BRDF( midf3 lightDir, midf3 lightDiffuse, midf3 lightSpecular, PixelData pixelData PASSBUF_ARG_DECL )
+{
+	midf NdotL = saturate( dot( pixelData.normal, lightDir ) );		//Diffuse (Lambert)
+	NdotL = floor( 2.0 * NdotL );	// QuantizeDot
+	lightDiffuse *= passBuf.jwToonScale;
+	
+	midf quantum = passBuf.jwToonQuantization;
+	
+	midf3 quantizedLight = floor( quantum * NdotL * lightDiffuse + midf3(0.5, 0.5, 0.5) ) / quantum;
+	
+	lightDiffuse = lerp( quantizedLight, lightDiffuse, 0.3 );
+
+    midf3 result = pixelData.diffuse.xyz * lightDiffuse;
+    
+    @property( !JWToon_weak )
+    if (pixelData.NdotV < 0.5) // darken areas edge-on to camera
+    {
+		result *= 0.5;
+    }
+    @end
+    
+    return result;
+}
+@end
+@end
+
+
 @property( BRDF_CookTorrance )
 @piece( DeclareBRDF )
 //Cook-Torrance

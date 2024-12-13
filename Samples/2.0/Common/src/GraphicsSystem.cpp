@@ -96,7 +96,8 @@ namespace Demo
 #endif
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
         mPluginsFolder = mResourcePath;
-#endif
+        mWriteAccessFolder = Ogre::macWriteAccessFolderPath();
+#else
         if( isWriteAccessFolder( mPluginsFolder, "Ogre.log" ) )
             mWriteAccessFolder = mPluginsFolder;
         else
@@ -104,6 +105,7 @@ namespace Demo
             Ogre::FileSystemLayer filesystemLayer( OGRE_VERSION_NAME );
             mWriteAccessFolder = filesystemLayer.getWritablePath( "" );
         }
+#endif
     }
     //-----------------------------------------------------------------------------------
     GraphicsSystem::~GraphicsSystem()
