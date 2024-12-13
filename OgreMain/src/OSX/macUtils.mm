@@ -188,6 +188,23 @@ namespace Ogre
         NSURL *logURL = [libURL URLByAppendingPathComponent:@"Logs" isDirectory:YES];
         return String( logURL.absoluteURL.path.UTF8String ) + "/";
     }
+    
+    String macWriteAccessFolderPath()
+    {
+        NSURL* suppURL = [NSFileManager.defaultManager
+            URLForDirectory: NSApplicationSupportDirectory
+            inDomain: NSUserDomainMask
+            appropriateForURL: nil
+            create: YES
+            error: nil];
+        NSURL* ogreURL = [suppURL URLByAppendingPathComponent: @"Ogre"
+                                isDirectory: YES];
+        [NSFileManager.defaultManager createDirectoryAtURL: ogreURL
+                        withIntermediateDirectories: YES
+                        attributes: nil
+                        error: nil];
+        return String( ogreURL.absoluteURL.path.UTF8String ) + "/";
+    }
 
     String macCachePath( bool bAutoCreate )
     {
@@ -196,19 +213,19 @@ namespace Ogre
                                                        appropriateForURL:nil
                                                                   create:YES
                                                                    error:nil];
-		NSURL *myDirURL = cachesURL;
+        NSURL *myDirURL = cachesURL;
 
-		if( NSBundle.mainBundle.bundleIdentifier )
-		{
-			// May be nullptr if bundle is not correctly set (e.g. samples)
-			myDirURL = [cachesURL URLByAppendingPathComponent:NSBundle.mainBundle.bundleIdentifier
-												  isDirectory:YES];
-		}
-		else
-		{
-			LogManager::getSingleton().logMessage( "WARNING: NS Bundle Identifier not set!",
-												   LML_CRITICAL );
-		}
+        if( NSBundle.mainBundle.bundleIdentifier )
+        {
+            // May be nullptr if bundle is not correctly set (e.g. samples)
+            myDirURL = [cachesURL URLByAppendingPathComponent:NSBundle.mainBundle.bundleIdentifier
+                                                  isDirectory:YES];
+        }
+        else
+        {
+            LogManager::getSingleton().logMessage( "WARNING: NS Bundle Identifier not set!",
+                                                   LML_CRITICAL );
+        }
 
         if( bAutoCreate )
         {

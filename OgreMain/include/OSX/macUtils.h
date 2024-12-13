@@ -46,6 +46,7 @@ namespace Ogre
     _OgreExport String macTempFileName();
     _OgreExport String macResourcesPath();
     _OgreExport String macLogPath();
+    _OgreExport String macWriteAccessFolderPath();
     _OgreExport void   mac_dispatchOneEvent();
 }  // namespace Ogre
 
