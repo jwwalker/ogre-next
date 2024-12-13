@@ -849,8 +849,8 @@ namespace Ogre
                     passScene->mShadowNode = shadowNodeName;
                     passScene->setAllClearColours( backgroundColour );
                     passScene->setAllLoadActions( LoadAction::Clear );
-                    passScene->mStoreActionDepth = StoreAction::DontCare;
-                    passScene->mStoreActionStencil = StoreAction::DontCare;
+                    passScene->mStoreActionDepth = StoreAction::Store;
+                    passScene->mStoreActionStencil = StoreAction::Store;
                 }
             }
         }
