@@ -2320,6 +2320,7 @@ namespace Ogre
                 {
                     debugDumpFile.write( source[i].c_str(),
                                          static_cast<std::streamsize>( source[i].size() ) );
+					debugDumpFile.flush();
                 }
             }
         }
@@ -2483,6 +2484,7 @@ namespace Ogre
                 {
                     debugDumpFile.write( &outString[0],
                                          static_cast<std::streamsize>( outString.size() ) );
+					debugDumpFile.flush();
                 }
 
                 // Don't create and compile if template requested not to
