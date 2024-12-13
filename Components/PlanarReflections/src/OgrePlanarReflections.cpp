@@ -709,6 +709,11 @@ namespace Ogre
                     actorData->reflectionCamera->setFOVy( fov );
                     actorData->reflectionCamera->enableReflection( actor->mPlane );
 
+                    Ogre::UserObjectBindings &cameraBindings(
+                        static_cast<MovableObject *>( actorData->reflectionCamera )
+                            ->getUserObjectBindings() );
+                    cameraBindings.setUserAny( "Slot", Any( actor->mCurrentBoundSlot ) );
+
                     if( camera->getFrustumExtentsManuallySet() )
                     {
                         Ogre::Vector4 frustumExtents;
