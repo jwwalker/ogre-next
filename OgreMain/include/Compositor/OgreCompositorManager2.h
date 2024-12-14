@@ -380,6 +380,7 @@ namespace Ogre
         void removeAllWorkspaces();
         void removeAllWorkspaceDefinitions();
 
+		const WorkspaceVec& getWorkspaces() const { return mWorkspaces; }// JWW
         size_t getNumWorkspaces() const { return mWorkspaces.size(); }
 
         /** Removes all shadow nodes defs. Make sure there are no active nodes using the definition!
