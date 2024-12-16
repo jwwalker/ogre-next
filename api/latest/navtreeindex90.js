@@ -1,5 +1,7 @@
 var NAVTREEINDEX90 =
 {
+"compositor.html#CompositorNodesPassesRenderScene_light_visibility_mask":[4,2,4,0,2,4,6],
+"compositor.html#CompositorNodesPassesRenderScene_lod_bias":[4,2,4,0,2,4,2],
 "compositor.html#CompositorNodesPassesRenderScene_lod_camera":[4,2,4,0,2,4,10],
 "compositor.html#CompositorNodesPassesRenderScene_lod_update_list":[4,2,4,0,2,4,3],
 "compositor.html#CompositorNodesPassesRenderScene_overlays":[4,2,4,0,2,4,8],
@@ -126,8 +128,8 @@ var NAVTREEINDEX90 =
 "functions_d.html":[8,3,0,4],
 "functions_e.html":[8,3,0,5],
 "functions_enum.html":[8,3,4],
-"functions_eval.html":[8,3,5,0],
 "functions_eval.html":[8,3,5],
+"functions_eval.html":[8,3,5,0],
 "functions_eval_b.html":[8,3,5,1],
 "functions_eval_c.html":[8,3,5,2],
 "functions_eval_d.html":[8,3,5,3],
@@ -200,8 +202,8 @@ var NAVTREEINDEX90 =
 "functions_rela_o.html":[8,3,7,2],
 "functions_s.html":[8,3,0,19],
 "functions_t.html":[8,3,0,20],
-"functions_type.html":[8,3,3],
 "functions_type.html":[8,3,3,0],
+"functions_type.html":[8,3,3],
 "functions_type_b.html":[8,3,3,1],
 "functions_type_c.html":[8,3,3,2],
 "functions_type_d.html":[8,3,3,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX90 =
 "functions_vars_s.html":[8,3,2,19],
 "functions_vars_t.html":[8,3,2,20],
 "functions_vars_u.html":[8,3,2,21],
-"functions_vars_v.html":[8,3,2,22],
-"functions_vars_w.html":[8,3,2,23],
-"functions_vars_x.html":[8,3,2,24]
+"functions_vars_v.html":[8,3,2,22]
 };
