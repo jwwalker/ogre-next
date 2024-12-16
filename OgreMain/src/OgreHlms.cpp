@@ -2230,6 +2230,9 @@ namespace Ogre
                 prepassMacroblock.mCullMode =
                     prepassMacroblock.mCullMode == CULL_CLOCKWISE ? CULL_ANTICLOCKWISE : CULL_CLOCKWISE;
             }
+            // We need to disable culling.
+            if( pso.pass.strongMacroblockBits & HlmsPassPso::ForceCullNone )
+                prepassMacroblock.mCullMode = CULL_NONE;
             // Force depth clamp. Probably a directional shadow caster pass
             if( pso.pass.strongMacroblockBits & HlmsPassPso::ForceDepthClamp )
                 prepassMacroblock.mDepthClamp = true;
@@ -2925,6 +2928,8 @@ namespace Ogre
 
         const CompositorPass *pass = sceneManager->getCurrentCompositorPass();
 
+        bool bForceCullNone = false;
+
         if( !casterPass )
         {
             size_t numShadowMapLights = 0u;
@@ -3167,6 +3172,7 @@ namespace Ogre
                     static_cast<const CompositorPassSceneDef *>( pass->getDefinition() );
                 if( passSceneDef->mUvBakingSet != 0xFF )
                 {
+                    bForceCullNone = true;
                     setProperty( kNoTid, HlmsBaseProp::UseUvBaking, 1 );
                     setProperty( kNoTid, HlmsBaseProp::UvBaking, passSceneDef->mUvBakingSet );
                     if( passSceneDef->mBakeLightingOnly )
@@ -3497,7 +3503,7 @@ namespace Ogre
         mListener->preparePassHash( shadowNode, casterPass, dualParaboloid, sceneManager, this );
 
         PassCache passCache;
-        passCache.passPso = getPassPsoForScene( sceneManager );
+        passCache.passPso = getPassPsoForScene( sceneManager, bForceCullNone );
         passCache.properties = mT[kNoTid].setProperties;
 
         assert( mPassCache.size() <= HlmsBits::PassMask &&
@@ -3518,7 +3524,7 @@ namespace Ogre
         return retVal;
     }
     //-----------------------------------------------------------------------------------
-    HlmsPassPso Hlms::getPassPsoForScene( SceneManager *sceneManager )
+    HlmsPassPso Hlms::getPassPsoForScene( SceneManager *sceneManager, const bool bForceCullNone )
     {
         const RenderPassDescriptor *renderPassDesc = mRenderSystem->getCurrentPassDescriptor();
 
@@ -3565,6 +3571,9 @@ namespace Ogre
 
         if( sceneManager->getCamerasInProgress().renderingCamera->getNeedsDepthClamp() )
             passPso.strongMacroblockBits |= HlmsPassPso::ForceDepthClamp;
+
+        if( bForceCullNone )
+            passPso.strongMacroblockBits |= HlmsPassPso::ForceCullNone;
 
         const bool invertVertexWinding = mRenderSystem->getInvertVertexWinding();
 
