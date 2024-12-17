@@ -98,8 +98,9 @@ namespace Ogre
         return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
     }
     //-------------------------------------------------------------------------
-    void VulkanWin32Window::updateWindowRect()
+    bool VulkanWin32Window::updateWindowRect()
     {
+        bool bResolutionChanged = false;
         RECT rc;
         BOOL result;
         result = GetWindowRect( mHwnd, &rc );
@@ -107,8 +108,9 @@ namespace Ogre
         {
             mTop = 0;
             mLeft = 0;
+            bResolutionChanged = true;
             setFinalResolution( 0, 0 );
-            return;
+            return bResolutionChanged;
         }
 
         mTop = rc.top;
@@ -118,17 +120,21 @@ namespace Ogre
         {
             mTop = 0;
             mLeft = 0;
+            bResolutionChanged = true;
             setFinalResolution( 0, 0 );
-            return;
+            return bResolutionChanged;
         }
         uint32 width = static_cast<uint32>( rc.right - rc.left );
         uint32 height = static_cast<uint32>( rc.bottom - rc.top );
         if( width != getWidth() || height != getHeight() )
         {
+            bResolutionChanged = true;
             mRequestedWidth = static_cast<uint32>( rc.right - rc.left );
             mRequestedHeight = static_cast<uint32>( rc.bottom - rc.top );
             setFinalResolution( mRequestedWidth, mRequestedHeight );
         }
+
+        return bResolutionChanged;
     }
     //-------------------------------------------------------------------------
     void VulkanWin32Window::destroy()
@@ -712,9 +718,9 @@ namespace Ogre
         if( !mHwnd || IsIconic( mHwnd ) )
             return;
 
-        updateWindowRect();
+        const bool bResolutionChanged = updateWindowRect();
 
-        if( mRequestedWidth == getWidth() && mRequestedHeight == getHeight() && !mRebuildingSwapchain )
+        if( !bResolutionChanged && !mRebuildingSwapchain )
             return;
 
         mDevice->stall();
