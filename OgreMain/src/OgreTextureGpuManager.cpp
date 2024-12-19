@@ -1212,7 +1212,9 @@ namespace Ogre
         text.clear();
         text.a( "Available Staging Textures\t|", (uint32)mAvailableStagingTextures.size(), "|",
                 (uint32)availSizeBytes / ( 1024u * 1024u ), " MB\t\t |In use:\t|",
-                (uint32)usedSizeBytes / ( 1024u * 1024u ), " MB" );
+                (uint32)mUsedStagingTextures.size(), "|",
+                (uint32)usedSizeBytes / ( 1024u * 1024u ) );
+		text.a(" MB");
         logMgr.logMessage( text.c_str() );
     }
     //-----------------------------------------------------------------------------------
