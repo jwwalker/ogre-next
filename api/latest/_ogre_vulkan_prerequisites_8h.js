@@ -2,8 +2,7 @@ var _ogre_vulkan_prerequisites_8h =
 [
     [ "_CRT_SECURE_NO_DEPRECATE", "_ogre_vulkan_prerequisites_8h.html#a411c46599e926f8cdf49c63957255359", null ],
     [ "_OgreVulkanExport", "_ogre_vulkan_prerequisites_8h.html#aa53bd6664703b81b8a3ba25059ad06c7", null ],
-    [ "checkVkResult", "_ogre_vulkan_prerequisites_8h.html#a53230793c393c7f171198d02e427dd4a", null ],
-    [ "OGRE_VK_EXCEPT", "_ogre_vulkan_prerequisites_8h.html#a6787338cb3eaf24539f5c018ee2e4cec", null ],
+    [ "checkVkResult", "_ogre_vulkan_prerequisites_8h.html#a37653ad34304c66802cee94eb288f1ca", null ],
     [ "OGRE_VK_NON_DISPATCHABLE_HANDLE", "_ogre_vulkan_prerequisites_8h.html#a1163bdf5ce5186a3112f47162c545d36", null ],
     [ "OGRE_VULKAN_CONST_SLOT_START", "_ogre_vulkan_prerequisites_8h.html#a3273850ef80f78f8eab994199554198e", null ],
     [ "OGRE_VULKAN_CS_CONST_SLOT_START", "_ogre_vulkan_prerequisites_8h.html#a9fcbc1c9c91cf506ad1f698314b9347a", null ],
@@ -23,5 +22,6 @@ var _ogre_vulkan_prerequisites_8h =
       [ "FlushOnly", "_ogre_vulkan_prerequisites_8h.html#a119342ed453a2c317a310c790104831ead38befc11f27a51af69cd4bb7acf9231", null ],
       [ "NewFrameIdx", "_ogre_vulkan_prerequisites_8h.html#a119342ed453a2c317a310c790104831ea008778c80c9330eb944ecf889f267462", null ],
       [ "EndFrameAndSwap", "_ogre_vulkan_prerequisites_8h.html#a119342ed453a2c317a310c790104831ea502186dffd75155c5a68c40240352a90", null ]
-    ] ]
+    ] ],
+    [ "onVulkanFailure", "_ogre_vulkan_prerequisites_8h.html#a58b32574dbda32c8bb1e410634f1d929", null ]
 ];
