@@ -95,12 +95,12 @@ namespace Ogre
         FastArray<VkExtensionProperties> availableExtensions;
         uint32 numExtensions = 0u;
         VkResult result = vkEnumerateInstanceExtensionProperties( 0, &numExtensions, 0 );
-        checkVkResult( result, "vkEnumerateInstanceExtensionProperties" );
+        checkVkResult( nullptr, result, "vkEnumerateInstanceExtensionProperties" );
 
         availableExtensions.resize( numExtensions );
         result =
             vkEnumerateInstanceExtensionProperties( 0, &numExtensions, availableExtensions.begin() );
-        checkVkResult( result, "vkEnumerateInstanceExtensionProperties" );
+        checkVkResult( nullptr, result, "vkEnumerateInstanceExtensionProperties" );
 
         for( const VkExtensionProperties &ext : availableExtensions )
         {
@@ -112,11 +112,11 @@ namespace Ogre
         FastArray<VkLayerProperties> availableLayers;
         uint32 numInstanceLayers = 0u;
         result = vkEnumerateInstanceLayerProperties( &numInstanceLayers, 0 );
-        checkVkResult( result, "vkEnumerateInstanceLayerProperties" );
+        checkVkResult( nullptr, result, "vkEnumerateInstanceLayerProperties" );
 
         availableLayers.resize( numInstanceLayers );
         result = vkEnumerateInstanceLayerProperties( &numInstanceLayers, availableLayers.begin() );
-        checkVkResult( result, "vkEnumerateInstanceLayerProperties" );
+        checkVkResult( nullptr, result, "vkEnumerateInstanceLayerProperties" );
 
         for( auto &layer : availableLayers )
             LogManager::getSingleton().logMessage( "Vulkan: Found instance layer: " +
@@ -290,7 +290,7 @@ namespace Ogre
 #endif
 
             VkResult result = vkCreateInstance( &createInfo, 0, &mVkInstance );
-            checkVkResult( result, "vkCreateInstance" );
+            checkVkResult( nullptr, result, "vkCreateInstance" );
         }
 
 #if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
@@ -347,19 +347,7 @@ namespace Ogre
             dbgCreateInfo.pUserData = userdata;
             VkResult result =
                 CreateDebugReportCallback( mVkInstance, &dbgCreateInfo, 0, &mDebugReportCallback );
-            switch( result )
-            {
-            case VK_SUCCESS:
-                break;
-            case VK_ERROR_OUT_OF_HOST_MEMORY:
-                OGRE_VK_EXCEPT( Exception::ERR_RENDERINGAPI_ERROR, result,
-                                "CreateDebugReportCallback: out of host memory",
-                                "VulkanInstance::addInstanceDebugCallback" );
-            default:
-                OGRE_VK_EXCEPT( Exception::ERR_RENDERINGAPI_ERROR, result,
-                                "vkCreateDebugReportCallbackEXT",
-                                "VulkanInstance::addInstanceDebugCallback" );
-            }
+            checkVkResult( nullptr, result, "vkCreateDebugReportCallbackEXT" );
         }
 #endif
 
@@ -412,11 +400,11 @@ namespace Ogre
         FastArray<VkPhysicalDevice> devices;
         uint32 numDevices = 0u;
         VkResult result = vkEnumeratePhysicalDevices( mVkInstance, &numDevices, NULL );
-        checkVkResult( result, "vkEnumeratePhysicalDevices" );
+        checkVkResult( nullptr, result, "vkEnumeratePhysicalDevices" );
 
         devices.resize( numDevices );
         result = vkEnumeratePhysicalDevices( mVkInstance, &numDevices, devices.begin() );
-        checkVkResult( result, "vkEnumeratePhysicalDevices" );
+        checkVkResult( nullptr, result, "vkEnumeratePhysicalDevices" );
 
         if( numDevices == 0u )
         {
@@ -507,7 +495,7 @@ namespace Ogre
         mVaoManager( 0 ),
         mRenderSystem( renderSystem ),
         mSupportedStages( 0xFFFFFFFF ),
-        mIsDeviceLost( false ),
+        mDeviceLostReason( VK_SUCCESS ),
         mIsExternal( false )
     {
     }
@@ -518,7 +506,7 @@ namespace Ogre
     {
         if( mDevice )
         {
-            vkDeviceWaitIdle( mDevice );
+            vkDeviceWaitIdle( mDevice );  // intentionally ignore result in destroy()
 
             mGraphicsQueue.destroy();
             destroyQueues( mComputeQueues );
@@ -664,6 +652,8 @@ namespace Ogre
     {
         destroy();
 
+        mDeviceLostReason = VK_SUCCESS;
+
         if( externalDevice )
         {
             LogManager::getSingleton().logMessage(
@@ -714,12 +704,15 @@ namespace Ogre
 
         // Obtain logical device
         uint32 numExtensions = 0;
-        vkEnumerateDeviceExtensionProperties( mPhysicalDevice, 0, &numExtensions, 0 );
+        VkResult result = vkEnumerateDeviceExtensionProperties( mPhysicalDevice, 0, &numExtensions, 0 );
+        checkVkResult( this, result, "vkEnumerateDeviceExtensionProperties" );
 
         FastArray<VkExtensionProperties> availableExtensions;
         availableExtensions.resize( numExtensions );
-        vkEnumerateDeviceExtensionProperties( mPhysicalDevice, 0, &numExtensions,
-                                              availableExtensions.begin() );
+        result = vkEnumerateDeviceExtensionProperties( mPhysicalDevice, 0, &numExtensions,
+                                                       availableExtensions.begin() );
+        checkVkResult( this, result, "vkEnumerateDeviceExtensionProperties" );
+
         if( !externalDevice )
         {
             createDevice( availableExtensions, 0u, 0u );
@@ -776,9 +769,8 @@ namespace Ogre
         // initial pipeline cache
         VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
         makeVkStruct( pipelineCacheCreateInfo, VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO );
-        VkResult result =
-            vkCreatePipelineCache( mDevice, &pipelineCacheCreateInfo, nullptr, &mPipelineCache );
-        checkVkResult( result, "vkCreatePipelineCache" );
+        result = vkCreatePipelineCache( mDevice, &pipelineCacheCreateInfo, nullptr, &mPipelineCache );
+        checkVkResult( this, result, "vkCreatePipelineCache" );
 
         // debug utils
         initUtils( mDevice );
@@ -885,6 +877,8 @@ namespace Ogre
                 deviceExtensions.push_back( VK_KHR_16BIT_STORAGE_EXTENSION_NAME );
             else if( extensionName == VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME )
                 deviceExtensions.push_back( VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME );
+            else if( extensionName == VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME )
+                deviceExtensions.push_back( VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME );
         }
 
         deviceExtensions.push_back( VK_KHR_SWAPCHAIN_EXTENSION_NAME );
@@ -980,7 +974,7 @@ namespace Ogre
             createInfo.pEnabledFeatures = &mDeviceFeatures;
 
         VkResult result = vkCreateDevice( mPhysicalDevice, &createInfo, NULL, &mDevice );
-        checkVkResult( result, "vkCreateDevice" );
+        checkVkResult( this, result, "vkCreateDevice" );
     }
     //-------------------------------------------------------------------------
     bool VulkanDevice::hasDeviceExtension( const IdString extension ) const
@@ -1062,7 +1056,8 @@ namespace Ogre
         commitAndNextCommandBuffer( SubmissionType::FlushOnly );
         mRenderSystem->resetAllBindings();
 
-        vkDeviceWaitIdle( mDevice );
+        VkResult result = vkDeviceWaitIdle( mDevice );
+        checkVkResult( this, result, "vkDeviceWaitIdle" );
 
         mRenderSystem->_notifyDeviceStalled();
     }

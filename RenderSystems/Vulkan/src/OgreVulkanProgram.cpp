@@ -51,41 +51,7 @@ THE SOFTWARE.
 #if defined( __GNUC__ ) && !defined( __clang__ )
 #    pragma GCC diagnostic pop
 #endif
-#include "glslang/SPIRV/Logger.h"
-
-// Inclusion of SPIRV headers triggers lots of C++11 errors we don't care
-namespace glslang
-{
-    struct SpvOptions
-    {
-        SpvOptions() :
-            generateDebugInfo( false ),
-            stripDebugInfo( false ),
-            disableOptimizer( true ),
-            optimizeSize( false ),
-            disassemble( false ),
-            validate( false )
-        {
-        }
-        bool generateDebugInfo;
-        bool stripDebugInfo;
-        bool disableOptimizer;
-        bool optimizeSize;
-        bool disassemble;
-        bool validate;
-    };
-
-    void GetSpirvVersion( std::string & );
-    int GetSpirvGeneratorVersion();
-    void GlslangToSpv( const glslang::TIntermediate &intermediate, std::vector<unsigned int> &spirv,
-                       SpvOptions *options = 0 );
-    void GlslangToSpv( const glslang::TIntermediate &intermediate, std::vector<unsigned int> &spirv,
-                       spv::SpvBuildLogger *logger, SpvOptions *options = 0 );
-    void OutputSpvBin( const std::vector<unsigned int> &spirv, const char *baseName );
-    void OutputSpvHex( const std::vector<unsigned int> &spirv, const char *baseName,
-                       const char *varName );
-
-}  // namespace glslang
+#include "glslang/SPIRV/GlslangToSpv.h"
 
 namespace Ogre
 {
@@ -105,8 +71,8 @@ namespace Ogre
 
     private:
         // Prevent being able to copy this object
-        FreeModuleOnDestructor( const FreeModuleOnDestructor & );
-        FreeModuleOnDestructor &operator=( const FreeModuleOnDestructor & );
+        FreeModuleOnDestructor( const FreeModuleOnDestructor & ) = delete;
+        FreeModuleOnDestructor &operator=( const FreeModuleOnDestructor & ) = delete;
     };
 
     //-----------------------------------------------------------------------
@@ -176,7 +142,7 @@ namespace Ogre
             moduleCi.codeSize = mSpirv.size() * sizeof( uint32 );
             moduleCi.pCode = mSpirv.data();
             VkResult result = vkCreateShaderModule( mDevice->mDevice, &moduleCi, 0, &mShaderModule );
-            checkVkResult( result, "vkCreateShaderModule" );
+            checkVkResult( mDevice, result, "vkCreateShaderModule" );
 
             setObjectName( mDevice->mDevice, (uint64_t)mShaderModule,
                            VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT, mName.c_str() );
@@ -383,7 +349,7 @@ namespace Ogre
                     moduleCi.pCode = mSpirv.data();
                     VkResult result =
                         vkCreateShaderModule( mDevice->mDevice, &moduleCi, 0, &mShaderModule );
-                    checkVkResult( result, "vkCreateShaderModule" );
+                    checkVkResult( mDevice, result, "vkCreateShaderModule" );
 
                     setObjectName( mDevice->mDevice, (uint64_t)mShaderModule,
                                    VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT, mName.c_str() );
@@ -802,7 +768,7 @@ namespace Ogre
             moduleCi.codeSize = mSpirv.size() * sizeof( uint32 );
             moduleCi.pCode = mSpirv.data();
             VkResult result = vkCreateShaderModule( mDevice->mDevice, &moduleCi, 0, &mShaderModule );
-            checkVkResult( result, "vkCreateShaderModule" );
+            checkVkResult( mDevice, result, "vkCreateShaderModule" );
 
             setObjectName( mDevice->mDevice, (uint64_t)mShaderModule,
                            VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT, mName.c_str() );
