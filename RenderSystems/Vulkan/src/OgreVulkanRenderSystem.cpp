@@ -191,7 +191,9 @@ namespace Ogre
         if( device != nullptr && device->mDeviceLostReason == VK_SUCCESS &&
             ( vkResult == VK_ERROR_OUT_OF_HOST_MEMORY || vkResult == VK_ERROR_OUT_OF_DEVICE_MEMORY ||
               vkResult == VK_ERROR_DEVICE_LOST ) )
+        {
             device->mDeviceLostReason = vkResult;
+        }
 
         ExceptionFactory::throwException( Exception::ERR_RENDERINGAPI_ERROR, vkResult,
                                           desc + ( "\nVkResult = " + vkResultToString( vkResult ) ), src,
@@ -402,7 +404,8 @@ namespace Ogre
         mCurrentAutoParamsBufferPtr = 0;
         mCurrentAutoParamsBufferSpaceLeft = 0;
 
-        mDevice->stall();
+        if( !mDevice->isDeviceLost() )
+            mDevice->stall();
     }
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::destroyVkResources1()
@@ -1175,7 +1178,11 @@ namespace Ogre
             }
 
             mActiveDevice = externalDevice
-                                ? VulkanPhysicalDevice( { externalDevice->physicalDevice } )
+                                ? VulkanPhysicalDevice( { externalDevice->physicalDevice,
+                                                          { 0ul, 0ul },
+                                                          VK_DRIVER_ID_MAX_ENUM,
+                                                          0u,
+                                                          "[OgreNext] External Device" } )
                                 : *mInstance->findByName( mVulkanSupport->getSelectedDeviceName() );
 
             mDevice = new VulkanDevice( this );
