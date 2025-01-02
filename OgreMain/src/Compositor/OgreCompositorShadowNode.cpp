@@ -1002,7 +1002,8 @@ namespace Ogre
         uint32 visibilityMask,                                 //
         float xyPadding,                                       //
         uint8 firstRq,                                         //
-        uint8 lastRq )
+        uint8 lastRq,
+        CompositorWorkspaceDef *workspaceDef )
     {
         typedef map<uint64, uint32>::type ResolutionsToEsmMap;
 
@@ -1127,7 +1128,9 @@ namespace Ogre
         CompositorShadowNodeDef *shadowNodeDef =
             compositorManager->addShadowNodeDefinition( shadowNodeName );
 
-        const size_t numTextures = atlasResolutions.size();
+ 		const String cubemapTexName = (workspaceDef == nullptr)? "tmpCubemap":
+			"global_tmpCubemap";
+       const size_t numTextures = atlasResolutions.size();
         {
             // Define the atlases (textures)
             shadowNodeDef->setNumLocalTextureDefinitions( numTextures + ( hasPointLights ? 1u : 0u ) );
@@ -1207,9 +1210,10 @@ namespace Ogre
             // Define the cubemap needed by point lights
             if( hasPointLights )
             {
-                const String texName = "tmpCubemap";
                 TextureDefinitionBase::TextureDefinition *texDef =
-                    shadowNodeDef->addTextureDefinition( texName );
+					(workspaceDef == nullptr)?
+                    shadowNodeDef->addTextureDefinition( cubemapTexName ) :
+                    workspaceDef->addTextureDefinition( cubemapTexName );
 
                 texDef->width = pointLightCubemapResolution;
                 texDef->height = pointLightCubemapResolution;
@@ -1220,8 +1224,8 @@ namespace Ogre
                 texDef->depthBufferFormat = PFG_D32_FLOAT;
                 texDef->preferDepthTexture = false;
 
-                RenderTargetViewDef *rtv = shadowNodeDef->addRenderTextureView( texName );
-                rtv->setForTextureDefinition( texName, texDef );
+                RenderTargetViewDef *rtv = shadowNodeDef->addRenderTextureView( cubemapTexName );
+                rtv->setForTextureDefinition( cubemapTexName, texDef );
             }
         }
 
@@ -1340,7 +1344,7 @@ namespace Ogre
                     // Render to cubemap, each face clear + render
                     for( uint32 i = 0; i < 6u; ++i )
                     {
-                        CompositorTargetDef *targetDef = shadowNodeDef->addTargetPass( "tmpCubemap", i );
+                        CompositorTargetDef *targetDef = shadowNodeDef->addTargetPass( cubemapTexName, i );
                         targetDef->setNumPasses( 1u );
                         targetDef->setShadowMapSupportedLightTypes( shadowParam.supportedLightTypes &
                                                                     pointMask );
@@ -1372,7 +1376,7 @@ namespace Ogre
                     passQuad->mMaterialIsHlms = false;
                     passQuad->mMaterialName =
                         useEsm ? "Ogre/DPSM/CubeToDpsmColour" : "Ogre/DPSM/CubeToDpsm";
-                    passQuad->addQuadTextureSource( 0, "tmpCubemap" );
+                    passQuad->addQuadTextureSource( 0, cubemapTexName );
                     passQuad->mShadowMapIdx = shadowMapIdx;
                 }
                 const uint32 numSplits =

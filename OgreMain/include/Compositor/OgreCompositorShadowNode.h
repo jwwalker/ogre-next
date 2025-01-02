@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 #include "Compositor/OgreCompositorNode.h"
 #include "Compositor/OgreCompositorShadowNodeDef.h"
+#include "Compositor/OgreCompositorWorkspaceDef.h"
 #include "OgreLight.h"
 #include "OgreShadowCameraSetup.h"
 
@@ -411,6 +412,9 @@ namespace Ogre
             Range is [firstRq; lastRq)
         @param lastRq
             See firstRq
+		@param workspaceDef
+			Workspace in which to create point light cube map textures globally.  If NULL,
+			the texture will be local.
         */
         static void createShadowNodeWithSettings(
             CompositorManager2                     *compositorManager,                    //
@@ -427,7 +431,8 @@ namespace Ogre
             uint32 visibilityMask = VisibilityFlags::RESERVED_VISIBILITY_FLAGS,           //
             float  xyPadding = 1.5f,                                                      //
             uint8  firstRq = 0u,                                                          //
-            uint8  lastRq = 255u );
+            uint8  lastRq = 255u,
+            CompositorWorkspaceDef					*workspaceDef = nullptr );
     };
 
     /** @} */
