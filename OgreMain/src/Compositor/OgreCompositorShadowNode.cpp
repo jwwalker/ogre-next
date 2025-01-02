@@ -1002,8 +1002,7 @@ namespace Ogre
         uint32 visibilityMask,                                 //
         float xyPadding,                                       //
         uint8 firstRq,                                         //
-        uint8 lastRq,
-        CompositorWorkspaceDef *workspaceDef )
+        uint8 lastRq, CompositorWorkspaceDef *workspaceDef )
     {
         typedef map<uint64, uint32>::type ResolutionsToEsmMap;
 
@@ -1128,9 +1127,8 @@ namespace Ogre
         CompositorShadowNodeDef *shadowNodeDef =
             compositorManager->addShadowNodeDefinition( shadowNodeName );
 
- 		const String cubemapTexName = (workspaceDef == nullptr)? "tmpCubemap":
-			"global_tmpCubemap";
-       const size_t numTextures = atlasResolutions.size();
+        const String cubemapTexName = ( workspaceDef == nullptr ) ? "tmpCubemap" : "global_plCube";
+        const size_t numTextures = atlasResolutions.size();
         {
             // Define the atlases (textures)
             shadowNodeDef->setNumLocalTextureDefinitions( numTextures + ( hasPointLights ? 1u : 0u ) );
@@ -1211,9 +1209,8 @@ namespace Ogre
             if( hasPointLights )
             {
                 TextureDefinitionBase::TextureDefinition *texDef =
-					(workspaceDef == nullptr)?
-                    shadowNodeDef->addTextureDefinition( cubemapTexName ) :
-                    workspaceDef->addTextureDefinition( cubemapTexName );
+                    ( workspaceDef == nullptr ) ? shadowNodeDef->addTextureDefinition( cubemapTexName )
+                                                : workspaceDef->addTextureDefinition( cubemapTexName );
 
                 texDef->width = pointLightCubemapResolution;
                 texDef->height = pointLightCubemapResolution;
@@ -1344,7 +1341,8 @@ namespace Ogre
                     // Render to cubemap, each face clear + render
                     for( uint32 i = 0; i < 6u; ++i )
                     {
-                        CompositorTargetDef *targetDef = shadowNodeDef->addTargetPass( cubemapTexName, i );
+                        CompositorTargetDef *targetDef =
+                            shadowNodeDef->addTargetPass( cubemapTexName, i );
                         targetDef->setNumPasses( 1u );
                         targetDef->setShadowMapSupportedLightTypes( shadowParam.supportedLightTypes &
                                                                     pointMask );
