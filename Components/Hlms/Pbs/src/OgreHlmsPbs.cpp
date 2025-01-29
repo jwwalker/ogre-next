@@ -595,12 +595,13 @@ namespace Ogre
     const HlmsCache *HlmsPbs::createShaderCacheEntry( uint32 renderableHash, const HlmsCache &passCache,
                                                       uint32 finalHash,
                                                       const QueuedRenderable &queuedRenderable,
-                                                      HlmsCache *reservedStubEntry, const size_t tid )
+                                                      HlmsCache *reservedStubEntry, uint64 deadline,
+                                                      const size_t tid )
     {
         OgreProfileExhaustive( "HlmsPbs::createShaderCacheEntry" );
 
         const HlmsCache *retVal = Hlms::createShaderCacheEntry(
-            renderableHash, passCache, finalHash, queuedRenderable, reservedStubEntry, tid );
+            renderableHash, passCache, finalHash, queuedRenderable, reservedStubEntry, deadline, tid );
 
         if( mShaderProfile != "glsl" )
         {
@@ -1142,9 +1143,13 @@ namespace Ogre
             setProperty( kNoTid, PbsProperty::MaterialsPerBuffer, static_cast<int>( mSlotsPerPool ) );
     }
     //-----------------------------------------------------------------------------------
-    void HlmsPbs::notifyPropertiesMergedPreGenerationStep( const size_t tid, PiecesMap *inOutPieces )
+    Hlms::PropertiesMergeStatus HlmsPbs::notifyPropertiesMergedPreGenerationStep(
+        const size_t tid, PiecesMap *inOutPieces )
     {
-        Hlms::notifyPropertiesMergedPreGenerationStep( tid, inOutPieces );
+        PropertiesMergeStatus status = Hlms::notifyPropertiesMergedPreGenerationStep( tid, inOutPieces );
+
+        if( status == PropertiesMergeStatusError )
+            return status;
 
         const int32 numVctProbes = getProperty( tid, PbsProperty::VctNumProbes );
         const bool hasVct = numVctProbes > 0;
@@ -1164,6 +1169,38 @@ namespace Ogre
 
         if( getProperty( tid, HlmsBaseProp::Pose ) > 0 )
             setProperty( tid, HlmsBaseProp::VertexId, 1 );
+
+        if( getProperty( tid, HlmsBaseProp::UseUvBaking ) )
+        {
+            // When baking UVs, ensure result is always valid or gives good error reporting.
+            const int32 bakingSet = getProperty( tid, HlmsBaseProp::UvBaking );
+            const int32 uvCount = getProperty( tid, HlmsBaseProp::UvCount );
+            if( bakingSet >= uvCount )
+            {
+                if( uvCount == 0 )
+                {
+                    status = PropertiesMergeStatusError;
+                    LogManager::getSingleton().logMessage(
+                        "[tid = " + StringConverter::toString( tid ) +
+                            "] ERROR: mesh has no UVs but trying to bake lightmaps for it.",
+                        LML_CRITICAL );
+                    return status;
+                }
+                else
+                {
+                    status = PropertiesMergeStatusWarning;
+                    setProperty( tid, HlmsBaseProp::UvBaking, uvCount - 1 );
+                    LogManager::getSingleton().logMessage(
+                        "[tid = " + StringConverter::toString( tid ) +
+                            "] WARNING: mesh has max UV count = " +
+                            StringConverter::toString( uvCount - 1 ) +
+                            " but baking lightmaps UV set is uv = " +
+                            StringConverter::toString( bakingSet ) +
+                            ". Forcing the former. UV baking may look wrong.",
+                        LML_CRITICAL );
+                }
+            }
+        }
 
         const int32 envProbeMap = getProperty( tid, PbsProperty::EnvProbeMap );
         const int32 targetEnvProbeMap = getProperty( tid, PbsProperty::TargetEnvprobeMap );
@@ -1188,10 +1225,18 @@ namespace Ogre
             }
         }
 
-        OGRE_ASSERT_MEDIUM( ( !getProperty( tid, PbsProperty::UseParallaxCorrectCubemaps ) ||
-                              getProperty( tid, PbsProperty::ParallaxCorrectCubemaps ) ) &&
-                            "Object with manual cubemap probe but "
-                            "setParallaxCorrectedCubemap() was not called!" );
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_MEDIUM
+        if( getProperty( tid, PbsProperty::UseParallaxCorrectCubemaps ) &&
+            !getProperty( tid, PbsProperty::ParallaxCorrectCubemaps ) )
+        {
+            status = PropertiesMergeStatusError;
+            LogManager::getSingleton().logMessage( "[tid = " + StringConverter::toString( tid ) +
+                                                       "] ERROR: Object with manual cubemap probe but "
+                                                       "setParallaxCorrectedCubemap() was not called!",
+                                                   LML_CRITICAL );
+            return status;
+        }
+#endif
 
         const bool hasIrradianceField = getProperty( tid, PbsProperty::IrradianceField ) != 0;
 
@@ -1268,10 +1313,19 @@ namespace Ogre
             setTextureReg( tid, PixelShader, "refractionMap", texUnit++ );
         }
 
-        OGRE_ASSERT_HIGH(
-            ( refractionsAvailable || getProperty( tid, HlmsBaseProp::ScreenSpaceRefractions ) == 0 ) &&
-            "A material that uses refractions is used in a pass where refractions are unavailable! See "
-            "Samples/2.0/ApiUsage/Refractions for which pass refractions must be rendered in" );
+#if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
+        if( !refractionsAvailable && getProperty( tid, HlmsBaseProp::ScreenSpaceRefractions ) != 0 )
+        {
+            status = PropertiesMergeStatusError;
+            LogManager::getSingleton().logMessage(
+                "[tid = " + StringConverter::toString( tid ) +
+                    "] ERROR: A material that uses refractions is used in a pass where refractions are "
+                    "unavailable! See Samples/2.0/ApiUsage/Refractions for which pass refractions must "
+                    "be rendered in.",
+                LML_CRITICAL );
+            return status;
+        }
+#endif
 
         const bool casterPass = getProperty( tid, HlmsBaseProp::ShadowCaster ) != 0;
 
@@ -1425,6 +1479,8 @@ namespace Ogre
             }
             setProperty( tid, HlmsBaseProp::UvCount, 1 );
         }
+
+        return status;
     }
     //-----------------------------------------------------------------------------------
     bool HlmsPbs::requiredPropertyByAlphaTest( IdString keyName )
