@@ -3449,12 +3449,12 @@ namespace Ogre
         VkGraphicsPipelineCreateInfo pipeline;
         makeVkStruct( pipeline, VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO );
 
-        pipeline.flags =
+        bool deadlineMissed =
             deadline != (uint64)-1 &&
-                    (int64)( Root::getSingleton().getTimer()->getMilliseconds() - deadline ) > 0 &&
-                    mDevice->hasDeviceExtension( VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME )
-                ? VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT
-                : 0;
+            (int64)( Root::getSingleton().getTimer()->getMilliseconds() - deadline ) > 0;
+        pipeline.flags = deadlineMissed && mDevice->mDeviceExtraFeatures.pipelineCreationCacheControl
+                             ? VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT
+                             : 0;
         pipeline.layout = layout;
         pipeline.stageCount = static_cast<uint32>( numShaderStages );
         pipeline.pStages = shaderStages;
@@ -3474,8 +3474,10 @@ namespace Ogre
 #endif
 
         VkPipeline vulkanPso = 0;
-        VkResult result = vkCreateGraphicsPipelines( mDevice->mDevice, mDevice->mPipelineCache, 1u,
-                                                     &pipeline, 0, &vulkanPso );
+        VkResult result = deadlineMissed && !mDevice->mDeviceExtraFeatures.pipelineCreationCacheControl
+                              ? VK_PIPELINE_COMPILE_REQUIRED_EXT
+                              : vkCreateGraphicsPipelines( mDevice->mDevice, mDevice->mPipelineCache, 1u,
+                                                           &pipeline, 0, &vulkanPso );
         if( result == VK_PIPELINE_COMPILE_REQUIRED_EXT )
             return false;
 
