@@ -191,8 +191,6 @@ namespace Ogre
                          "VulkanXcbWindow::_initialize" );
         }
 
-        createSurface();
-
         VulkanTextureGpuManager *textureManager =
             static_cast<VulkanTextureGpuManager *>( textureGpuManager );
 
@@ -205,38 +203,16 @@ namespace Ogre
         mStencilBuffer = 0;
 
         setFinalResolution( mRequestedWidth, mRequestedHeight );
-        mTexture->setPixelFormat( chooseSurfaceFormat( mHwGamma ) );
-        if( mDepthBuffer )
-        {
-            mDepthBuffer->setPixelFormat( DepthBuffer::DefaultDepthBufferFormat );
-            if( PixelFormatGpuUtils::isStencil( mDepthBuffer->getPixelFormat() ) )
-                mStencilBuffer = mDepthBuffer;
-        }
 
-        mSampleDescription = mDevice->mRenderSystem->validateSampleDescription(
-            mRequestedSampleDescription, mTexture->getPixelFormat(),
-            TextureFlags::NotTexture | TextureFlags::RenderWindowSpecific );
-        mTexture->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-        if( mDepthBuffer )
-            mDepthBuffer->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-
-        if( mDepthBuffer )
-        {
-            mTexture->_setDepthBufferDefaults( mDepthBuffer->isTilerMemoryless()
-                                                   ? DepthBuffer::POOL_MEMORYLESS
-                                                   : DepthBuffer::NO_POOL_EXPLICIT_RTV,
-                                               false, mDepthBuffer->getPixelFormat() );
-        }
-        else
-        {
-            mTexture->_setDepthBufferDefaults( DepthBuffer::POOL_NO_DEPTH, false, PFG_NULL );
-        }
-
+        createSurface();
         createSwapchain();
     }
     //-------------------------------------------------------------------------
     void VulkanXcbWindow::createSurface()
     {
+        if( mDevice->isDeviceLost() )  // notifyDeviceRestored() will call us again
+            return;
+
         PFN_vkCreateXcbSurfaceKHR create_xcb_surface = (PFN_vkCreateXcbSurfaceKHR)vkGetInstanceProcAddr(
             mDevice->mInstance->mVkInstance, "vkCreateXcbSurfaceKHR" );
 
@@ -518,7 +494,7 @@ namespace Ogre
         if( newWidth == getWidth() && newHeight == getHeight() && !mRebuildingSwapchain )
             return;
 
-        mDevice->stall();
+        mDevice->stallIgnoringDeviceLost();
 
         destroySwapchain();
         setFinalResolution( newWidth, newHeight );

@@ -406,8 +406,7 @@ namespace Ogre
         mCurrentAutoParamsBufferPtr = 0;
         mCurrentAutoParamsBufferSpaceLeft = 0;
 
-        if( !mDevice->isDeviceLost() )
-            mDevice->stall();
+        mDevice->stallIgnoringDeviceLost();
     }
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::destroyVkResources1()
@@ -1875,11 +1874,14 @@ namespace Ogre
             mComputeTableDirty = true;
         }
 
+        // NOTE: right now we never skip compute pipeline creation, but better be safe than sorry
         OGRE_ASSERT_LOW( pso->rsData );
-        VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData );
-        delayed_vkDestroyPipeline( mVaoManager, mDevice->mDevice, vulkanPso->pso, 0 );
-        delete vulkanPso;
-        pso->rsData = 0;
+        if( VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData ) )
+        {
+            pso->rsData = 0;
+            delayed_vkDestroyPipeline( mVaoManager, mDevice->mDevice, vulkanPso->pso, 0 );
+            delete vulkanPso;
+        }
     }
     //-------------------------------------------------------------------------
     void VulkanRenderSystem::_beginFrame() {}
@@ -1960,6 +1962,7 @@ namespace Ogre
 
         // check, if we deferred pipeline compilation due to the skipped deadline
         // TODO: set some fallback? Dummy here, or more clever at compilation site?
+        // this also ensures, that if mPso is not null then mPso->rsData is valid
         if( pso && !pso->rsData )
             pso = 0;
 
@@ -1969,10 +1972,10 @@ namespace Ogre
             {
                 VulkanRootLayout *oldRootLayout = 0;
                 if( mPso )
-                    oldRootLayout = reinterpret_cast<VulkanHlmsPso *>( mPso->rsData )->rootLayout;
+                    oldRootLayout = static_cast<VulkanHlmsPso *>( mPso->rsData )->rootLayout;
 
                 OGRE_ASSERT_LOW( pso->rsData );
-                VulkanHlmsPso *vulkanPso = reinterpret_cast<VulkanHlmsPso *>( pso->rsData );
+                VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData );
                 VkCommandBuffer cmdBuffer = mDevice->mGraphicsQueue.getCurrentCmdBuffer();
                 vkCmdBindPipeline( cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vulkanPso->pso );
 
@@ -1991,16 +1994,22 @@ namespace Ogre
     {
         mDevice->mGraphicsQueue.getComputeEncoder();
 
+        // check, if we deferred pipeline compilation due to the skipped deadline
+        // NOTE: right now we never skip compute pipelines compilations
+        // this also ensures, that if mComputePso is not null then mComputePso->rsData is valid
+        if( pso && !pso->rsData )
+            pso = 0;
+
         if( mComputePso != pso )
         {
             if( pso )
             {
                 VulkanRootLayout *oldRootLayout = 0;
                 if( mComputePso )
-                    oldRootLayout = reinterpret_cast<VulkanHlmsPso *>( mComputePso->rsData )->rootLayout;
+                    oldRootLayout = static_cast<VulkanHlmsPso *>( mComputePso->rsData )->rootLayout;
 
                 OGRE_ASSERT_LOW( pso->rsData );
-                VulkanHlmsPso *vulkanPso = reinterpret_cast<VulkanHlmsPso *>( pso->rsData );
+                VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData );
                 VkCommandBuffer cmdBuffer = mDevice->mGraphicsQueue.getCurrentCmdBuffer();
                 vkCmdBindPipeline( cmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, vulkanPso->pso );
 
@@ -2069,9 +2078,12 @@ namespace Ogre
         if( !mTableDirty )
             return;
 
-        VulkanVaoManager *vaoManager = static_cast<VulkanVaoManager *>( mVaoManager );
-        VulkanRootLayout *rootLayout = reinterpret_cast<VulkanHlmsPso *>( mPso->rsData )->rootLayout;
-        rootLayout->bind( mDevice, vaoManager, mGlobalTable );
+        if( mPso )
+        {
+            VulkanVaoManager *vaoManager = static_cast<VulkanVaoManager *>( mVaoManager );
+            VulkanRootLayout *rootLayout = static_cast<VulkanHlmsPso *>( mPso->rsData )->rootLayout;
+            rootLayout->bind( mDevice, vaoManager, mGlobalTable );
+        }
         mGlobalTable.reset();
         mTableDirty = false;
     }
@@ -2081,10 +2093,13 @@ namespace Ogre
         if( !mComputeTableDirty )
             return;
 
-        VulkanVaoManager *vaoManager = static_cast<VulkanVaoManager *>( mVaoManager );
-        VulkanRootLayout *rootLayout =
-            reinterpret_cast<VulkanHlmsPso *>( mComputePso->rsData )->rootLayout;
-        rootLayout->bind( mDevice, vaoManager, mComputeTable );
+        if( mComputePso )
+        {
+            VulkanVaoManager *vaoManager = static_cast<VulkanVaoManager *>( mVaoManager );
+            VulkanRootLayout *rootLayout =
+                static_cast<VulkanHlmsPso *>( mComputePso->rsData )->rootLayout;
+            rootLayout->bind( mDevice, vaoManager, mComputeTable );
+        }
         mComputeTable.reset();
         mComputeTableDirty = false;
     }
@@ -3450,7 +3465,7 @@ namespace Ogre
         makeVkStruct( pipeline, VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO );
 
         bool deadlineMissed =
-            deadline != (uint64)-1 &&
+            deadline != UINT64_MAX &&
             (int64)( Root::getSingleton().getTimer()->getMilliseconds() - deadline ) > 0;
         pipeline.flags = deadlineMissed && mDevice->mDeviceExtraFeatures.pipelineCreationCacheControl
                              ? VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT
@@ -3520,11 +3535,13 @@ namespace Ogre
             mPso = 0;
         }
 
-        OGRE_ASSERT_LOW( pso->rsData );
-        VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData );
-        delayed_vkDestroyPipeline( mVaoManager, mDevice->mDevice, vulkanPso->pso, 0 );
-        delete vulkanPso;
-        pso->rsData = 0;
+        // graphics pipeline creation could have been skipped
+        if( VulkanHlmsPso *vulkanPso = static_cast<VulkanHlmsPso *>( pso->rsData ) )
+        {
+            pso->rsData = 0;
+            delayed_vkDestroyPipeline( mVaoManager, mDevice->mDevice, vulkanPso->pso, 0 );
+            delete vulkanPso;
+        }
     }
 
     void VulkanRenderSystem::_hlmsMacroblockCreated( HlmsMacroblock *newBlock )

@@ -85,7 +85,7 @@ namespace Ogre
     {
         if( mNativeWindow )
         {
-            mDevice->stall();
+            mDevice->stallIgnoringDeviceLost();
         }
 
         VulkanWindowSwapChainBased::destroy();
@@ -220,7 +220,7 @@ namespace Ogre
         if( newWidth == getWidth() && newHeight == getHeight() && !mRebuildingSwapchain )
             return;
 
-        mDevice->stall();
+        mDevice->stallIgnoringDeviceLost();
 
 #ifdef OGRE_VULKAN_USE_SWAPPY
         // Code to detect buggy devices (if it's buggy, we disable Swappy).
@@ -336,19 +336,10 @@ namespace Ogre
         // We must flush all our references to the old swapchain otherwise when
         // the app goes to foreground again and submit that stale content Mali
         // will return DEVICE_LOST
-        mDevice->stall();
+        mDevice->stallIgnoringDeviceLost();
 
         destroySwapchain();
         destroySurface();
-
-        // Depth & Stencil buffer are normal textures; thus they need to be reeinitialized normally
-        if( mDepthBuffer && mDepthBuffer->getResidencyStatus() != GpuResidency::OnStorage )
-            mDepthBuffer->_transitionTo( GpuResidency::OnStorage, (uint8 *)0 );
-        if( mStencilBuffer && mStencilBuffer != mDepthBuffer &&
-            mStencilBuffer->getResidencyStatus() != GpuResidency::OnStorage )
-        {
-            mStencilBuffer->_transitionTo( GpuResidency::OnStorage, (uint8 *)0 );
-        }
 
         if( mNativeWindow != nativeWindow )
         {
@@ -362,12 +353,6 @@ namespace Ogre
         if( !mNativeWindow )
             return;
 
-        mClosed = false;
-        mFocused = true;
-        // WindowEventUtilities::_addRenderWindow( this );
-
-        createSurface();
-
         const uint32 newWidth = static_cast<uint32>( ANativeWindow_getWidth( mNativeWindow ) );
         const uint32 newHeight = static_cast<uint32>( ANativeWindow_getHeight( mNativeWindow ) );
 
@@ -376,42 +361,15 @@ namespace Ogre
 
         setFinalResolution( mRequestedWidth, mRequestedHeight );
 
-        // mTexture is in OnStorage only once ever: at startup. Set these parameters once
-        if( mTexture->getResidencyStatus() == GpuResidency::OnStorage )
-        {
-            mTexture->setPixelFormat( chooseSurfaceFormat( mHwGamma ) );
-            if( mDepthBuffer )
-            {
-                mDepthBuffer->setPixelFormat( DepthBuffer::DefaultDepthBufferFormat );
-                if( PixelFormatGpuUtils::isStencil( mDepthBuffer->getPixelFormat() ) )
-                    mStencilBuffer = mDepthBuffer;
-            }
-
-            mSampleDescription = mDevice->mRenderSystem->validateSampleDescription(
-                mRequestedSampleDescription, mTexture->getPixelFormat(),
-                TextureFlags::NotTexture | TextureFlags::RenderWindowSpecific );
-            mTexture->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-            if( mDepthBuffer )
-                mDepthBuffer->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-
-            if( mDepthBuffer )
-            {
-                mTexture->_setDepthBufferDefaults( mDepthBuffer->isTilerMemoryless()
-                                                       ? DepthBuffer::POOL_MEMORYLESS
-                                                       : DepthBuffer::NO_POOL_EXPLICIT_RTV,
-                                                   false, mDepthBuffer->getPixelFormat() );
-            }
-            else
-            {
-                mTexture->_setDepthBufferDefaults( DepthBuffer::POOL_NO_DEPTH, false, PFG_NULL );
-            }
-        }
-
+        createSurface();
         createSwapchain();
     }
     //-------------------------------------------------------------------------
     void VulkanAndroidWindow::createSurface()
     {
+        if( mDevice->isDeviceLost() )  // notifyDeviceRestored() will call us again
+            return;
+
         VkAndroidSurfaceCreateInfoKHR andrSurfCreateInfo;
         makeVkStruct( andrSurfCreateInfo, VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR );
         andrSurfCreateInfo.window = mNativeWindow;

@@ -445,12 +445,13 @@ namespace Ogre
                 << "Created VulkanWin32Window '" << mTitle << "' : " << mRequestedWidth << "x"
                 << mRequestedHeight << ", " << mColourDepth << "bpp";
         }
-
-        createSurface();
     }
     //-------------------------------------------------------------------------
     void VulkanWin32Window::createSurface()
     {
+        if( mDevice->isDeviceLost() )  // notifyDeviceRestored() will call us again
+            return;
+
         VkWin32SurfaceCreateInfoKHR createInfo;
         makeVkStruct( createInfo, VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR );
         createInfo.hwnd = mHwnd;
@@ -532,36 +533,7 @@ namespace Ogre
 
         setFinalResolution( mRequestedWidth, mRequestedHeight );
 
-        // if( mColourDepth == 16u )
-        //     mTexture->setPixelFormat( PFG_B5G5R5A1_UNORM );
-        // else
-        mTexture->setPixelFormat( chooseSurfaceFormat( mHwGamma ) );
-        if( mDepthBuffer )
-        {
-            mDepthBuffer->setPixelFormat( DepthBuffer::DefaultDepthBufferFormat );
-            if( PixelFormatGpuUtils::isStencil( mDepthBuffer->getPixelFormat() ) )
-                mStencilBuffer = mDepthBuffer;
-        }
-
-        mSampleDescription = mDevice->mRenderSystem->validateSampleDescription(
-            mRequestedSampleDescription, mTexture->getPixelFormat(),
-            TextureFlags::NotTexture | TextureFlags::RenderWindowSpecific );
-        mTexture->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-        if( mDepthBuffer )
-            mDepthBuffer->_setSampleDescription( mRequestedSampleDescription, mSampleDescription );
-
-        if( mDepthBuffer )
-        {
-            mTexture->_setDepthBufferDefaults( mDepthBuffer->isTilerMemoryless()
-                                                   ? DepthBuffer::POOL_MEMORYLESS
-                                                   : DepthBuffer::NO_POOL_EXPLICIT_RTV,
-                                               false, mDepthBuffer->getPixelFormat() );
-        }
-        else
-        {
-            mTexture->_setDepthBufferDefaults( DepthBuffer::POOL_NO_DEPTH, false, PFG_NULL );
-        }
-
+        createSurface();
         createSwapchain();
 
         setHidden( mHidden );
@@ -723,7 +695,7 @@ namespace Ogre
         if( !bResolutionChanged && !mRebuildingSwapchain )
             return;
 
-        mDevice->stall();
+        mDevice->stallIgnoringDeviceLost();
 
         destroySwapchain();
         setFinalResolution( mRequestedWidth, mRequestedHeight );
