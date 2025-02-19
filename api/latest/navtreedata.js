@@ -851,9 +851,9 @@ var NAVTREEINDEX =
 "_android_2_ogre_config_dialog_imp_8h.html",
 "_ogre_billboard_chain_8h.html",
 "_ogre_d3_d11_legacy_s_d_k_emulation_8h.html#a38aca83993b2756cc7a2f374905ab196",
-"_ogre_g_l_e_s2_prerequisites_8h.html#a45bbdef2e602a1d12b999a837df8fb89",
-"_ogre_id_string_8h.html#a65d81f8d195ea976dbed9daee4cc31f0",
-"_ogre_overlay_prerequisites_8h.html",
+"_ogre_g_l_e_s2_prerequisites_8h.html#a475eba7444e56d54bf4d2cfdaa38bc43",
+"_ogre_id_string_8h.html#a76df4aa2317392de6730341e372598ea",
+"_ogre_overlay_prerequisites_8h.html#a17b4cbca9d40bcecaa0ce48a611defe2",
 "_ogre_render_queue_8h.html",
 "_ogre_texture_gpu_manager_8h.html#a3a978c834ce00930123468c9a64047b4a46cdc74c21d464c0330b5bcb57b22462",
 "_ogre_vertex_elements_8h.html#a0a62b3f2ede8992ff365bb013a8bc00da6f167783a26ed5d1c146fbeae995af0b",
@@ -983,8 +983,8 @@ var NAVTREEINDEX =
 "struct_ogre_1_1_transform.html#a6b4b819f764fb26b97c1f528e60f7e3f",
 "struct_ogre_1_1_vct_material_1_1_datablock_conversion_result.html#a019db3b486b7a6d2d8a5ce4d979cdee7",
 "struct_ogre_1_1_volume_1_1_chunk_tree_shared_data.html#a64aba683df2575afa57a24c039d3298b",
-"struct_ogre_1_1_vulkan_external_instance.html",
-"struct_ogre_1_1is_pod_like_3_01std_1_1pair_3_01_t_00_01_u_01_4_01_4.html"
+"struct_ogre_1_1_vulkan_external_device.html#accafaac2bc60074f91c4517c586f0f2b",
+"struct_ogre_1_1is_pod_like_3_01signed_01char_01_4.html#af8ad32023ee81d5136137cfa8e5f5941"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
