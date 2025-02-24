@@ -18,6 +18,11 @@
 #include "OgreHlmsManager.h"
 #include "OgreHlmsPbs.h"
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+#    include "OSX/macUtils.h"
+#endif
+
+
 namespace Demo
 {
     class Hlms01CustomizationGraphicsSystem final : public GraphicsSystem
