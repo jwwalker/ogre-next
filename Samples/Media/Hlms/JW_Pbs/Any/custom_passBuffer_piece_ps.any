@@ -1,0 +1,4 @@
+@piece( custom_passBuffer )
+	float	jwToonQuantization;
+	float	jwToonScale;
+@end
