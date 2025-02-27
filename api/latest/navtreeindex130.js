@@ -1,5 +1,8 @@
 var NAVTREEINDEX130 =
 {
+"struct_ogre_1_1_queued_renderable.html#a824405b401150a9fe60811fc7c9fe8c7":[6,2,9,5,0],
+"struct_ogre_1_1_queued_renderable.html#a8d6b87f3ec79e59736e0a7e38b6fcd44":[6,2,9,5,2],
+"struct_ogre_1_1_queued_renderable.html#a9d6f3abc79c72f43d91fdf8013b740c5":[6,2,9,5,4],
 "struct_ogre_1_1_queued_renderable.html#ad63644d36969a4f90efc8b88ec394518":[6,2,9,5,5],
 "struct_ogre_1_1_raster_params.html":[7,0,0,807],
 "struct_ogre_1_1_raster_params.html":[8,0,0,778],
@@ -246,8 +249,5 @@ var NAVTREEINDEX130 =
 "struct_ogre_1_1_shadow_node_helper_1_1_resolution.html":[6,2,1,52,0],
 "struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#a274cb1b6817759212de6f6ff27830dbb":[6,2,1,52,0,2],
 "struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#a3085167caccdb6a2ac3f0d45f789a37f":[6,2,1,52,0,1],
-"struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#a9f23e2f0b3877884e4d1c54b70721806":[6,2,1,52,0,4],
-"struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#aea5ac676e1d7a40e0d461974d081fc41":[6,2,1,52,0,3],
-"struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#afb6c016b17587cdd5024bce6b12e8191":[6,2,1,52,0,0],
-"struct_ogre_1_1_shadow_node_helper_1_1_shadow_param.html":[6,2,1,52,1]
+"struct_ogre_1_1_shadow_node_helper_1_1_resolution.html#a9f23e2f0b3877884e4d1c54b70721806":[6,2,1,52,0,4]
 };
