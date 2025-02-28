@@ -272,6 +272,7 @@ namespace Ogre
         float mClearCoatRoughness;
         float _padding1;
         float mUserValue[3][4];  // can be used in custom pieces
+        uint32 mUserInt[2];
         // uint16  mTexIndices[NUM_PBSM_TEXTURE_TYPES];
 
         CubemapProbe *mCubemapProbe;
@@ -674,6 +675,13 @@ namespace Ogre
         */
         void    setUserValue( uint8 userValueIdx, const Vector4 &value );
         Vector4 getUserValue( uint8 userValueIdx ) const;
+
+        /** Sets the value of the userInt, this can be used in a custom piece
+        @param userIntIdx
+            Which userInt to modify, 0 or 1
+        */
+        void   setUserInt( uint8 userIntIdx, uint32 value );
+        uint32 getUserInt( uint8 userIntIdx ) const;
 
         /** When set, it treats the emissive map as a lightmap; which means it will
             be multiplied against the diffuse component.

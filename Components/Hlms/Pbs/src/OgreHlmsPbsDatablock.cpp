@@ -61,7 +61,7 @@ namespace Ogre
                                        "Lighten",         "Darken",       "GrainExtract", "GrainMerge",
                                        "Difference" };
 
-    const uint32 HlmsPbsDatablock::MaterialSizeInGpu = 60u * 4u + NUM_PBSM_TEXTURE_TYPES * 2u;
+    const uint32 HlmsPbsDatablock::MaterialSizeInGpu = 62u * 4u + NUM_PBSM_TEXTURE_TYPES * 2u;
     const uint32 HlmsPbsDatablock::MaterialSizeInGpuAligned =
         alignToNextMultiple<uint32>( HlmsPbsDatablock::MaterialSizeInGpu, 4 * 4 );
 
@@ -96,6 +96,7 @@ namespace Ogre
         mClearCoat( 0.0f ),
         mClearCoatRoughness( 0.0f ),
         _padding1( 0 ),
+        mUserInt{ 0, 0 },
         mCubemapProbe( 0 ),
         mBrdf( creator->getDefaultBrdfWithDiffuseFresnel() ? PbsBrdf::DefaultHasDiffuseFresnel
                                                            : PbsBrdf::Default )
@@ -960,6 +961,18 @@ namespace Ogre
         assert( userValueIdx < 3 );
         return Vector4( mUserValue[userValueIdx][0], mUserValue[userValueIdx][1],
                         mUserValue[userValueIdx][2], mUserValue[userValueIdx][3] );
+    }
+    //-----------------------------------------------------------------------------------
+    void   HlmsPbsDatablock::setUserInt( uint8 userIntIdx, uint32 value )
+    {
+        assert( userIntIdx < 2 );
+        mUserInt[userIntIdx] = value;
+        scheduleConstBufferUpdate();
+    }
+    uint32 HlmsPbsDatablock::getUserInt( uint8 userIntIdx ) const
+    {
+        assert( userIntIdx < 2 );
+        return mUserInt[userIntIdx];
     }
     //-----------------------------------------------------------------------------------
     void HlmsPbsDatablock::setCubemapProbe( CubemapProbe *probe )

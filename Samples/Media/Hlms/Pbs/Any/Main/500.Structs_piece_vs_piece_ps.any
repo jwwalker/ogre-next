@@ -301,6 +301,7 @@ struct Material
 	float clearCoatRoughness;
 	float _padding1;
 	float4 userValue[3];
+	uint userInt[3];
 
 	@property( syntax != metal )
 		uint4 indices0_3;
