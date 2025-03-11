@@ -18,7 +18,7 @@
 #include "OgreHlmsManager.h"
 #include "OgreHlmsPbs.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 #    include "OSX/macUtils.h"
 #endif
 
