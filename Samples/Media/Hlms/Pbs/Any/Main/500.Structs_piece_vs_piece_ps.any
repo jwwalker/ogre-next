@@ -301,6 +301,8 @@ struct Material
 	float clearCoatRoughness;
 	float _padding1;
 	float4 userValue[3];
+	// Conceptually, this should be uint userInt[2], but that would take up 32 bytes
+	// instead of 8 bytes on Vulkan and Direct3D, due to std140 uniform layout rules.
 	uint2 userInt;
 
 	@property( syntax != metal )
