@@ -111,6 +111,8 @@ namespace Ogre
         /// Pointer can be null if using HLMS
         Pass   *getPass() { return mPass; }
         Camera *getCamera() { return mCamera; }
+        
+        Material* _getMaterial() { return mMaterial.get(); } // JWW
     };
 
     /** @} */
