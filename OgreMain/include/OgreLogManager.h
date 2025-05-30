@@ -175,6 +175,33 @@ namespace Ogre
     /** @} */
 }  // namespace Ogre
 
+// Make assertion failure show up in Ogre.log - JWW
+#if defined(assert) && !defined(NDEBUG)
+	#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+		#undef assert
+		#define assert(e)  \
+			do { \
+				if (__builtin_expect(!(e), 0)) \
+				{ \
+					LogManager::getSingleton().logMessage( "Failed assert: " #e \
+					" in file" __FILE__, LML_CRITICAL ); \
+					__assert (#e, __ASSERT_FILE_NAME, __LINE__); \
+				} \
+			} while (0)
+	#elif OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+		#undef assert
+		#define assert(e)  \
+			do { \
+				if (!(e)) \
+				{ \
+					LogManager::getSingleton().logMessage( "Failed assert: " #e \
+					" in file" __FILE__, LML_CRITICAL ); \
+					_wassert(_CRT_WIDE(#e), _CRT_WIDE(__FILE__), (unsigned)__LINE__, 0); \
+				} \
+			} while (0)
+	#endif
+#endif
+
 #include "OgreHeaderSuffix.h"
 
 #endif
