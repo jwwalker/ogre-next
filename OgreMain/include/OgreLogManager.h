@@ -183,8 +183,8 @@ namespace Ogre
 			do { \
 				if (__builtin_expect(!(e), 0)) \
 				{ \
-					LogManager::getSingleton().logMessage( "Failed assert: " #e \
-					" in file" __FILE__, LML_CRITICAL ); \
+					Ogre::LogManager::getSingleton().logMessage( "Failed assert: " #e \
+					" in file" __FILE__, Ogre::LML_CRITICAL ); \
 					__assert (#e, __ASSERT_FILE_NAME, __LINE__); \
 				} \
 			} while (0)
@@ -194,8 +194,8 @@ namespace Ogre
 			do { \
 				if (!(e)) \
 				{ \
-					LogManager::getSingleton().logMessage( "Failed assert: " #e \
-					" in file" __FILE__, LML_CRITICAL ); \
+					Ogre::LogManager::getSingleton().logMessage( "Failed assert: " #e \
+					" in file" __FILE__, Ogre::LML_CRITICAL ); \
 					_wassert(_CRT_WIDE(#e), _CRT_WIDE(__FILE__), (unsigned)__LINE__); \
 				} \
 			} while (0)
