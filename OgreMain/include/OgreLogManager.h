@@ -196,7 +196,7 @@ namespace Ogre
 				{ \
 					LogManager::getSingleton().logMessage( "Failed assert: " #e \
 					" in file" __FILE__, LML_CRITICAL ); \
-					_wassert(_CRT_WIDE(#e), _CRT_WIDE(__FILE__), (unsigned)__LINE__, 0); \
+					_wassert(_CRT_WIDE(#e), _CRT_WIDE(__FILE__), (unsigned)__LINE__); \
 				} \
 			} while (0)
 	#endif
