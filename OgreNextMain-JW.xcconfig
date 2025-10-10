@@ -1,0 +1,11 @@
+//  OgreNextMain-JW.xcconfig
+//  OGRE-Next
+//
+//  Created by James Walker on 7/25/25.
+//  
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+OTHER_LDFLAGS = -Xlinker -reexported_symbols_list -Xlinker /Volumes/Work/git-repos/ogre-next-fork/OgreNextMain-no-strip.h -framework IOKit -framework Cocoa -framework Carbon -framework OpenGL -framework CoreVideo  /Volumes/Work/git-repos/ogre-next-fork/Dependencies/lib/$CONFIGURATION/libFreeImage.a /Volumes/Work/git-repos/ogre-next-fork/Dependencies/lib/$CONFIGURATION/libzziplib.a /Applications/Xcode26.1-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libz.tbd $(inherited)

@@ -1,0 +1,3 @@
+_FreeImage_PreMultiplyWithAlpha
+_FreeImage_Rescale
+
