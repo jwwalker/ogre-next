@@ -236,11 +236,13 @@ namespace Ogre
             mSubItems.push_back( SubItem( this, subMesh ) );
 
             // Try first Hlms materials, then the low level ones.
-
-            mSubItems.back().setDatablockOrMaterialName(
-                materialsList ? ( *materialsList )[i]
-                              : ( bUseMeshMat ? subMesh->mMaterialName : defaultDatablock ),
-                mMesh->getGroup() );
+			if ( (materialsList != nullptr) || bUseMeshMat )
+			{
+				mSubItems.back().setDatablockOrMaterialName(
+					materialsList ? ( *materialsList )[i]
+								  : ( bUseMeshMat ? subMesh->mMaterialName : defaultDatablock ),
+					mMesh->getGroup() );
+			}
         }
     }
     //-----------------------------------------------------------------------
