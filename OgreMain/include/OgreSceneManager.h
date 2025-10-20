@@ -1231,6 +1231,12 @@ namespace Ogre
 
         /// Finds all the scene nodes with the name passed as parameter.
         virtual_l1 SceneNodeList findSceneNodes( const String &name ) const;
+        
+		typedef ConstVectorIterator<SceneNodeList> SceneNodeIterator;
+
+		/// Get an iterator over all SceneNode instances in this SceneManager. (JWW)
+		SceneNodeIterator getSceneNodeIterator() const
+			{ return SceneNodeIterator( mSceneNodes.begin(), mSceneNodes.end() ); }
 
         /** Node listeners need to be registered with us so that they can be successfully called
             when calling updateAllTransforms. @see updateAllTransforms
