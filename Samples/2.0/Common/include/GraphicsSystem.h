@@ -59,7 +59,9 @@ namespace Demo
         Ogre::v1::OverlaySystem *mOverlaySystem;
 
         StaticPluginLoader mStaticPluginLoader;
-
+        #ifdef AUTO_TESTING
+            std::string renderer;
+        #endif
         /// Tracks the amount of elapsed time since we last
         /// heard from the LogicSystem finishing a frame
         float                mAccumTimeSinceLastLogicFrame;
@@ -147,6 +149,10 @@ namespace Demo
 
 #if OGRE_USE_SDL2
         SdlInputHandler *getInputHandler() { return mInputHandler; }
+
+        virtual bool getGrabMousePointerOnStartup() const { return false; }
+
+        virtual void handleRawSdlEvent( const SDL_Event &evt ) {}
 #endif
 
         /// Creates an atmosphere and binds it to the SceneManager
@@ -179,6 +185,9 @@ namespace Demo
 
         virtual void stopCompositor();
         virtual void restartCompositor();
+        #ifdef AUTO_TESTING
+            void setRendererParam(std::string renderSubsystem);
+        #endif
     };
 }  // namespace Demo
 

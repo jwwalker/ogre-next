@@ -264,4 +264,4 @@ namespace Ogre
             [app sendEvent:event];
         }
     }
-}
+}  // namespace Ogre
