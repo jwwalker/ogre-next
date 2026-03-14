@@ -1,3 +1,55 @@
+# How this Fork Differs from the Official Repository
+
+This fork has been modified in a few ways to accommodate FrameForge Storyboard Studio.
+
+## Texture Coordinate Transforms (AKA UV Transforms)
+
+Standard Ogre-Next allows texture coordinate transforms (scaling, rotating, and translating
+the texture coordinates) when using unlit shading, via the
+`HlmsUnlitDatablock::setAnimationMatrix` API, but does not implement texture coordinate
+transforms when using physically-based shading.  This fork implements texture coordinate
+transforms for PBS using 6 of the 12 user value numbers in the `HlmsPbsDatablock` class.
+You set it using the `HlmsPbsDatablock::setUserValue` API.
+
+## Cartoon-style Shading
+
+This fork implements cartoon-like shading using the Bidirectional Reflectance Distribution
+Function (BRDF) functionality.  You invoke this style by calling the
+`HlmsPbsDatablock::setBrdf` API with one of the constants `Ogre::PbsBrdf::JWToon` or
+`Ogre::PbsBrdf::JWToonWeak`.  These styles have one numeric parameter called *cartoon
+quantization*.  It is recorded in the last of the 12 user value numbers in the
+`HlmsPbsDatablock` class. You set it using the `HlmsPbsDatablock::setUserValue` API.
+
+## Planar Reflections (Mirrors) Modifications
+
+This fork contains an imperfect fix for an Ogre bug involving planar reflections and
+two-sided lighting.  See [Ogre Bug 369](https://github.com/OGRECave/ogre-next/issues/369)
+for details.
+
+There is also a small modification to give access to the correspondence between a
+reflection camera and a planar reflection "actor".
+
+## Extra Ambient Light
+
+Extra ambient light is added at the end of the ambient light shading, as a hack to make
+the sky look the way we wanted. It is recorded in 3 of the 12 user value numbers in the
+`HlmsPbsDatablock` class.  You set it using the `HlmsPbsDatablock::setUserValue` API.
+Specifically, if you call `HlmsPbsDatablock::setUserValue( 2, v )`, then the first 3
+members of `v` are the extra ambient light, and the 4th member is the cartoon
+quantization.
+
+## MacOS-Specific Changes
+
+The `OgreMetalView` class posts an `"OgreViewDidChangeBackingProperties"` notification
+when the view changes its backing properties, i.e., when its window moves to  a screen
+with a different backing store scale factor.  This is needed to fix a rendering glitch
+on macOS.
+
+There is a new utility function `macWriteAccessFolderPath`, used in sample code to
+provide a more Mac-appropriate location for `Ogre.log` and `ogre.cfg` files.
+
+
+
 # OGRE-Next 3D (Object-Oriented Graphics Rendering Engine Next Generation)
 
 Ogre-Next is a 3D graphics rendering engine. Not to be confused with a game engine which provides Networking, Sound, Physics, etc.
