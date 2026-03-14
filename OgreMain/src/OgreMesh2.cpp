@@ -50,10 +50,18 @@ THE SOFTWARE.
 #include "Vao/OgreIndexBufferPacked.h"
 #include "Vao/OgreVertexArrayObject.h"
 
+#ifdef __APPLE__xx
+	#include <os/log.h>
+	#define AppleLog( ... )	os_log_debug( OS_LOG_DEFAULT, __VA_ARGS__ )
+#else
+	#define AppleLog( ... )
+#endif
+
 namespace Ogre
 {
     bool Mesh::msOptimizeForShadowMapping = false;
     bool Mesh::msUseTimestampAsHash = false;
+    static long long sMeshCount = 0;
 
     //-----------------------------------------------------------------------
     Mesh::Mesh( ResourceManager *creator, const String &name, ResourceHandle handle, const String &group,
@@ -67,12 +75,14 @@ namespace Ogre
         mVertexBufferShadowBuffer( true ),
         mIndexBufferShadowBuffer( true )
     {
+		AppleLog( "Mesh count %lld", ++sMeshCount );
         memset( mHashForCaches, 0, sizeof( mHashForCaches ) );
         mLodValues.push_back( LodStrategyManager::getSingleton().getDefaultStrategy()->getBaseValue() );
     }
     //-----------------------------------------------------------------------
     Mesh::~Mesh()
     {
+		AppleLog( "Mesh count %lld", --sMeshCount );
         if( !isLoaded() )
         {
             // Even while unloaded we still may have stuff to free

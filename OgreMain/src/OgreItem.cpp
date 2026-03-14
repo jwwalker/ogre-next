@@ -43,14 +43,25 @@ Copyright (c) 2000-2014 Torus Knot Software Ltd
 #include "OgreSubItem.h"
 #include "OgreSubMesh2.h"
 
+#ifdef __APPLE__xx
+	#include <os/log.h>
+	#define AppleLog( ... )	os_log_debug( OS_LOG_DEFAULT, __VA_ARGS__ )
+#else
+	#define AppleLog( ... )
+#endif
+
+
 namespace Ogre
 {
     extern const FastArray<Real> c_DefaultLodMesh;
+    static long long sItemCount = 0;
+    
     //-----------------------------------------------------------------------
     Item::Item( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager ) :
         MovableObject( id, objectMemoryManager, manager, 10u ),
         mInitialised( false )
     {
+		AppleLog("Item count %lld", ++sItemCount);
         mObjectData.mQueryFlags[mObjectData.mIndex] = SceneManager::QUERY_ENTITY_DEFAULT_MASK;
     }
     //-----------------------------------------------------------------------
@@ -60,6 +71,7 @@ namespace Ogre
         mMesh( mesh ),
         mInitialised( false )
     {
+		AppleLog("Item count %lld", ++sItemCount);
         _initialise( false, bUseMeshMat );
         mObjectData.mQueryFlags[mObjectData.mIndex] = SceneManager::QUERY_ENTITY_DEFAULT_MASK;
     }
@@ -160,6 +172,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     Item::~Item()
     {
+		AppleLog("Item count %lld", --sItemCount);
         _deinitialise();
         // Unregister our listener
         mMesh->removeListener( this );
