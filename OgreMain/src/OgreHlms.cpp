@@ -2453,6 +2453,8 @@ namespace Ogre
             blendblock.mBlendOperationAlpha =
                 static_cast<SceneBlendOperation>( ( blendOperationAlpha >> 20u ) - 1u );
         }
+
+        blendblock.calculateSeparateBlendMode();
     }
     //-----------------------------------------------------------------------------------
     HighLevelGpuProgramPtr Hlms::compileShaderCode( const String &source,
@@ -3084,8 +3086,7 @@ namespace Ogre
         }
 
         {
-            const HlmsDatablock::CustomPropertyArray &customProperties =
-                datablock->getCustomProperties();
+            const HlmsDatablock::CustomPropertyVec &customProperties = datablock->getCustomProperties();
             for( const HlmsDatablock::CustomProperty &property : customProperties )
                 setProperty( kNoTid, property.keyName, property.value );
         }

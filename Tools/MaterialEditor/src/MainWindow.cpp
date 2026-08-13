@@ -844,7 +844,8 @@ void MainWindow::OnMenuSelection( wxCommandEvent &event )
             m_meshList->populateFromDatabase();
 
             m_pbsTexturePanel->unsetEnvMapFromAllDatablocks();
-            m_projectSettings->saveProject( m_root->getHlmsManager(), *m_lightPanel );
+            m_projectSettings->saveProject( m_root->getHlmsManager(), *m_lightPanel, *m_datablockList,
+                                            *m_meshList );
             m_pbsTexturePanel->notifyMeshChanged();
         }
         break;
@@ -854,7 +855,8 @@ void MainWindow::OnMenuSelection( wxCommandEvent &event )
         if( !projPath.empty() )
         {
             unloadForNewProject();
-            m_projectSettings->openProject( projPath, m_root->getHlmsManager(), *m_lightPanel );
+            m_projectSettings->openProject( projPath, m_root->getHlmsManager(), *m_lightPanel,
+                                            *m_datablockList, *m_meshList );
             Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups( true );
             m_datablockList->populateFromDatabase();
             m_meshList->populateFromDatabase();
@@ -863,7 +865,8 @@ void MainWindow::OnMenuSelection( wxCommandEvent &event )
     }
     case wxID_SAVE:
         m_pbsTexturePanel->unsetEnvMapFromAllDatablocks();
-        m_projectSettings->saveProject( m_root->getHlmsManager(), *m_lightPanel );
+        m_projectSettings->saveProject( m_root->getHlmsManager(), *m_lightPanel, *m_datablockList,
+                                        *m_meshList );
         m_pbsTexturePanel->notifyMeshChanged();
         break;
     case wxID_PREFERENCES:
@@ -883,7 +886,7 @@ void MainWindow::OnMenuSelection( wxCommandEvent &event )
         break;
     }
 
-        // Submenu Camera
+        // Submenu View
     case wxID_MENUCAMERAORIGIN:
         originCamera();
         break;
@@ -906,6 +909,25 @@ void MainWindow::OnMenuSelection( wxCommandEvent &event )
         setCoordinateConvention( CoordinateConvention::zUp );
         centerMeshCamera();
         break;
+
+        // Submenu Engine
+    case wxID_ENGINE_HLMS_RELOAD:
+    {
+        Ogre::HlmsManager *hlmsManager = m_root->getHlmsManager();
+
+        {
+            Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_UNLIT );
+            Ogre::GpuProgramManager::getSingleton().clearMicrocodeCache();
+            hlms->reloadFrom( hlms->getDataFolder() );
+        }
+
+        {
+            Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_PBS );
+            Ogre::GpuProgramManager::getSingleton().clearMicrocodeCache();
+            hlms->reloadFrom( hlms->getDataFolder() );
+        }
+        break;
+    }
     }
     event.Skip();
 }
@@ -958,6 +980,15 @@ bool MainWindow::loadMeshAsItem( const Ogre::String &meshName, const Ogre::Strin
         mesh->prepareForShadowMapping( true );
 
         item = m_sceneManager->createItem( meshName, resourceGroup );
+
+        if( item->getNumSubItems() > 0u && item->getSubItem( 0u )->hasSkeletonAnimation() &&
+            !item->hasSkeleton() )
+        {
+            wxMessageBox( wxT( "Mesh has skeleton but couldn't be loaded.\nRefusing to load." ),
+                          wxT( "Mesh Open Error" ), wxOK | wxICON_ERROR );
+            m_sceneManager->destroyItem( item );
+            return false;
+        }
     }
     catch( Ogre::Exception & )
     {

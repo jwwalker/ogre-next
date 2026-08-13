@@ -40,6 +40,7 @@ THE SOFTWARE.
 #include "OgreVulkanRootLayout.h"
 #include "OgreVulkanSupport.h"
 #include "OgreVulkanTextureGpuManager.h"
+#include "OgreVulkanTextureGpuWindow.h"
 #include "OgreVulkanUtils.h"
 #include "OgreVulkanWindow.h"
 #include "Vao/OgreVulkanVaoManager.h"
@@ -3163,13 +3164,38 @@ namespace Ogre
                 imageBarrier.oldLayout = VulkanMappings::get( itor->oldLayout, texture );
                 imageBarrier.newLayout = VulkanMappings::get( itor->newLayout, texture );
 
+                if( texture->isRenderWindowSpecific() &&
+                    PixelFormatGpuUtils::isAccessible( texture->getPixelFormat() ) )
+                {
+                    // This is a swapchain (depth & stencil textures should not reach here).
+                    //
+                    // We must add the semaphore now. We may have to flush the queue earlier,
+                    // before even reaching VulkanRenderPassDescriptor::performLoadActions.
+                    OGRE_ASSERT_HIGH( dynamic_cast<VulkanTextureGpuWindow *>( texture ) );
+                    VulkanTextureGpuWindow *textureVulkan =
+                        static_cast<VulkanTextureGpuWindow *>( texture );
+                    VkSemaphore semaphore = textureVulkan->getImageAcquiredSemaphore();
+                    if( semaphore )
+                    {
+                        // We cannot start transition this texture commands until the semaphore says so.
+                        mDevice->mGraphicsQueue.addWindowToWaitFor( semaphore );
+                        srcStage |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                    }
+                }
+
                 const bool bIsDepth = PixelFormatGpuUtils::isDepth( texture->getPixelFormat() );
 
                 // If oldAccess == ResourceAccess::Undefined then this texture is used for
                 // the first time on a new frame (but not necessarily the first time ever)
                 // thus there are no caches needed to flush.
                 //
-                // dstStage only needs to wait for the transition to happen though
+                // dstStage needs to wait for srcStage to finish for the transition to happen though.
+                if( itor->oldLayout != ResourceLayout::Texture &&
+                    itor->oldLayout != ResourceLayout::Uav )
+                {
+                    srcStage |= toVkPipelineStageFlags( itor->oldLayout, bIsDepth );
+                }
+
                 if( itor->oldAccess != ResourceAccess::Undefined )
                 {
                     if( itor->oldAccess & ResourceAccess::Write )
@@ -3178,12 +3204,6 @@ namespace Ogre
                             VulkanMappings::getAccessFlags( itor->oldLayout, itor->oldAccess, texture,
                                                             false ) &
                             c_srcValidAccessFlags;
-                    }
-
-                    if( itor->oldLayout != ResourceLayout::Texture &&
-                        itor->oldLayout != ResourceLayout::Uav )
-                    {
-                        srcStage |= toVkPipelineStageFlags( itor->oldLayout, bIsDepth );
                     }
 
                     if( itor->oldStageMask != 0u )

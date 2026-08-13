@@ -1,11 +1,14 @@
 #include "ProjectSettings.h"
 
+#include "DatablockList.h"
 #include "LightPanel.h"
+#include "MeshList.h"
 
 #include "OgreConfigFile.h"
 #include "OgreHlms.h"
 #include "OgreHlmsJson.h"
 #include "OgreHlmsManager.h"
+#include "OgreLogManager.h"
 #include "OgreMeshManager.h"
 #include "OgreMeshManager2.h"
 #include "OgreResourceGroupManager.h"
@@ -212,6 +215,8 @@ void ProjectSettings::loadProject( Ogre::HlmsManager *hlmsManager )
     m_samplerTemplates.clear();
     generateDefaultSamplerTemplates();
 
+    bool bErrorsFound = false;
+
     const Ogre::String relativeFolder = m_relativeFolder.utf8_string();
 
     for( const wxString &resource : m_resources )
@@ -241,21 +246,51 @@ void ProjectSettings::loadProject( Ogre::HlmsManager *hlmsManager )
                         if( !archName.empty() && archName.front() == '/' )
                             archName.erase( 0u );
 
-                        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-                            relativeFolder + archName, typeName, secName );
-                        m_resourceLocations.push_back( { relativeFolder + archName, secName } );
+                        try
+                        {
+                            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+                                relativeFolder + archName, typeName, secName );
+                            m_resourceLocations.push_back( { relativeFolder + archName, secName } );
+                        }
+                        catch( Ogre::Exception &e )
+                        {
+                            Ogre::LogManager::getSingleton().logMessage( e.getFullDescription(),
+                                                                         Ogre::LML_CRITICAL );
+                            bErrorsFound = true;
+                        }
                     }
                 }
             }
         }
         else
         {
-            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-                resource.utf8_string(), "FileSystem",
-                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-            m_resourceLocations.push_back(
-                { resource.utf8_string(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME } );
+            try
+            {
+                Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+                    resource.utf8_string(), "FileSystem",
+                    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+                m_resourceLocations.push_back(
+                    { resource.utf8_string(),
+                      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME } );
+            }
+            catch( Ogre::Exception &e )
+            {
+                Ogre::LogManager::getSingleton().logMessage( e.getFullDescription(),
+                                                             Ogre::LML_CRITICAL );
+                bErrorsFound = true;
+            }
         }
+    }
+
+    if( bErrorsFound )
+    {
+        wxMessageDialog dlg( this,
+                             wxT( "Some folders threw errors while trying to load them.\n"
+                                  "Probably wrong paths to *.zip files.\n"
+                                  "See Ogre.log or console for more info." ),
+                             wxT( "Errors in ResourceGroupManager::addResourceLocation" ),
+                             wxOK | wxICON_ERROR );
+        dlg.ShowModal();
     }
 
     const char *suffix[] = { "_pbs.material.json", "_unlit.material.json" };
@@ -284,7 +319,8 @@ void ProjectSettings::loadProject( Ogre::HlmsManager *hlmsManager )
     }
 }
 //-----------------------------------------------------------------------------
-void ProjectSettings::saveProject( Ogre::HlmsManager *hlmsManager, LightPanel &lightPanel )
+void ProjectSettings::saveProject( Ogre::HlmsManager *hlmsManager, LightPanel &lightPanel,
+                                   DatablockList &datablockList, MeshList &meshList )
 {
     Ogre::String jsonString;
 
@@ -328,6 +364,8 @@ void ProjectSettings::saveProject( Ogre::HlmsManager *hlmsManager, LightPanel &l
     jsonString += "\n	}";
 
     lightPanel.saveProject( jsonString );
+    datablockList.saveProject( jsonString );
+    meshList.saveProject( jsonString );
 
     jsonString += "\n}";
 
@@ -390,7 +428,8 @@ void ProjectSettings::newProject( Ogre::HlmsManager *hlmsManager )
 }
 //-----------------------------------------------------------------------------
 void ProjectSettings::openProject( wxString projectPath, Ogre::HlmsManager *hlmsManager,
-                                   LightPanel &lightPanel )
+                                   LightPanel &lightPanel, DatablockList &datablockList,
+                                   MeshList &meshList )
 {
     projectPath.Replace( "\\", "/" );
     m_projectPath = projectPath;
@@ -490,6 +529,8 @@ void ProjectSettings::openProject( wxString projectPath, Ogre::HlmsManager *hlms
     }
 
     lightPanel.loadProject( d );
+    datablockList.loadProject( d );
+    meshList.loadProject( d );
 
     newProject( hlmsManager );
 }

@@ -30,6 +30,7 @@ THE SOFTWARE.
 
 #include "OgreResourceTransition.h"
 
+#include "OgrePixelFormatGpuUtils.h"
 #include "OgreRenderSystem.h"
 #include "OgreTextureGpu.h"
 #include "OgreTextureGpuManager.h"
@@ -168,7 +169,17 @@ namespace Ogre
             resTrans.resource = texture;
             if( texture->isDiscardableContent() )
             {
-                resTrans.oldLayout = ResourceLayout::Undefined;
+                if( texture->isRenderWindowSpecific() &&
+                    PixelFormatGpuUtils::isAccessible( texture->getPixelFormat() ) )
+                {
+                    // This is a swapchain (depth & stencil textures should not reach here).
+                    resTrans.oldLayout = ResourceLayout::Undefined;
+                }
+                else
+                {
+                    resTrans.oldLayout = texture->getCurrentLayout();
+                }
+
                 if( access == ResourceAccess::Read )
                 {
                     OGRE_EXCEPT(
@@ -200,10 +211,8 @@ namespace Ogre
                                            itor->second.layout );
 #endif
 
-            if( !renderSystem->isSameLayout( itor->second.layout, newLayout, texture, false ) ||
-                ( newLayout == ResourceLayout::Uav &&  //
-                  ( access != ResourceAccess::Read ||  //
-                    itor->second.access != ResourceAccess::Read ) ) )
+            if( access != ResourceAccess::Read || itor->second.access != ResourceAccess::Read ||
+                !renderSystem->isSameLayout( itor->second.layout, newLayout, texture, false ) )
             {
                 ResourceTransition resTrans;
                 resTrans.resource = texture;
